@@ -4,68 +4,315 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Friday Football Club (FFC)</title>
-<script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
 <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
-<link href="[https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap)" rel="stylesheet">
+<link href="[https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap)" rel="stylesheet">
 <script src="[https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js](https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js)"></script>
 <script src="[https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js](https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js)"></script>
-<script>
-tailwind.config = {
-darkMode: 'class',
-theme: {
-extend: {
-fontFamily: {
-sans: ['"Hind Siliguri"', 'sans-serif'],
-}
-}
-}
-}
-</script>
 <style>
-body { font-family: 'Hind Siliguri', sans-serif; }
-.tab-active {
-background-color: rgba(16, 185, 129, 0.15);
-color: #10b981;
-border: 1px solid rgba(16, 185, 129, 0.3);
+:root {
+--bg-body: #0b111e;
+--bg-header: #0e1525;
+--bg-card: #111827;
+--bg-input: #0b111e;
+--bg-elevated: #162033;
+--border-color: #1e293b;
+--text-main: #f8fafc;
+--text-muted: #94a3b8;
+--emerald: #10b981;
+--emerald-hover: #059669;
+--amber: #f59e0b;
+--cyan: #06b6d4;
+--rose: #e11d48;
+--purple: #8b5cf6;
 }
+​html.light {
+--bg-body: #f1f5f9;
+--bg-header: #ffffff;
+--bg-card: #ffffff;
+--bg-input: #f8fafc;
+--bg-elevated: #e2e8f0;
+--border-color: #cbd5e1;
+--text-main: #0f172a;
+--text-muted: #475569;
+}
+​* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+font-family: 'Hind Siliguri', system-ui, -apple-system, sans-serif;
+}
+​body {
+background-color: var(--bg-body);
+color: var(--text-main);
+min-height: 100vh;
+transition: background-color 0.2s, color 0.2s;
+line-height: 1.5;
+}
+​.hidden { display: none !important; }
+.flex { display: flex; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.flex-wrap { flex-wrap: wrap; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.w-full { width: 100%; }
+.mt-2 { margin-top: 8px; }
+.mt-4 { margin-top: 16px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-3 { margin-bottom: 12px; }
+.mb-4 { margin-bottom: 16px; }
+​/* Modals */
+.modal-overlay {
+position: fixed;
+inset: 0;
+z-index: 50;
+background: rgba(11, 17, 30, 0.92);
+backdrop-filter: blur(6px);
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 16px;
+}
+​.modal-box {
+background-color: var(--bg-card);
+border: 1px solid var(--border-color);
+border-radius: 20px;
+padding: 24px;
+width: 100%;
+max-width: 420px;
+box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+}
+​/* Form Inputs & Buttons */
+input, select, textarea {
+background-color: var(--bg-input);
+border: 1px solid var(--border-color);
+color: var(--text-main);
+border-radius: 12px;
+padding: 10px 14px;
+font-size: 14px;
+width: 100%;
+outline: none;
+transition: border-color 0.2s;
+}
+​input:focus, select:focus, textarea:focus {
+border-color: var(--emerald);
+}
+​.btn {
+border: none;
+border-radius: 12px;
+padding: 10px 16px;
+font-size: 14px;
+font-weight: 700;
+cursor: pointer;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+transition: opacity 0.2s, transform 0.1s;
+}
+​.btn:active { transform: scale(0.98); }
+.btn-emerald { background: var(--emerald); color: #052e16; }
+.btn-emerald:hover { background: var(--emerald-hover); }
+.btn-amber { background: var(--amber); color: #1c1917; }
+.btn-cyan { background: var(--cyan); color: #083344; }
+.btn-rose { background: var(--rose); color: #ffffff; }
+.btn-purple { background: var(--purple); color: #ffffff; }
+.btn-dark {
+background: var(--bg-elevated);
+color: var(--text-main);
+border: 1px solid var(--border-color);
+}
+​/* Header & Nav */
+header {
+background-color: var(--bg-header);
+border-bottom: 1px solid var(--border-color);
+position: sticky;
+top: 0;
+z-index: 30;
+}
+​.container {
+max-width: 1120px;
+margin: 0 auto;
+padding: 0 16px;
+}
+​.header-top {
+padding: 12px 0;
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+justify-content: space-between;
+gap: 12px;
+}
+​.brand-badge {
+background: var(--emerald);
+color: #052e16;
+font-weight: 800;
+padding: 6px 12px;
+border-radius: 10px;
+font-size: 14px;
+}
+​.nav-tabs {
+display: flex;
+gap: 8px;
+overflow-x: auto;
+padding-bottom: 12px;
+}
+​.tab-btn {
+background: transparent;
+border: 1px solid transparent;
+color: var(--text-muted);
+padding: 8px 14px;
+border-radius: 12px;
+font-size: 13px;
+font-weight: 600;
+cursor: pointer;
+white-space: nowrap;
+display: inline-flex;
+align-items: center;
+gap: 7px;
+}
+​.tab-btn.active {
+background: rgba(16, 185, 129, 0.15);
+color: var(--emerald);
+border-color: rgba(16, 185, 129, 0.35);
+}
+​/* Cards & Grids */
+main {
+max-width: 1120px;
+margin: 0 auto;
+padding: 20px 16px 90px 16px;
+}
+​.card {
+background-color: var(--bg-card);
+border: 1px solid var(--border-color);
+border-radius: 20px;
+padding: 20px;
+margin-bottom: 20px;
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+​.notice-bar {
+background-color: var(--bg-card);
+border: 1px solid var(--border-color);
+border-radius: 16px;
+padding: 12px 16px;
+display: flex;
+align-items: center;
+gap: 12px;
+margin-bottom: 20px;
+}
+​.notice-tag {
+background: rgba(16, 185, 129, 0.15);
+color: var(--emerald);
+border: 1px solid rgba(16, 185, 129, 0.3);
+padding: 4px 10px;
+border-radius: 8px;
+font-size: 12px;
+font-weight: 700;
+white-space: nowrap;
+}
+​.grid-2 {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+gap: 16px;
+}
+​.grid-3 {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+gap: 12px;
+}
+​.grid-4 {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+gap: 12px;
+}
+​/* Table */
+.table-wrap { overflow-x: auto; }
+table {
+width: 100%;
+border-collapse: collapse;
+text-align: left;
+font-size: 14px;
+}
+th {
+color: var(--text-muted);
+font-size: 12px;
+padding: 10px 8px;
+border-bottom: 1px solid var(--border-color);
+}
+td {
+padding: 12px 8px;
+border-bottom: 1px solid var(--border-color);
+}
+tr.clickable:hover { background: rgba(148, 163, 184, 0.08); cursor: pointer; }
+​/* Avatars & Badges */
+.avatar {
+width: 38px;
+height: 38px;
+border-radius: 50%;
+background: rgba(16, 185, 129, 0.18);
+color: var(--emerald);
+border: 1px solid rgba(16, 185, 129, 0.35);
+display: inline-flex;
+align-items: center;
+justify-content: center;
+font-weight: 700;
+font-size: 13px;
+overflow: hidden;
+flex-shrink: 0;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+​.badge {
+padding: 4px 10px;
+border-radius: 8px;
+font-size: 11px;
+font-weight: 700;
+}
+.badge-paid { background: rgba(16, 185, 129, 0.15); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+.badge-due { background: rgba(225, 29, 72, 0.15); color: #fb7185; border: 1px solid rgba(225, 29, 72, 0.3); }
+.cap-badge {
+width: 20px; height: 20px;
+border-radius: 50%;
+background: #fbbf24;
+color: #0f172a;
+font-size: 11px;
+font-weight: 800;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+}
+​/* Tactics Pitch */
 .pitch-bg {
-background: linear-gradient(90deg, #133b28 0%, #174730 10%, #133b28 10%, #133b28 20%, #174730 20%, #174730 30%, #133b28 30%, #133b28 40%, #174730 40%, #174730 50%, #133b28 50%, #133b28 60%, #174730 60%, #174730 70%, #133b28 70%, #133b28 80%, #174730 80%, #174730 90%, #133b28 90%, #133b28 100%);
+background: repeating-linear-gradient(90deg, #133b28 0%, #133b28 10%, #184932 10%, #184932 20%);
 position: relative;
+height: 360px;
+border-radius: 18px;
 border: 2px solid rgba(255, 255, 255, 0.35);
+overflow: hidden;
 user-select: none;
 touch-action: none;
 }
 .pitch-line-center {
-position: absolute;
-top: 0; bottom: 0; left: 50%;
-width: 2px;
-background: rgba(255, 255, 255, 0.35);
-transform: translateX(-50%);
-pointer-events: none;
+position: absolute; top: 0; bottom: 0; left: 50%;
+width: 2px; background: rgba(255, 255, 255, 0.35);
+transform: translateX(-50%); pointer-events: none;
 }
 .pitch-circle-center {
-position: absolute;
-top: 50%; left: 50%;
+position: absolute; top: 50%; left: 50%;
 width: 84px; height: 84px;
 border: 2px solid rgba(255, 255, 255, 0.35);
-border-radius: 50%;
-transform: translate(-50%, -50%);
+border-radius: 50%; transform: translate(-50%, -50%);
 pointer-events: none;
 }
 .pitch-box-left {
-position: absolute;
-top: 22%; bottom: 22%; left: 0;
-width: 14%;
-border: 2px solid rgba(255, 255, 255, 0.35);
-border-left: none;
+position: absolute; top: 22%; bottom: 22%; left: 0; width: 14%;
+border: 2px solid rgba(255, 255, 255, 0.35); border-left: none;
 pointer-events: none;
 }
 .pitch-box-right {
-position: absolute;
-top: 22%; bottom: 22%; right: 0;
-width: 14%;
-border: 2px solid rgba(255, 255, 255, 0.35);
-border-right: none;
+position: absolute; top: 22%; bottom: 22%; right: 0; width: 14%;
+border: 2px solid rgba(255, 255, 255, 0.35); border-right: none;
 pointer-events: none;
 }
 .draggable-token {
@@ -73,454 +320,457 @@ position: absolute;
 transform: translate(-50%, -50%);
 cursor: grab;
 z-index: 20;
+display: flex;
+flex-direction: column;
+align-items: center;
 }
-.draggable-token:active { cursor: grabbing; z-index: 30; }
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+.token-circle {
+width: 36px; height: 36px;
+border-radius: 50%;
+color: #090d16;
+font-weight: 800;
+font-size: 11px;
+display: flex;
+align-items: center;
+justify-content: center;
+border: 2px solid #ffffff;
+box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+​/* Floating Music Button */
+.music-fab {
+position: fixed;
+bottom: 20px;
+right: 20px;
+z-index: 40;
+width: 46px;
+height: 46px;
+border-radius: 50%;
+background: var(--emerald);
+color: #052e16;
+border: none;
+font-size: 16px;
+cursor: pointer;
+box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+display: flex;
+align-items: center;
+justify-content: center;
+}
+​.sub-box {
+background-color: var(--bg-input);
+border: 1px solid var(--border-color);
+border-radius: 14px;
+padding: 14px;
+}
+​.chat-scroll {
+max-height: 380px;
+overflow-y: auto;
+display: flex;
+flex-direction: column;
+gap: 10px;
+margin-bottom: 14px;
+}
+​.moment-card {
+position: relative;
+background: var(--bg-input);
+border: 1px solid var(--border-color);
+border-radius: 14px;
+overflow: hidden;
+}
+.moment-card img {
+width: 100%;
+height: 160px;
+object-fit: cover;
+display: block;
+}
 </style>
 </head>
-<body class="bg-[#0b111e] text-slate-100 min-h-screen transition-colors duration-200">
-​<!-- Login Overlay Modal -->
-<div id="loginModal" class="fixed inset-0 z-50 bg-[#0b111e]/95 backdrop-blur-sm flex items-center justify-center p-4">
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center">
-<div class="inline-flex items-center justify-center bg-emerald-500 text-slate-950 font-bold px-3.5 py-1.5 rounded-lg text-sm mb-3">FFC</div>
-<h1 class="text-2xl font-bold text-white mb-1">ফুটবল ক্লাবে স্বাগতম</h1>
-<p class="text-xs text-slate-400 mb-6">আপনার আইডি সিলেক্ট করুন এবং গোপন পিন দিন</p>
-​<div class="text-left space-y-4">
-<div>
-<label class="block text-xs text-slate-400 mb-1.5">আপনার নাম সিলেক্ট করুন:</label>
-<select id="loginPlayerSelect" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+<body>
+​<!-- Login Modal -->
+<div id="loginModal" class="modal-overlay">
+<div class="modal-box" style="text-align: center;">
+<span class="brand-badge" style="display: inline-block; margin-bottom: 12px;">FFC</span>
+<h1 id="t_welcomeTitle" style="font-size: 22px; font-weight: 700; margin-bottom: 4px;">ফুটবল ক্লাবে স্বাগতম</h1>
+<p id="t_welcomeSub" style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">আপনার আইডি সিলেক্ট করুন এবং গোপন পিন দিন</p>
+​<div style="text-align: left;">
+<label id="t_selectNameLabel" style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">আপনার নাম সিলেক্ট করুন:</label>
+<select id="loginPlayerSelect" class="mb-3">
 <option value="">-- প্লেয়ার সিলেক্ট করুন --</option>
 </select>
+​<label id="t_secretPinLabel" style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">গোপন পিন (PIN):</label>
+<input type="password" id="loginPinInput" maxlength="6" placeholder="****" class="mb-4">
+​<button onclick="handleMemberLogin()" id="t_loginBtn" class="btn btn-emerald w-full">লগইন করুন</button>
 </div>
-<div>
-<label class="block text-xs text-slate-400 mb-1.5">গোপন পিন (PIN):</label>
-<input type="password" id="loginPinInput" maxlength="6" placeholder="৪ সংখ্যার পিন দিন" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
-</div>
-<button onclick="handleMemberLogin()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition cursor-pointer">
-লগইন করুন
-</button>
-</div>
-​<div class="my-4 flex items-center gap-3">
-<div class="h-px bg-slate-800 flex-1"></div>
-<span class="text-xs text-slate-500">অথবা</span>
-<div class="h-px bg-slate-800 flex-1"></div>
-</div>
-​<button onclick="enterVisitorMode()" class="w-full bg-[#1e293b] hover:bg-slate-700 text-slate-200 font-medium py-2.5 rounded-xl text-sm border border-slate-700 transition flex items-center justify-center gap-2 cursor-pointer">
-<i class="fa-solid fa-eye text-xs"></i> শুধু ভিজিটর হিসেবে দেখুন
+​<div style="margin: 14px 0; font-size: 12px; color: var(--text-muted);" id="t_orText">অথবা</div>
+​<button onclick="enterVisitorMode()" id="t_visitorBtn" class="btn btn-dark w-full">
+<i class="fa-solid fa-eye"></i> শুধু ভিজিটর হিসেবে দেখুন
 </button>
 </div>
 </div>
 ​<!-- Admin Auth Modal -->
-<div id="adminLoginModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-<div class="flex justify-between items-center mb-4">
-<h3 class="text-lg font-bold text-amber-500 flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> অ্যাডমিন ভেরিফিকেশন</h3>
-<button onclick="closeAdminModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+<div id="adminLoginModal" class="modal-overlay hidden">
+<div class="modal-box">
+<div class="flex items-center justify-between mb-3">
+<h3 id="t_adminVerifyTitle" style="color: var(--amber); font-size: 18px;"><i class="fa-solid fa-shield-halved"></i> অ্যাডমিন ভেরিফিকেশন</h3>
+<button onclick="closeAdminModal()" style="background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
 </div>
-<p class="text-xs text-slate-400 mb-4">ক্লাব কন্ট্রোল প্যানেল আনলক করতে অ্যাডমিন পিন দিন।</p>
-<input type="password" id="adminPinInput" placeholder="অ্যাডমিন পিন লিখুন" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white mb-4 focus:outline-none focus:border-amber-500">
-<button onclick="verifyAdminPin()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-xl text-sm transition">
-অ্যাডমিন আনলক করুন
+<p id="t_adminVerifySub" style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">ক্লাব কন্ট্রোল প্যানেল আনলক করতে অ্যাডমিন পিন দিন।</p>
+<input type="password" id="adminPinInput" placeholder="Admin PIN" class="mb-4">
+<button onclick="verifyAdminPin()" id="t_adminUnlockBtn" class="btn btn-amber w-full">অ্যাডমিন আনলক করুন</button>
+</div>
+</div>
+​<!-- Settings Modal (Language + Theme) -->
+<div id="settingsModal" class="modal-overlay hidden">
+<div class="modal-box">
+<div class="flex items-center justify-between mb-4">
+<h3 id="t_settingsTitle" style="font-size: 18px; font-weight: 700;"><i class="fa-solid fa-gear" style="color: var(--cyan);"></i> সেটিংস (Settings)</h3>
+<button onclick="closeSettingsModal()" style="background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+</div>
+​<div class="mb-4">
+<label id="t_langLabel" style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">ভাষা পরিবর্তন করুন (Language):</label>
+<div class="grid-2" style="grid-template-columns: 1fr 1fr;">
+<button onclick="setLanguage('bn')" id="langBtnBn" class="btn btn-emerald">বাংলা (Bengali)</button>
+<button onclick="setLanguage('en')" id="langBtnEn" class="btn btn-dark">English</button>
+</div>
+</div>
+​<div>
+<label id="t_themeLabel" style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">থিম মোড (Theme):</label>
+<button onclick="toggleTheme()" id="t_toggleThemeBtn" class="btn btn-dark w-full">
+<i id="themeIcon" class="fa-solid fa-moon"></i> ডার্ক / লাইট মোড পরিবর্তন
 </button>
 </div>
 </div>
-​<!-- Custom Confirm Modal -->
-<div id="confirmModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center">
-<div class="w-12 h-12 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto mb-3 text-xl">
-<i class="fa-solid fa-triangle-exclamation"></i>
 </div>
-<h3 id="confirmTitle" class="text-lg font-bold text-white mb-1">আপনি কি নিশ্চিত?</h3>
-<p id="confirmMessage" class="text-xs text-slate-400 mb-5">এই কাজটি বাতিল করা যাবে না।</p>
+​<!-- Confirm Modal -->
+<div id="confirmModal" class="modal-overlay hidden">
+<div class="modal-box" style="text-align: center;">
+<h3 id="confirmTitle" style="font-size: 18px; margin-bottom: 6px;">আপনি কি নিশ্চিত?</h3>
+<p id="confirmMessage" style="font-size: 13px; color: var(--text-muted); margin-bottom: 18px;">এই কাজটি বাতিল করা যাবে না।</p>
 <div class="flex gap-3">
-<button onclick="closeConfirmModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 rounded-xl text-sm font-medium">বাতিল</button>
-<button id="confirmActionBtn" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-xl text-sm font-bold">ডিলিট করুন</button>
+<button onclick="closeConfirmModal()" id="t_cancelBtn" class="btn btn-dark w-full">বাতিল</button>
+<button id="confirmActionBtn" class="btn btn-rose w-full">ডিলিট</button>
 </div>
 </div>
 </div>
 ​<!-- Header -->
-<header class="bg-[#0e1525] dark:bg-[#0e1525] border-b border-slate-800/80 sticky top-0 z-30">
-<div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+<header>
+<div class="container">
+<div class="header-top">
 <div class="flex items-center gap-3">
-<div class="bg-emerald-500 text-slate-950 font-extrabold px-3 py-1.5 rounded-lg text-sm tracking-wide">FFC</div>
+<span class="brand-badge">FFC</span>
 <div>
-<h1 class="font-bold text-base sm:text-lg text-white leading-tight">Friday Football Club</h1>
-<p id="userStatusBadge" class="text-[11px] text-amber-400 font-medium">মোড: ভিজিটর (শুধুমাত্র দেখার জন্য)</p>
+<h1 style="font-size: 17px; font-weight: 700; line-height: 1.2;">Friday Football Club</h1>
+<p id="userStatusBadge" style="font-size: 12px; color: var(--amber); font-weight: 600;">মোড: ভিজিটর (শুধুমাত্র দেখার জন্য)</p>
 </div>
 </div>
-​<div class="flex items-center gap-2">
-<button onclick="toggleTheme()" title="থিম পরিবর্তন" class="w-9 h-9 rounded-xl bg-[#162033] hover:bg-slate-700 border border-slate-700/70 flex items-center justify-center text-slate-300 text-sm transition">
-<i id="themeIcon" class="fa-solid fa-moon"></i>
+​<div class="flex items-center gap-2 flex-wrap">
+<button onclick="openSettingsModal()" class="btn btn-dark" style="padding: 8px 12px; font-size: 12px;">
+<i class="fa-solid fa-gear"></i> <span id="t_navSettings">সেটিংস</span>
 </button>
-<button id="myProfileHeaderBtn" onclick="openMyProfile()" class="hidden items-center gap-1.5 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 px-3 py-2 rounded-xl text-xs font-semibold transition">
-<i class="fa-solid fa-user-circle"></i> <span id="headerProfileName">প্রোফাইল</span>
+<button id="myProfileHeaderBtn" onclick="openMyProfile()" class="btn btn-emerald hidden" style="padding: 8px 12px; font-size: 12px;">
+<i class="fa-solid fa-user"></i> <span id="headerProfileName">প্রোফাইল</span>
 </button>
-<button onclick="openLoginModal()" class="flex items-center gap-1.5 bg-[#162033] hover:bg-slate-700 text-slate-200 border border-slate-700/70 px-3 py-2 rounded-xl text-xs font-medium transition">
-<i class="fa-solid fa-users"></i> আইডি পরিবর্তন
+<button onclick="openLoginModal()" class="btn btn-dark" style="padding: 8px 12px; font-size: 12px;">
+<i class="fa-solid fa-users"></i> <span id="t_navSwitchId">আইডি পরিবর্তন</span>
 </button>
-<button id="adminHeaderBtn" onclick="handleAdminButtonClick()" class="flex items-center gap-1.5 bg-[#162033] hover:bg-slate-700 text-slate-200 border border-slate-700/70 px-3 py-2 rounded-xl text-xs font-medium transition">
-<i class="fa-solid fa-lock text-amber-500"></i> অ্যাডমিন
+<button onclick="handleAdminButtonClick()" class="btn btn-dark" style="padding: 8px 12px; font-size: 12px;">
+<i class="fa-solid fa-lock" style="color: var(--amber);"></i> <span id="t_navAdmin">অ্যাডমিন</span>
 </button>
 </div>
 </div>
-​<!-- Navigation Tabs -->
-<nav class="max-w-6xl mx-auto px-4 pb-3 flex items-center gap-2 overflow-x-auto">
-<button onclick="switchTab('home')" id="tab-btn-home" class="tab-btn tab-active px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-<i class="fa-solid fa-house"></i> হোম
+​<nav class="nav-tabs">
+<button onclick="switchTab('home')" id="tab-btn-home" class="tab-btn active">
+<i class="fa-solid fa-house"></i> <span id="t_tabHome">হোম</span>
 </button>
-<button onclick="switchTab('squad')" id="tab-btn-squad" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-<i class="fa-solid fa-trophy"></i> স্কোয়াড ও প্রোফাইল
+<button onclick="switchTab('squad')" id="tab-btn-squad" class="tab-btn">
+<i class="fa-solid fa-trophy"></i> <span id="t_tabSquad">স্কোয়াড ও প্রোফাইল</span>
 </button>
-<button onclick="switchTab('lineup')" id="tab-btn-lineup" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-<i class="fa-solid fa-people-group"></i> টিম লাইনআপ
+<button onclick="switchTab('lineup')" id="tab-btn-lineup" class="tab-btn">
+<i class="fa-solid fa-people-group"></i> <span id="t_tabLineup">টিম লাইনআপ</span>
 </button>
-<button onclick="switchTab('tactics')" id="tab-btn-tactics" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-<i class="fa-solid fa-chalkboard-user"></i> ট্যাকটিকস বোর্ড
+<button onclick="switchTab('tactics')" id="tab-btn-tactics" class="tab-btn">
+<i class="fa-solid fa-chalkboard-user"></i> <span id="t_tabTactics">ট্যাকটিকস বোর্ড</span>
 </button>
-<button onclick="switchTab('matches')" id="tab-btn-matches" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-<i class="fa-solid fa-calendar-days"></i> ম্যাচ রেকর্ড
+<button onclick="switchTab('matches')" id="tab-btn-matches" class="tab-btn">
+<i class="fa-solid fa-calendar-days"></i> <span id="t_tabMatches">ম্যাচ রেকর্ড</span>
 </button>
-<button onclick="switchTab('chat')" id="tab-btn-chat" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-<i class="fa-solid fa-comments"></i> চ্যাট ওয়াল
+<button onclick="switchTab('chat')" id="tab-btn-chat" class="tab-btn">
+<i class="fa-solid fa-comments"></i> <span id="t_tabChat">চ্যাট ওয়াল</span>
 </button>
-<button onclick="switchTab('admin')" id="tab-btn-admin" class="hidden tab-btn text-amber-400 hover:text-amber-300 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold items-center gap-2 whitespace-nowrap transition">
-<i class="fa-solid fa-sliders"></i> অ্যাডমিন প্যানেল
+<button onclick="switchTab('admin')" id="tab-btn-admin" class="tab-btn hidden" style="color: var(--amber);">
+<i class="fa-solid fa-sliders"></i> <span id="t_tabAdmin">অ্যাডমিন প্যানেল</span>
 </button>
 </nav>
+</div>
 </header>
-​<!-- Main Container -->
-<main class="max-w-6xl mx-auto px-4 py-5 space-y-6 pb-24">
-​<!-- Notice Bar -->
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-3.5 flex items-center gap-3 shadow-sm">
-<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 shrink-0">
-<i class="fa-solid fa-bullhorn"></i> নোটিশ
-</span>
-<p id="clubNoticeText" class="text-xs sm:text-sm text-slate-200 font-medium">শুক্রবারের ম্যাচে সবাইকে যথাসময়ে উপস্থিত থাকার জন্য অনুরোধ করা হলো।</p>
+​<main>
+<!-- Notice Bar -->
+<div class="notice-bar">
+<span class="notice-tag"><i class="fa-solid fa-bullhorn"></i> <span id="t_noticeTag">নোটিশ</span></span>
+<p id="clubNoticeText" style="font-size: 13px; font-weight: 500;">শুক্রবারের ম্যাচে সবাইকে যথাসময়ে উপস্থিত থাকার জন্য অনুরোধ করা হলো।</p>
 </div>
 ​<!-- TAB 1: HOME -->
-<section id="tab-home" class="tab-content space-y-6">
-<!-- Live Leaderboard -->
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
-<h2 class="text-base sm:text-lg font-bold text-amber-400 flex items-center gap-2 mb-4">
-<i class="fa-solid fa-trophy"></i> লাইভ লিডারবোর্ড
+<section id="tab-home" class="tab-content">
+<div class="card">
+<h2 style="color: var(--amber); font-size: 17px; margin-bottom: 14px;">
+<i class="fa-solid fa-trophy"></i> <span id="t_leaderboardTitle">লাইভ লিডারবোর্ড</span>
 </h2>
-<div class="overflow-x-auto">
-<table class="w-full text-left border-collapse">
+<div class="table-wrap">
+<table>
 <thead>
-<tr class="border-b border-slate-800 text-[11px] sm:text-xs text-slate-400">
-<th class="py-2.5 px-2">প্লেয়ার</th>
-<th class="py-2.5 px-2">পজিশন</th>
-<th class="py-2.5 px-2 text-center text-cyan-400">ম্যাচ</th>
-<th class="py-2.5 px-2 text-center text-emerald-400">গোল</th>
-<th class="py-2.5 px-2 text-center text-amber-400">অ্যাসিস্ট</th>
+<tr>
+<th id="t_thPlayer">প্লেয়ার</th>
+<th id="t_thPos">পজিশন</th>
+<th id="t_thMatches" style="text-align: center; color: var(--cyan);">ম্যাচ</th>
+<th id="t_thGoals" style="text-align: center; color: var(--emerald);">গোল</th>
+<th id="t_thAssists" style="text-align: center; color: var(--amber);">অ্যাসিস্ট</th>
 </tr>
 </thead>
-<tbody id="leaderboardTableBody" class="divide-y divide-slate-800/60 text-xs sm:text-sm"></tbody>
+<tbody id="leaderboardTableBody"></tbody>
 </table>
 </div>
 </div>
-​<!-- RSVP Attendance -->
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
-<div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-<h2 class="text-sm sm:text-base font-bold text-cyan-400">আগামী ম্যাচে কে কে খেলবে? (RSVP)</h2>
-<span id="rsvpCountBadge" class="bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-bold">০ জন নিশ্চিত</span>
+​<div class="card">
+<div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+<h2 id="t_rsvpTitle" style="color: var(--cyan); font-size: 16px;">আগামী ম্যাচে কে কে খেলবে? (RSVP)</h2>
+<span id="rsvpCountBadge" class="badge badge-paid">০ জন নিশ্চিত</span>
 </div>
-<p class="text-xs text-slate-400 mb-3">আপনি কি আগামী শুক্রবার খেলছেন? উপস্থিতি নিশ্চিত করুন:</p>
-<div class="grid grid-cols-2 gap-3 mb-4">
-<button onclick="submitRSVP(true)" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2">
+<p id="t_rsvpSub" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">আপনি কি আগামী শুক্রবার খেলছেন? উপস্থিতি নিশ্চিত করুন:</p>
+<div class="grid-2 mb-4" style="grid-template-columns: 1fr 1fr;">
+<button onclick="submitRSVP(true)" id="t_btnPlaying" class="btn btn-emerald">
 <i class="fa-solid fa-circle-check"></i> খেলব (Playing)
 </button>
-<button onclick="submitRSVP(false)" class="bg-rose-950/60 hover:bg-rose-900/70 text-rose-300 border border-rose-800/60 font-bold py-2.5 rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2">
+<button onclick="submitRSVP(false)" id="t_btnNotPlaying" class="btn btn-rose">
 <i class="fa-solid fa-circle-xmark"></i> খেলব না (Not Playing)
 </button>
 </div>
 <div id="rsvpPlayingList" class="flex flex-wrap gap-2"></div>
 </div>
-​<!-- Turf Fee / Chanda Tracker -->
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
-<div class="flex flex-wrap items-center justify-between gap-2 mb-1">
-<h2 class="text-sm sm:text-base font-bold text-amber-400 flex items-center gap-2">
-<i class="fa-solid fa-wallet"></i> ম্যাচ ফি / চাঁদা ট্র্যাকার (Paid/Due)
+​<div class="card">
+<div class="flex items-center justify-between flex-wrap gap-2 mb-2">
+<h2 style="color: var(--amber); font-size: 16px;">
+<i class="fa-solid fa-wallet"></i> <span id="t_feeTitle">ম্যাচ ফি / চাঁদা ট্র্যাকার (Paid/Due)</span>
 </h2>
-<span id="feePaidCountBadge" class="bg-amber-500/15 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-bold">পেইড: ০ / ০ জন</span>
+<span id="feePaidCountBadge" class="badge" style="background: rgba(245, 158, 11, 0.15); color: var(--amber);">পেইড: ০ / ০</span>
 </div>
-<p class="text-xs text-slate-400 mb-4">টার্ফ ও বল ফান্ডের বর্তমান স্ট্যাটাস (অ্যাডমিন ক্লিক করে পরিবর্তন করতে পারবেন)</p>
-<div id="feeTrackerGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+<p id="t_feeSub" style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">টার্ফ ও বল ফান্ডের বর্তমান স্ট্যাটাস (অ্যাডমিন ক্লিক করে পরিবর্তন করতে পারবেন)</p>
+<div id="feeTrackerGrid" class="grid-3"></div>
 </div>
 </section>
-​<!-- TAB 2: SQUAD & PUBLIC PROFILE -->
-<section id="tab-squad" class="tab-content hidden space-y-6">
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
-<h2 class="text-base sm:text-lg font-bold text-emerald-400 flex items-center gap-2 mb-4">
-<i class="fa-solid fa-users-viewfinder"></i> স্কোয়াড ও প্লেয়ার প্রোফাইল
+​<!-- TAB 2: SQUAD -->
+<section id="tab-squad" class="tab-content hidden">
+<div class="card">
+<h2 style="color: var(--emerald); font-size: 17px; margin-bottom: 14px;">
+<i class="fa-solid fa-users-viewfinder"></i> <span id="t_squadTitle">স্কোয়াড ও প্লেয়ার প্রোফাইল</span>
 </h2>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
-<input type="text" id="squadSearchInput" oninput="renderSquad()" placeholder="নাম দিয়ে প্লেয়ার খুঁজুন..." class="bg-[#0b111e] border border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500">
-<select id="squadPositionFilter" onchange="renderSquad()" class="bg-[#0b111e] border border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500">
-<option value="ALL">সকল পজিশন</option>
+<div class="grid-2 mb-4">
+<input type="text" id="squadSearchInput" oninput="renderSquad()" placeholder="Search player...">
+<select id="squadPositionFilter" onchange="renderSquad()">
+<option value="ALL">All Positions / সকল পজিশন</option>
 <option value="Attacker">Attacker</option>
 <option value="Midfielder">Midfielder</option>
 <option value="Defender">Defender</option>
 <option value="Goalkeeper">Goalkeeper</option>
 </select>
 </div>
-<p class="text-xs text-slate-400 mb-3"><i class="fa-solid fa-circle-info text-cyan-400"></i> যেকোনো প্লেয়ারের কার্ডে ক্লিক করে তার বিস্তারিত প্রোফাইল ও বায়ো দেখুন।</p>
-<div id="squadCardsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+<p id="t_squadHint" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">যেকোনো প্লেয়ারের কার্ডে ক্লিক করে তার প্রোফাইল ও বায়ো দেখুন।</p>
+<div id="squadCardsGrid" class="grid-2"></div>
 </div>
 </section>
-​<!-- DEDICATED PROFILE VIEW / EDIT -->
-<section id="tab-profile-detail" class="tab-content hidden space-y-6">
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 sm:p-7 shadow-lg max-w-2xl mx-auto">
-<button onclick="switchTab('squad')" class="text-xs text-slate-400 hover:text-white flex items-center gap-1.5 mb-5">
-<i class="fa-solid fa-arrow-left"></i> স্কোয়াডে ফিরে যান
+​<!-- DEDICATED PROFILE VIEW -->
+<section id="tab-profile-detail" class="tab-content hidden">
+<div class="card" style="max-width: 680px; margin: 0 auto;">
+<button onclick="switchTab('squad')" class="btn btn-dark mb-4" style="font-size: 12px; padding: 6px 12px;">
+<i class="fa-solid fa-arrow-left"></i> <span id="t_backToSquad">স্কোয়াডে ফিরে যান</span>
 </button>
-​<div class="flex flex-col sm:flex-row items-center gap-5 border-b border-slate-800 pb-6">
-<div class="relative">
-<div id="profileDetailAvatar" class="w-24 h-24 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center text-2xl font-bold text-emerald-400 overflow-hidden"></div>
-<label id="profilePhotoUploadLabel" class="hidden absolute bottom-0 right-0 w-8 h-8 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-full items-center justify-center cursor-pointer shadow-lg">
-<i class="fa-solid fa-camera text-xs"></i>
-<input type="file" id="profilePhotoInput" accept="image/*" onchange="handleProfilePhotoUpload(event)" class="hidden">
+​<div class="flex items-center gap-4 flex-wrap mb-4">
+<div style="position: relative;">
+<div id="profileDetailAvatar" class="avatar" style="width: 84px; height: 84px; font-size: 24px;"></div>
+<label id="profilePhotoUploadLabel" class="hidden" style="position: absolute; bottom: 0; right: 0; width: 28px; height: 28px; background: var(--emerald); color: #052e16; border-radius: 50%; align-items: center; justify-content: center; cursor: pointer;">
+<i class="fa-solid fa-camera" style="font-size: 12px;"></i>
+<input type="file" accept="image/*" onchange="handleProfilePhotoUpload(event)" class="hidden">
 </label>
 </div>
-<div class="text-center sm:text-left flex-1">
-<h2 id="profileDetailName" class="text-xl font-bold text-white"></h2>
-<span id="profileDetailPosition" class="inline-block bg-slate-800 text-cyan-400 text-xs px-3 py-1 rounded-lg mt-1 font-medium"></span>
-<p id="profileDetailBio" class="text-xs sm:text-sm text-slate-300 mt-3 bg-[#0b111e] p-3 rounded-xl border border-slate-800/80"></p>
+<div style="flex: 1; min-width: 200px;">
+<h2 id="profileDetailName" style="font-size: 20px; font-weight: 700;"></h2>
+<span id="profileDetailPosition" class="badge" style="background: var(--bg-elevated); color: var(--cyan); display: inline-block; margin-top: 4px;"></span>
+<p id="profileDetailBio" class="sub-box mt-2" style="font-size: 13px;"></p>
 </div>
 </div>
-​<!-- Stats Row -->
-<div class="grid grid-cols-4 gap-2 sm:gap-4 my-6 text-center">
-<div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3">
-<p class="text-[11px] text-slate-400">ম্যাচ</p>
-<p id="profStatMatches" class="text-lg font-bold text-cyan-400">0</p>
+​<div class="grid-4 mb-4" style="text-align: center;">
+<div class="sub-box"><div style="font-size: 11px; color: var(--text-muted);">Matches</div><strong id="profStatMatches" style="color: var(--cyan); font-size: 18px;">0</strong></div>
+<div class="sub-box"><div style="font-size: 11px; color: var(--text-muted);">Goals</div><strong id="profStatGoals" style="color: var(--emerald); font-size: 18px;">0</strong></div>
+<div class="sub-box"><div style="font-size: 11px; color: var(--text-muted);">Assists</div><strong id="profStatAssists" style="color: var(--amber); font-size: 18px;">0</strong></div>
+<div class="sub-box"><div style="font-size: 11px; color: var(--text-muted);">MotM</div><strong id="profStatMotm" style="color: var(--purple); font-size: 18px;">0</strong></div>
 </div>
-<div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3">
-<p class="text-[11px] text-slate-400">গোল</p>
-<p id="profStatGoals" class="text-lg font-bold text-emerald-400">0</p>
-</div>
-<div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3">
-<p class="text-[11px] text-slate-400">অ্যাসিস্ট</p>
-<p id="profStatAssists" class="text-lg font-bold text-amber-400">0</p>
-</div>
-<div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3">
-<p class="text-[11px] text-slate-400">MotM</p>
-<p id="profStatMotm" class="text-lg font-bold text-purple-400">0</p>
-</div>
-</div>
-​<!-- Self Edit Controls (Only visible to logged-in owner) -->
-<div id="selfEditProfileBox" class="hidden space-y-4 pt-4 border-t border-slate-800">
-<h3 class="text-sm font-bold text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-pen-to-square"></i> আপনার প্রোফাইল তথ্য এডিট করুন</h3>
-<div>
-<label class="block text-xs text-slate-400 mb-1">নিজের সম্পর্কে বায়ো (Bio):</label>
-<textarea id="editBioInput" rows="2" placeholder="আপনার খেলার ধরন বা পছন্দের পজিশন লিখুন..." class="w-full bg-[#0b111e] border border-slate-700 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500"></textarea>
-</div>
-<div>
-<label class="block text-xs text-slate-400 mb-1">নতুন গোপন পিন (PIN পরিবর্তন করতে চাইলে লিখুন):</label>
-<input type="password" id="editPinInput" maxlength="6" placeholder="নতুন পিন (খালি রাখলে আগেরটাই থাকবে)" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500">
-</div>
-<button onclick="saveOwnProfile()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition">
-প্রোফাইল সেভ করুন
-</button>
+​<div id="selfEditProfileBox" class="hidden" style="border-top: 1px solid var(--border-color); padding-top: 16px;">
+<h3 id="t_editProfileTitle" style="font-size: 15px; color: var(--emerald); margin-bottom: 10px;">নিজের প্রোফাইল এডিট করুন</h3>
+<label id="t_bioLabel" style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">নিজের সম্পর্কে বায়ো (Bio):</label>
+<textarea id="editBioInput" rows="2" class="mb-3"></textarea>
+​<label id="t_newPinLabel" style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">নতুন গোপন পিন (খালি রাখলে আগেরটাই থাকবে):</label>
+<input type="password" id="editPinInput" maxlength="6" placeholder="****" class="mb-3">
+​<button onclick="saveOwnProfile()" id="t_saveProfileBtn" class="btn btn-emerald w-full">প্রোফাইল সেভ করুন</button>
 </div>
 </div>
 </section>
 ​<!-- TAB 3: TEAM LINEUP -->
-<section id="tab-lineup" class="tab-content hidden space-y-6">
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
-<div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-<div>
-<h2 class="text-base sm:text-lg font-bold text-emerald-400 flex items-center gap-2">
-<i class="fa-solid fa-people-group"></i> অফিশিয়াল টিম লাইনআপ
+<section id="tab-lineup" class="tab-content hidden">
+<div class="card">
+<h2 style="color: var(--emerald); font-size: 17px; margin-bottom: 4px;">
+<i class="fa-solid fa-people-group"></i> <span id="t_lineupTitle">অফিশিয়াল টিম লাইনআপ</span>
 </h2>
-<p id="lineupMetaSubtitle" class="text-xs text-slate-400">অ্যাডমিন কর্তৃক প্রকাশিত বর্তমান ম্যাচের দলসমূহ</p>
-</div>
-</div>
-<div id="publishedLineupsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-<div class="col-span-full text-center py-10 text-slate-500 text-sm">এখনো কোনো টিম লাইনআপ পাবলিশ করা হয়নি।</div>
-</div>
+<p id="lineupMetaSubtitle" style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">অ্যাডমিন কর্তৃক প্রকাশিত বর্তমান ম্যাচের দলসমূহ</p>
+<div id="publishedLineupsContainer" class="grid-2"></div>
 </div>
 </section>
-​<!-- TAB 4: INTERACTIVE TACTICS MAKER -->
-<section id="tab-tactics" class="tab-content hidden space-y-6">
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
-<div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+​<!-- TAB 4: TACTICS MAKER -->
+<section id="tab-tactics" class="tab-content hidden">
+<div class="card">
+<div class="flex items-center justify-between flex-wrap gap-3 mb-4">
 <div>
-<h2 class="text-base sm:text-lg font-bold text-cyan-400 flex items-center gap-2">
-<i class="fa-solid fa-chalkboard"></i> ইন্টারঅ্যাক্টিভ ট্যাকটিকস বোর্ড
+<h2 style="color: var(--cyan); font-size: 17px;">
+<i class="fa-solid fa-chalkboard"></i> <span id="t_tacticsTitle">ইন্টারঅ্যাক্টিভ ট্যাকটিকস বোর্ড</span>
 </h2>
-<p class="text-xs text-slate-400">প্লেয়ার আইকন ও বল আঙুল বা মাউস দিয়ে ড্র্যাগ করে মাঠের যেকোনো জায়গায় বসান</p>
+<p id="t_tacticsSub" style="font-size: 12px; color: var(--text-muted);">প্লেয়ার আইকন ও বল ড্র্যাগ করে মাঠের যেকোনো জায়গায় বসান</p>
 </div>
-<div class="flex items-center gap-2">
-<select id="tacticsFormationSelect" onchange="applyTacticsFormation()" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
-<option value="2-1-2">ফরমেশন: 2-1-2 (6v6)</option>
-<option value="2-2-1">ফরমেশন: 2-2-1 (6v6)</option>
-<option value="3-2-1">ফরমেশন: 3-2-1 (7v7)</option>
-<option value="1-2-1">ফরমেশন: 1-2-1 (5v5)</option>
+<div class="flex gap-2">
+<select id="tacticsFormationSelect" onchange="applyTacticsFormation()" style="width: auto;">
+<option value="2-1-2">2-1-2 (6v6)</option>
+<option value="2-2-1">2-2-1 (6v6)</option>
+<option value="3-2-1">3-2-1 (7v7)</option>
+<option value="1-2-1">1-2-1 (5v5)</option>
 </select>
-<button onclick="applyTacticsFormation()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs font-medium">রিসেট</button>
+<button onclick="applyTacticsFormation()" id="t_resetBtn" class="btn btn-dark">রিসেট</button>
 </div>
 </div>
-​<!-- Football Pitch -->
-<div id="tacticsPitch" class="pitch-bg w-full h-[340px] sm:h-[430px] rounded-2xl overflow-hidden shadow-inner">
+​<div id="tacticsPitch" class="pitch-bg">
 <div class="pitch-line-center"></div>
 <div class="pitch-circle-center"></div>
 <div class="pitch-box-left"></div>
 <div class="pitch-box-right"></div>
-<div id="tacticsTokensLayer" class="absolute inset-0"></div>
-</div>
-​<div class="mt-4 bg-[#0b111e] border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
-<span><i class="fa-solid fa-hand-pointer text-emerald-400 mr-1"></i> লগইন করা মেম্বাররা নিজের মোবাইলে স্ট্র্যাটেজি সাজাতে পারবেন।</span>
-<span class="text-amber-400">ভিজিটর মোডে বোর্ড লক থাকবে।</span>
+<div id="tacticsTokensLayer" style="position: absolute; inset: 0;"></div>
 </div>
 </div>
 </section>
 ​<!-- TAB 5: MATCHES & MOMENTS -->
-<section id="tab-matches" class="tab-content hidden space-y-6">
-<!-- Match History -->
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
-<h2 class="text-base sm:text-lg font-bold text-cyan-400 flex items-center gap-2 mb-4">
-<i class="fa-solid fa-calendar-check"></i> ম্যাচ রেকর্ড ও আলোচনা
+<section id="tab-matches" class="tab-content hidden">
+<div class="card">
+<h2 style="color: var(--cyan); font-size: 17px; margin-bottom: 14px;">
+<i class="fa-solid fa-calendar-check"></i> <span id="t_matchesTitle">ম্যাচ রেকর্ড ও আলোচনা</span>
 </h2>
-<div id="matchHistoryContainer" class="space-y-4">
-<p class="text-center py-8 text-slate-500 text-sm">এখনো কোনো ম্যাচ রেকর্ড যোগ করা হয়নি।</p>
+<div id="matchHistoryContainer"></div>
 </div>
-</div>
-​<!-- Unlimited Match Moments Gallery -->
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
-<div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+​<div class="card">
+<div class="flex items-center justify-between flex-wrap gap-2 mb-4">
 <div>
-<h2 class="text-base sm:text-lg font-bold text-amber-400 flex items-center gap-2">
-<i class="fa-solid fa-images"></i> ম্যাচ মোমেন্টস গ্যালারি (Unlimited)
+<h2 style="color: var(--amber); font-size: 17px;">
+<i class="fa-solid fa-images"></i> <span id="t_momentsTitle">ম্যাচ মোমেন্টস গ্যালারি (Unlimited)</span>
 </h2>
-<p class="text-xs text-slate-400">মাঠের সেরা মুহূর্তগুলোর ছবি</p>
+<p id="t_momentsSub" style="font-size: 12px; color: var(--text-muted);">মাঠের সেরা মুহূর্তগুলোর ছবি</p>
 </div>
 <div id="momentUploadBox" class="hidden">
-<label class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-3.5 py-2 rounded-xl text-xs cursor-pointer inline-flex items-center gap-1.5 transition">
-<i class="fa-solid fa-cloud-arrow-up"></i> মোমেন্ট ছবি আপলোড
+<label class="btn btn-emerald" style="font-size: 12px; cursor: pointer;">
+<i class="fa-solid fa-cloud-arrow-up"></i> <span id="t_uploadMomentBtn">ছবি আপলোড</span>
 <input type="file" accept="image/*" multiple onchange="handleMomentUpload(event)" class="hidden">
 </label>
 </div>
 </div>
-<div id="matchMomentsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-<p class="col-span-full text-center py-6 text-slate-500 text-xs">কোনো মোমেন্ট ছবি নেই।</p>
-</div>
+<div id="matchMomentsGrid" class="grid-4"></div>
 </div>
 </section>
-​<!-- TAB 6: CLUB CHAT WALL -->
-<section id="tab-chat" class="tab-content hidden space-y-6">
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
-<h2 class="text-base sm:text-lg font-bold text-emerald-400 flex items-center gap-2 mb-4">
-<i class="fa-solid fa-comments"></i> ক্লাব ওয়াল (লাইভ চ্যাট বোর্ড)
+​<!-- TAB 6: CHAT WALL -->
+<section id="tab-chat" class="tab-content hidden">
+<div class="card">
+<h2 style="color: var(--emerald); font-size: 17px; margin-bottom: 14px;">
+<i class="fa-solid fa-comments"></i> <span id="t_chatTitle">ক্লাব ওয়াল (লাইভ চ্যাট বোর্ড)</span>
 </h2>
-<div id="chatMessagesList" class="space-y-3 max-h-[420px] overflow-y-auto pr-1 mb-4"></div>
+<div id="chatMessagesList" class="chat-scroll"></div>
 <form onsubmit="sendChatMessage(event)" class="flex gap-2">
-<input type="text" id="chatInput" placeholder="আপনার বার্তা এখানে লিখুন..." class="flex-1 bg-[#0b111e] border border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500">
-<button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm transition">
-<i class="fa-solid fa-paper-plane"></i>
-</button>
+<input type="text" id="chatInput" placeholder="Write a message...">
+<button type="submit" class="btn btn-emerald"><i class="fa-solid fa-paper-plane"></i></button>
 </form>
 </div>
 </section>
-​<!-- TAB 7: ADMIN PANEL (HIDDEN BY DEFAULT UNTIL PIN 426790 VERIFIED) -->
-<section id="tab-admin" class="tab-content hidden space-y-6">
-<div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
-<div class="flex items-center gap-2 text-amber-400 text-sm font-bold">
-<i class="fa-solid fa-shield-halved"></i> অ্যাডমিন কন্ট্রোল প্যানেল সক্রিয় আছে
+​<!-- TAB 7: ADMIN PANEL (HIDDEN BY DEFAULT) -->
+<section id="tab-admin" class="tab-content hidden">
+<div class="card flex items-center justify-between flex-wrap gap-3" style="border-color: var(--amber);">
+<span style="color: var(--amber); font-weight: 700;"><i class="fa-solid fa-shield-halved"></i> অ্যাডমিন কন্ট্রোল প্যানেল সক্রিয় আছে</span>
+<button onclick="logoutAdmin()" class="btn btn-rose" style="font-size: 12px; padding: 6px 14px;">অ্যাডমিন লগআউট</button>
 </div>
-<button onclick="logoutAdmin()" class="bg-rose-600 hover:bg-rose-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold">
-অ্যাডমিন লগআউট
-</button>
+​<div class="grid-2">
+<div class="card">
+<h3 style="color: var(--cyan); font-size: 15px; margin-bottom: 10px;">ক্লাব নোটিশ আপডেট</h3>
+<input type="text" id="adminNoticeInput" placeholder="নতুন নোটিশ লিখুন..." class="mb-3">
+<button onclick="updateNotice()" class="btn btn-emerald w-full">নোটিশ পাবলিশ করুন</button>
 </div>
-​<!-- Notice & Music Upload -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-3">
-<h3 class="text-sm font-bold text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-bullhorn"></i> ক্লাব নোটিশ আপডেট</h3>
-<input type="text" id="adminNoticeInput" placeholder="নতুন নোটিশ লিখুন..." class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white">
-<button onclick="updateNotice()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs sm:text-sm">নোটিশ পাবলিশ করুন</button>
-</div>
-​<div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-3">
-<h3 class="text-sm font-bold text-purple-400 flex items-center gap-2"><i class="fa-solid fa-music"></i> ব্যাকগ্রাউন্ড মিউজিক আপলোড</h3>
-<p class="text-[11px] text-slate-400">ফোন থেকে নতুন MP3 আপলোড করলে পুরোনো মিউজিক বদলে যাবে।</p>
-<label class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition">
-<i class="fa-solid fa-upload"></i> নতুন অডিও ফাইল সিলেক্ট করুন
+​<div class="card">
+<h3 style="color: var(--purple); font-size: 15px; margin-bottom: 10px;">ব্যাকগ্রাউন্ড মিউজিক আপলোড</h3>
+<p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">নতুন MP3 ফাইল আপলোড করলে পুরোনো মিউজিক বদলে যাবে।</p>
+<label class="btn btn-purple w-full" style="cursor: pointer;">
+<i class="fa-solid fa-upload"></i> অডিও ফাইল সিলেক্ট করুন
 <input type="file" accept="audio/*" onchange="handleAdminMusicUpload(event)" class="hidden">
 </label>
 </div>
 </div>
-​<!-- Add New Player & Manage Squad Stats / Delete -->
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-4">
-<h3 class="text-sm font-bold text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-user-plus"></i> নতুন প্লেয়ার যোগ ও স্কোয়াড ম্যানেজমেন্ট</h3>
-<div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
-<input type="text" id="newPlayerName" placeholder="প্লেয়ারের নাম" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-<select id="newPlayerPos" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+​<div class="card">
+<h3 style="color: var(--cyan); font-size: 15px; margin-bottom: 12px;">নতুন প্লেয়ার যোগ ও স্কোয়াড ম্যানেজমেন্ট</h3>
+<div class="grid-4 mb-4">
+<input type="text" id="newPlayerName" placeholder="প্লেয়ারের নাম">
+<select id="newPlayerPos">
 <option value="Attacker">Attacker</option>
 <option value="Midfielder">Midfielder</option>
 <option value="Defender">Defender</option>
 <option value="Goalkeeper">Goalkeeper</option>
 </select>
-<input type="text" id="newPlayerPin" maxlength="6" placeholder="গোপন পিন (যেমন: 1234)" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-<button onclick="addNewPlayer()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2 rounded-xl text-xs">প্লেয়ার অ্যাড করুন</button>
+<input type="text" id="newPlayerPin" maxlength="6" placeholder="গোপন পিন (1234)">
+<button onclick="addNewPlayer()" class="btn btn-cyan">প্লেয়ার অ্যাড করুন</button>
 </div>
-​<div id="adminPlayersManageList" class="divide-y divide-slate-800 max-h-80 overflow-y-auto pt-2"></div>
+<div id="adminPlayersManageList"></div>
 </div>
-​<!-- Team Lineup Builder (2 to 7 Teams + Captain C Badge) -->
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-4">
-<div class="flex flex-wrap items-center justify-between gap-3">
-<div>
-<h3 class="text-sm font-bold text-amber-400 flex items-center gap-2"><i class="fa-solid fa-sitemap"></i> টিম লাইনআপ বিল্ডার ও পাবলিশার</h3>
-<p class="text-[11px] text-slate-400">টিম সংখ্যা (২–৭) এবং ফরমেশন (৫–৭ জন) সিলেক্ট করে প্লেয়ার ও ক্যাপ্টেন (C) নির্ধারণ করুন</p>
-</div>
-<div class="flex flex-wrap gap-2">
-<select id="adminTeamCount" onchange="renderLineupBuilderInputs()" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-<option value="2">২টি টিম (Team A - B)</option>
-<option value="3">৩টি টিম (Team A - C)</option>
-<option value="4">৪টি টিম (Team A - D)</option>
-<option value="5">৫টি টিম (Team A - E)</option>
-<option value="6">৬টি টিম (Team A - F)</option>
-<option value="7">৭টি টিম (Team A - G)</option>
+​<div class="card">
+<div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+<h3 style="color: var(--amber); font-size: 15px;">টিম লাইনআপ বিল্ডার (২–৭ টিম ও ক্যাপ্টেন C)</h3>
+<div class="flex gap-2">
+<select id="adminTeamCount" onchange="renderLineupBuilderInputs()" style="width: auto;">
+<option value="2">২টি টিম</option>
+<option value="3">৩টি টিম</option>
+<option value="4">৪টি টিম</option>
+<option value="5">৫টি টিম</option>
+<option value="6">৬টি টিম</option>
+<option value="7">৭টি টিম</option>
 </select>
-<select id="adminFormationType" onchange="renderLineupBuilderInputs()" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-<option value="5">5v5 ফরমেশন (1-2-1)</option>
-<option value="6" selected>6v6 ফরমেশন (2-1-2)</option>
-<option value="7">7v7 ফরমেশন (3-2-1)</option>
+<select id="adminFormationType" onchange="renderLineupBuilderInputs()" style="width: auto;">
+<option value="5">5v5</option>
+<option value="6" selected>6v6</option>
+<option value="7">7v7</option>
 </select>
 </div>
 </div>
-​<div id="lineupBuilderGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-​<button onclick="publishLineups()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-xl text-xs sm:text-sm transition">
-<i class="fa-solid fa-cloud-arrow-up mr-1"></i> টিম লাইনআপ পাবলিশ করুন (সবার জন্য লাইভ হবে)
-</button>
+<div id="lineupBuilderGrid" class="grid-2 mb-4"></div>
+<button onclick="publishLineups()" class="btn btn-emerald w-full">টিম লাইনআপ পাবলিশ করুন</button>
 </div>
-​<!-- Add Match History (Max 2 Photos) -->
-<div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-3">
-<h3 class="text-sm font-bold text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-futbol"></i> নতুন ম্যাচ রেকর্ড যোগ করুন</h3>
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-<input type="text" id="matchTitleInput" placeholder="ম্যাচের শিরোনাম (যেমন: Friendly 6v6)" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-<input type="date" id="matchDateInput" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-<input type="text" id="matchScoreInput" placeholder="ফলাফল (যেমন: 7-5)" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+​<div class="card">
+<h3 style="color: var(--emerald); font-size: 15px; margin-bottom: 12px;">নতুন ম্যাচ রেকর্ড যোগ করুন (সর্বোচ্চ ২টি ছবি)</h3>
+<div class="grid-3 mb-3">
+<input type="text" id="matchTitleInput" placeholder="শিরোনাম (Friendly 6v6)">
+<input type="date" id="matchDateInput">
+<input type="text" id="matchScoreInput" placeholder="ফলাফল (7-5)">
 </div>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-<input type="text" id="matchTeamAInput" placeholder="টিম A প্লেয়ারদের নাম" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-<input type="text" id="matchTeamBInput" placeholder="টিম B প্লেয়ারদের নাম" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+<div class="grid-2 mb-3">
+<input type="text" id="matchTeamAInput" placeholder="টিম A প্লেয়ারদের নাম">
+<input type="text" id="matchTeamBInput" placeholder="টিম B প্লেয়ারদের নাম">
 </div>
-<input type="text" id="matchScorersInput" placeholder="গোলদাতাদের বিবরণ (যেমন: Sakib 2G, Wali 3G)" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-<div>
-<label class="block text-xs text-slate-400 mb-1">ম্যাচের ছবি আপলোড (সর্বোচ্চ ২টি ছবি):</label>
-<input type="file" id="matchPhotosInput" accept="image/*" multiple class="text-xs text-slate-300">
-</div>
-<button onclick="addMatchRecord()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs sm:text-sm">ম্যাচ রেকর্ড সেভ করুন</button>
+<input type="text" id="matchScorersInput" placeholder="গোলদাতাদের বিবরণ" class="mb-3">
+<input type="file" id="matchPhotosInput" accept="image/*" multiple class="mb-3">
+<button onclick="addMatchRecord()" class="btn btn-emerald w-full">ম্যাচ রেকর্ড সেভ করুন</button>
 </div>
 </section>
 </main>
-​<!-- Floating Music Player -->
-<button onclick="toggleBgMusic()" id="musicFloatingBtn" title="ব্যাকগ্রাউন্ড মিউজিক চালু/বন্ধ" class="fixed bottom-5 right-5 z-40 w-11 h-11 rounded-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 shadow-xl flex items-center justify-center text-base transition">
+​<!-- Floating Music Button -->
+<button onclick="toggleBgMusic()" class="music-fab" title="Background Music">
 <i id="musicIcon" class="fa-solid fa-music"></i>
 </button>
 <audio id="bgAudioPlayer" loop></audio>
 ​<script>
-// Firebase Configuration
 const firebaseConfig = {
 apiKey: "AIzaSyAhN3ilhC2TFGJrpCfZuGnNZfDtrRHeSf8",
 authDomain: "friday-football-club.firebaseapp.com",
@@ -535,8 +785,7 @@ measurementId: "G-RVBHSY9GML"
 const db = firebase.database();
 const ROOT = "ffc_v2";
 const ADMIN_PIN = "426790";
-​// 18 Players with Unique Secret PINs & Clean 0 Stats
-const INITIAL_PLAYERS = {
+​const INITIAL_PLAYERS = {
 "p1":  { id: "p1",  name: "Sakib Al hasan",       pos: "Defender",   pin: "6769", matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Friday Football Club Member", photo: "" },
 "p2":  { id: "p2",  name: "Abu wali siddique",    pos: "Attacker",   pin: "1024", matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Friday Football Club Member", photo: "" },
 "p3":  { id: "p3",  name: "Jobayer hosen",        pos: "Attacker",   pin: "2048", matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Friday Football Club Member", photo: "" },
@@ -556,8 +805,106 @@ const INITIAL_PLAYERS = {
 "p17": { id: "p17", name: "Tasin ebne Shahid",    pos: "Midfielder", pin: "7913", matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Friday Football Club Member", photo: "" },
 "p18": { id: "p18", name: "Tawaj",                pos: "Defender",   pin: "8024", matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Friday Football Club Member", photo: "" }
 };
-​// App State
-let state = {
+​const I18N = {
+bn: {
+t_welcomeTitle: "ফুটবল ক্লাবে স্বাগতম",
+t_welcomeSub: "আপনার আইডি সিলেক্ট করুন এবং গোপন পিন দিন",
+t_selectNameLabel: "আপনার নাম সিলেক্ট করুন:",
+t_secretPinLabel: "গোপন পিন (PIN):",
+t_loginBtn: "লগইন করুন",
+t_orText: "অথবা",
+t_visitorBtn: "শুধু ভিজিটর হিসেবে দেখুন",
+t_navSettings: "সেটিংস",
+t_navSwitchId: "আইডি পরিবর্তন",
+t_navAdmin: "অ্যাডমিন",
+t_tabHome: "হোম",
+t_tabSquad: "স্কোয়াড ও প্রোফাইল",
+t_tabLineup: "টিম লাইনআপ",
+t_tabTactics: "ট্যাকটিকস বোর্ড",
+t_tabMatches: "ম্যাচ রেকর্ড",
+t_tabChat: "চ্যাট ওয়াল",
+t_tabAdmin: "অ্যাডমিন প্যানেল",
+t_noticeTag: "নোটিশ",
+t_leaderboardTitle: "লাইভ লিডারবোর্ড",
+t_thPlayer: "প্লেয়ার",
+t_thPos: "পজিশন",
+t_thMatches: "ম্যাচ",
+t_thGoals: "গোল",
+t_thAssists: "অ্যাসিস্ট",
+t_rsvpTitle: "আগামী ম্যাচে কে কে খেলবে? (RSVP)",
+t_rsvpSub: "আপনি কি আগামী শুক্রবার খেলছেন? উপস্থিতি নিশ্চিত করুন:",
+t_btnPlaying: "খেলব (Playing)",
+t_btnNotPlaying: "খেলব না (Not Playing)",
+t_feeTitle: "ম্যাচ ফি / চাঁদা ট্র্যাকার (Paid/Due)",
+t_feeSub: "টার্ফ ও বল ফান্ডের বর্তমান স্ট্যাটাস (অ্যাডমিন ক্লিক করে পরিবর্তন করতে পারবেন)",
+t_squadTitle: "স্কোয়াড ও প্লেয়ার প্রোফাইল",
+t_squadHint: "যেকোনো প্লেয়ারের কার্ডে ক্লিক করে তার প্রোফাইল ও বায়ো দেখুন।",
+t_backToSquad: "স্কোয়াডে ফিরে যান",
+t_editProfileTitle: "নিজের প্রোফাইল এডিট করুন",
+t_bioLabel: "নিজের সম্পর্কে বায়ো (Bio):",
+t_newPinLabel: "নতুন গোপন পিন (খালি রাখলে আগেরটাই থাকবে):",
+t_saveProfileBtn: "প্রোফাইল সেভ করুন",
+t_lineupTitle: "অফিশিয়াল টিম লাইনআপ",
+t_tacticsTitle: "ইন্টারঅ্যাক্টিভ ট্যাকটিকস বোর্ড",
+t_tacticsSub: "প্লেয়ার আইকন ও বল ড্র্যাগ করে মাঠের যেকোনো জায়গায় বসান",
+t_resetBtn: "রিসেট",
+t_matchesTitle: "ম্যাচ রেকর্ড ও আলোচনা",
+t_momentsTitle: "ম্যাচ মোমেন্টস গ্যালারি (Unlimited)",
+t_momentsSub: "মাঠের সেরা মুহূর্তগুলোর ছবি",
+t_uploadMomentBtn: "ছবি আপলোড",
+t_chatTitle: "ক্লাব ওয়াল (লাইভ চ্যাট বোর্ড)"
+},
+en: {
+t_welcomeTitle: "Welcome to Football Club",
+t_welcomeSub: "Select your ID and enter your secret PIN",
+t_selectNameLabel: "Select Your Name:",
+t_secretPinLabel: "Secret PIN:",
+t_loginBtn: "Login",
+t_orText: "OR",
+t_visitorBtn: "View as Visitor Only",
+t_navSettings: "Settings",
+t_navSwitchId: "Switch ID",
+t_navAdmin: "Admin",
+t_tabHome: "Home",
+t_tabSquad: "Squad & Profiles",
+t_tabLineup: "Team Lineup",
+t_tabTactics: "Tactics Board",
+t_tabMatches: "Match Records",
+t_tabChat: "Chat Wall",
+t_tabAdmin: "Admin Panel",
+t_noticeTag: "Notice",
+t_leaderboardTitle: "Live Leaderboard",
+t_thPlayer: "Player",
+t_thPos: "Position",
+t_thMatches: "Matches",
+t_thGoals: "Goals",
+t_thAssists: "Assists",
+t_rsvpTitle: "Who is Playing Next Match? (RSVP)",
+t_rsvpSub: "Confirm your availability for upcoming Friday match:",
+t_btnPlaying: "Playing",
+t_btnNotPlaying: "Not Playing",
+t_feeTitle: "Match Fee Tracker (Paid/Due)",
+t_feeSub: "Turf & ball fund status (Admin can click to toggle)",
+t_squadTitle: "Squad & Player Profiles",
+t_squadHint: "Click any player card to view their full profile and bio.",
+t_backToSquad: "Back to Squad",
+t_editProfileTitle: "Edit Your Profile",
+t_bioLabel: "Your Bio:",
+t_newPinLabel: "New Secret PIN (leave blank to keep current):",
+t_saveProfileBtn: "Save Profile",
+t_lineupTitle: "Official Team Lineup",
+t_tacticsTitle: "Interactive Tactics Board",
+t_tacticsSub: "Drag player tokens and ball anywhere on the pitch",
+t_resetBtn: "Reset",
+t_matchesTitle: "Match Records & Discussion",
+t_momentsTitle: "Match Moments Gallery (Unlimited)",
+t_momentsSub: "Best moments from the pitch",
+t_uploadMomentBtn: "Upload Photos",
+t_chatTitle: "Club Wall (Live Chat Board)"
+}
+};
+​let state = {
+lang: localStorage.getItem("ffc_lang") || "bn",
 players: {},
 rsvp: {},
 notice: "শুক্রবারের ম্যাচে সবাইকে যথাসময়ে উপস্থিত থাকার জন্য অনুরোধ করা হলো।",
@@ -566,18 +913,40 @@ matches: {},
 moments: {},
 chat: {},
 musicUrl: "",
-currentUser: null, // null = Visitor, object = Logged-in Member
+currentUser: null,
 isAdmin: false,
 viewingProfileId: null
 };
-​// Seed clean players if ffc_v2/players does not exist yet
-db.ref(${ROOT}/players).once("value", (snap) => {
+​function setLanguage(lang) {
+state.lang = lang;
+localStorage.setItem("ffc_lang", lang);
+const dict = I18N[lang];
+Object.keys(dict).forEach(id => {
+const el = document.getElementById(id);
+if (el) el.innerText = dict[id];
+});
+document.getElementById("langBtnBn").className = lang === "bn" ? "btn btn-emerald" : "btn btn-dark";
+document.getElementById("langBtnEn").className = lang === "en" ? "btn btn-emerald" : "btn btn-dark";
+updateAuthUI();
+}
+​function openSettingsModal() { document.getElementById("settingsModal").classList.remove("hidden"); }
+function closeSettingsModal() { document.getElementById("settingsModal").classList.add("hidden"); }
+​function toggleTheme() {
+const html = document.documentElement;
+if (html.classList.contains("light")) {
+html.classList.remove("light");
+html.classList.add("dark");
+} else {
+html.classList.remove("dark");
+html.classList.add("light");
+}
+}
+​db.ref(${ROOT}/players).once("value", (snap) => {
 if (!snap.exists()) {
 db.ref(${ROOT}/players).set(INITIAL_PLAYERS);
 }
 });
-​// Realtime Listeners
-db.ref(${ROOT}/players).on("value", (snap) => {
+​db.ref(${ROOT}/players).on("value", (snap) => {
 state.players = snap.val() || {};
 populateLoginDropdown();
 renderLeaderboard();
@@ -622,16 +991,14 @@ state.musicUrl = url;
 document.getElementById("bgAudioPlayer").src = url;
 }
 });
-​// Helper: Avatar HTML
-function getAvatarHTML(player, sizeClass = "w-9 h-9 text-xs") {
+​function getAvatarHTML(player, sizePx = 38) {
 if (player.photo) {
-return <img src="${player.photo}" alt="${player.name}" class="${sizeClass} rounded-full object-cover border border-emerald-500/40 shrink-0">;
+return <div class="avatar" style="width:${sizePx}px; height:${sizePx}px;"><img src="${player.photo}" alt="${player.name}"></div>;
 }
 const initials = player.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
-return <div class="${sizeClass} rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold flex items-center justify-center shrink-0">${initials}</div>;
+return <div class="avatar" style="width:${sizePx}px; height:${sizePx}px;">${initials}</div>;
 }
-​// Helper: Image Compressor
-function compressImage(file, maxWidth = 700, quality = 0.7) {
+​function compressImage(file, maxWidth = 700, quality = 0.7) {
 return new Promise((resolve) => {
 const reader = new FileReader();
 reader.onload = (e) => {
@@ -639,14 +1006,9 @@ const img = new Image();
 img.onload = () => {
 const canvas = document.createElement("canvas");
 let w = img.width, h = img.height;
-if (w > maxWidth) {
-h = Math.round((h * maxWidth) / w);
-w = maxWidth;
-}
-canvas.width = w;
-canvas.height = h;
-const ctx = canvas.getContext("2d");
-ctx.drawImage(img, 0, 0, w, h);
+if (w > maxWidth) { h = Math.round((h * maxWidth) / w); w = maxWidth; }
+canvas.width = w; canvas.height = h;
+canvas.getContext("2d").drawImage(img, 0, 0, w, h);
 resolve(canvas.toDataURL("image/jpeg", quality));
 };
 img.src = e.target.result;
@@ -654,23 +1016,22 @@ img.src = e.target.result;
 reader.readAsDataURL(file);
 });
 }
-​// Login & Visitor System (No Passwords Shown)
-function populateLoginDropdown() {
+​function populateLoginDropdown() {
 const select = document.getElementById("loginPlayerSelect");
-const currentVal = select.value;
-select.innerHTML = <option value="">-- প্লেয়ার সিলেক্ট করুন --</option>;
+const cur = select.value;
+select.innerHTML = <option value="">-- Select Player / প্লেয়ার সিলেক্ট করুন --</option>;
 Object.values(state.players).forEach(p => {
 select.innerHTML += <option value="${p.id}">${p.name}</option>;
 });
-select.value = currentVal;
+select.value = cur;
 }
 ​function handleMemberLogin() {
 const pid = document.getElementById("loginPlayerSelect").value;
 const pin = document.getElementById("loginPinInput").value.trim();
-if (!pid) return alert("অনুগ্রহ করে আপনার নাম সিলেক্ট করুন।");
+if (!pid) return alert(state.lang === "bn" ? "নাম সিলেক্ট করুন।" : "Please select your name.");
 const player = state.players[pid];
 if (!player || String(player.pin) !== pin) {
-return alert("ভুল পিন দিয়েছেন! সঠিক গোপন পিন দিন।");
+return alert(state.lang === "bn" ? "ভুল পিন দিয়েছেন!" : "Incorrect PIN!");
 }
 state.currentUser = player;
 document.getElementById("loginPinInput").value = "";
@@ -682,157 +1043,95 @@ state.currentUser = null;
 document.getElementById("loginModal").classList.add("hidden");
 updateAuthUI();
 }
-​function openLoginModal() {
-document.getElementById("loginModal").classList.remove("hidden");
-}
+​function openLoginModal() { document.getElementById("loginModal").classList.remove("hidden"); }
 ​function updateAuthUI() {
 const badge = document.getElementById("userStatusBadge");
 const profBtn = document.getElementById("myProfileHeaderBtn");
 const momentBox = document.getElementById("momentUploadBox");
 ​if (state.currentUser) {
-badge.innerText = লগইন: ${state.currentUser.name};
-badge.className = "text-[11px] text-emerald-400 font-semibold";
+badge.innerText = state.lang === "bn" ? লগইন: ${state.currentUser.name} : Logged in: ${state.currentUser.name};
+badge.style.color = "var(--emerald)";
 profBtn.classList.remove("hidden");
-profBtn.classList.add("flex");
 document.getElementById("headerProfileName").innerText = state.currentUser.name.split(" ")[0];
 momentBox.classList.remove("hidden");
 } else {
-badge.innerText = "মোড: ভিজিটর (শুধুমাত্র দেখার জন্য)";
-badge.className = "text-[11px] text-amber-400 font-medium";
+badge.innerText = state.lang === "bn" ? "মোড: ভিজিটর (শুধুমাত্র দেখার জন্য)" : "Mode: Visitor (View Only)";
+badge.style.color = "var(--amber)";
 profBtn.classList.add("hidden");
-profBtn.classList.remove("flex");
 if (!state.isAdmin) momentBox.classList.add("hidden");
 }
 renderMoments();
 renderMatchHistory();
 }
-​// Admin Authentication (PIN: 426790) - Hidden by default
-function handleAdminButtonClick() {
-if (state.isAdmin) {
-switchTab("admin");
-} else {
-document.getElementById("adminLoginModal").classList.remove("hidden");
-document.getElementById("adminLoginModal").classList.add("flex");
+​function handleAdminButtonClick() {
+if (state.isAdmin) switchTab("admin");
+else document.getElementById("adminLoginModal").classList.remove("hidden");
 }
-}
-​function closeAdminModal() {
-document.getElementById("adminLoginModal").classList.add("hidden");
-document.getElementById("adminLoginModal").classList.remove("flex");
-}
+​function closeAdminModal() { document.getElementById("adminLoginModal").classList.add("hidden"); }
 ​function verifyAdminPin() {
 const pin = document.getElementById("adminPinInput").value.trim();
 if (pin === ADMIN_PIN) {
 state.isAdmin = true;
 document.getElementById("adminPinInput").value = "";
 closeAdminModal();
-const adminTabBtn = document.getElementById("tab-btn-admin");
-adminTabBtn.classList.remove("hidden");
-adminTabBtn.classList.add("flex");
+document.getElementById("tab-btn-admin").classList.remove("hidden");
 document.getElementById("momentUploadBox").classList.remove("hidden");
 switchTab("admin");
 renderMoments();
 renderMatchHistory();
 } else {
-alert("ভুল অ্যাডমিন পিন!");
+alert(state.lang === "bn" ? "ভুল অ্যাডমিন পিন!" : "Wrong Admin PIN!");
 }
 }
 ​function logoutAdmin() {
 state.isAdmin = false;
-const adminTabBtn = document.getElementById("tab-btn-admin");
-adminTabBtn.classList.add("hidden");
-adminTabBtn.classList.remove("flex");
-if (!state.currentUser) {
-document.getElementById("momentUploadBox").classList.add("hidden");
-}
+document.getElementById("tab-btn-admin").classList.add("hidden");
+if (!state.currentUser) document.getElementById("momentUploadBox").classList.add("hidden");
 switchTab("home");
 renderMoments();
 renderMatchHistory();
 }
-​// Tab Navigation
-function switchTab(tabName) {
+​function switchTab(tabName) {
 if (tabName === "admin" && !state.isAdmin) return;
 document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
-document.querySelectorAll(".tab-btn").forEach(btn => {
-btn.classList.remove("tab-active");
-btn.classList.add("text-slate-400");
-});
-​const targetSection = document.getElementById(tab-${tabName});
-if (targetSection) targetSection.classList.remove("hidden");
-​const activeBtn = document.getElementById(tab-btn-${tabName});
-if (activeBtn) {
-activeBtn.classList.add("tab-active");
-activeBtn.classList.remove("text-slate-400");
+document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+const target = document.getElementById(tab-${tabName});
+if (target) target.classList.remove("hidden");
+const btn = document.getElementById(tab-btn-${tabName});
+if (btn) btn.classList.add("active");
 }
-}
-​// Theme Toggle
-function toggleTheme() {
-const html = document.documentElement;
-const icon = document.getElementById("themeIcon");
-if (html.classList.contains("dark")) {
-html.classList.remove("dark");
-document.body.classList.replace("bg-[#0b111e]", "bg-slate-100");
-document.body.classList.replace("text-slate-100", "text-slate-900");
-icon.className = "fa-solid fa-sun text-amber-400";
-} else {
-html.classList.add("dark");
-document.body.classList.replace("bg-slate-100", "bg-[#0b111e]");
-document.body.classList.replace("text-slate-900", "text-slate-100");
-icon.className = "fa-solid fa-moon";
-}
-}
-​// Home: Leaderboard
-function renderLeaderboard() {
+​function renderLeaderboard() {
 const tbody = document.getElementById("leaderboardTableBody");
 const sorted = Object.values(state.players).sort((a, b) => (b.goals - a.goals) || (b.assists - a.assists));
-tbody.innerHTML = sorted.map(p => <tr onclick="openPlayerProfile('${p.id}')" class="hover:bg-slate-800/40 cursor-pointer transition"> <td class="py-3 px-2 flex items-center gap-2.5 font-semibold text-white"> ${getAvatarHTML(p, "w-8 h-8 text-xs")} <span>${p.name}</span> </td> <td class="py-3 px-2 text-slate-400 text-xs">${p.pos}</td> <td class="py-3 px-2 text-center font-bold text-cyan-400">${p.matches || 0}</td> <td class="py-3 px-2 text-center font-bold text-emerald-400">${p.goals || 0}</td> <td class="py-3 px-2 text-center font-bold text-amber-400">${p.assists || 0}</td> </tr>).join("");
+tbody.innerHTML = sorted.map(p => <tr class="clickable" onclick="openPlayerProfile('${p.id}')"> <td> <div class="flex items-center gap-2"> ${getAvatarHTML(p, 34)} <strong>${p.name}</strong> </div> </td> <td style="color: var(--text-muted); font-size: 12px;">${p.pos}</td> <td style="text-align: center; color: var(--cyan); font-weight: 700;">${p.matches || 0}</td> <td style="text-align: center; color: var(--emerald); font-weight: 700;">${p.goals || 0}</td> <td style="text-align: center; color: var(--amber); font-weight: 700;">${p.assists || 0}</td> </tr>).join("");
 }
-​// Home: RSVP
-function submitRSVP(isPlaying) {
-if (!state.currentUser) return alert("ভিজিটর মোডে RSVP করা যাবে না। অনুগ্রহ করে লগইন করুন।");
-db.ref(${ROOT}/rsvp/${state.currentUser.id}).set({
-name: state.currentUser.name,
-playing: isPlaying
-});
+​function submitRSVP(isPlaying) {
+if (!state.currentUser) return alert(state.lang === "bn" ? "ভিজিটর মোডে RSVP করা যাবে না। লগইন করুন।" : "Please login to submit RSVP.");
+db.ref(${ROOT}/rsvp/${state.currentUser.id}).set({ name: state.currentUser.name, playing: isPlaying });
 }
 ​function renderRSVP() {
-const playingEntries = Object.values(state.rsvp).filter(r => r.playing);
-document.getElementById("rsvpCountBadge").innerText = ${playingEntries.length} জন নিশ্চিত;
+const playing = Object.values(state.rsvp).filter(r => r.playing);
+document.getElementById("rsvpCountBadge").innerText = state.lang === "bn" ? ${playing.length} জন নিশ্চিত : ${playing.length} Confirmed;
 const list = document.getElementById("rsvpPlayingList");
-if (playingEntries.length === 0) {
-list.innerHTML = <span class="text-xs text-slate-500">এখনো কেউ নিশ্চিত করেনি।</span>;
-return;
+list.innerHTML = playing.length ? playing.map(r => <span class="badge badge-paid">✓ ${r.name}</span>).join("") : <span style="font-size:12px; color:var(--text-muted);">--</span>;
 }
-list.innerHTML = playingEntries.map(r => <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-lg text-xs font-medium"> <i class="fa-solid fa-check mr-1"></i> ${r.name} </span>).join("");
-}
-​// Home: Fee Tracker
-function renderFeeTracker() {
+​function renderFeeTracker() {
 const players = Object.values(state.players);
-const paidCount = players.filter(p => p.feePaid).length;
-document.getElementById("feePaidCountBadge").innerText = পেইড: ${paidCount} / ${players.length} জন;
-​const grid = document.getElementById("feeTrackerGrid");
-grid.innerHTML = players.map(p => <div onclick="togglePlayerFee('${p.id}')" class="bg-[#0b111e] border border-slate-800 rounded-xl p-3 flex items-center justify-between ${state.isAdmin ? 'cursor-pointer hover:border-amber-500/50' : ''}"> <div class="flex items-center gap-2.5"> ${getAvatarHTML(p, "w-9 h-9 text-xs")} <div> <p class="text-xs sm:text-sm font-bold text-white leading-tight">${p.name}</p> <p class="text-[11px] text-slate-400">${p.pos}</p> </div> </div> <span class="${p.feePaid ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/15 text-rose-400 border-rose-500/30'} border px-2.5 py-1 rounded-lg text-[11px] font-bold"> ${p.feePaid ? '✓ পেইড' : '✕ ডিউ'} </span> </div>).join("");
+const paid = players.filter(p => p.feePaid).length;
+document.getElementById("feePaidCountBadge").innerText = Paid: ${paid} / ${players.length};
+document.getElementById("feeTrackerGrid").innerHTML = players.map(p => <div onclick="togglePlayerFee('${p.id}')" class="sub-box flex items-center justify-between" style="cursor: ${state.isAdmin ? 'pointer' : 'default'};"> <div class="flex items-center gap-2"> ${getAvatarHTML(p, 34)} <div> <div style="font-size: 13px; font-weight: 700;">${p.name}</div> <div style="font-size: 11px; color: var(--text-muted);">${p.pos}</div> </div> </div> <span class="badge ${p.feePaid ? 'badge-paid' : 'badge-due'}">${p.feePaid ? '✓ Paid' : '✕ Due'}</span> </div>).join("");
 }
 ​function togglePlayerFee(pid) {
 if (!state.isAdmin) return;
-const current = state.players[pid]?.feePaid || false;
-db.ref(${ROOT}/players/${pid}/feePaid).set(!current);
+db.ref(${ROOT}/players/${pid}/feePaid).set(!(state.players[pid]?.feePaid || false));
 }
-​// Squad & Public Profile
-function renderSquad() {
+​function renderSquad() {
 const q = document.getElementById("squadSearchInput").value.toLowerCase();
 const pos = document.getElementById("squadPositionFilter").value;
-const grid = document.getElementById("squadCardsGrid");
-​const filtered = Object.values(state.players).filter(p => {
-const matchName = p.name.toLowerCase().includes(q);
-const matchPos = pos === "ALL" || p.pos === pos;
-return matchName && matchPos;
-});
-​grid.innerHTML = filtered.map(p => <div onclick="openPlayerProfile('${p.id}')" class="bg-[#0b111e] hover:bg-slate-900/90 border border-slate-800 hover:border-emerald-500/40 rounded-2xl p-4 cursor-pointer transition space-y-3"> <div class="flex items-center gap-3"> ${getAvatarHTML(p, "w-12 h-12 text-sm")} <div> <h3 class="font-bold text-white text-sm sm:text-base">${p.name}</h3> <span class="inline-block bg-slate-800 text-slate-300 text-[11px] px-2.5 py-0.5 rounded-md mt-0.5">${p.pos}</span> </div> </div> <div class="grid grid-cols-3 text-center pt-2 border-t border-slate-800/80 text-xs"> <div class="text-cyan-400 font-bold">ম্যাচ: ${p.matches || 0}</div> <div class="text-emerald-400 font-bold">গোল: ${p.goals || 0}</div> <div class="text-amber-400 font-bold">অ্যাসিস্ট: ${p.assists || 0}</div> </div> </div>).join("");
+const filtered = Object.values(state.players).filter(p => p.name.toLowerCase().includes(q) && (pos === "ALL" || p.pos === pos));
+document.getElementById("squadCardsGrid").innerHTML = filtered.map(p => <div onclick="openPlayerProfile('${p.id}')" class="sub-box" style="cursor: pointer;"> <div class="flex items-center gap-3 mb-3"> ${getAvatarHTML(p, 48)} <div> <div style="font-weight: 700; font-size: 15px;">${p.name}</div> <span class="badge" style="background: var(--bg-elevated); color: var(--cyan);">${p.pos}</span> </div> </div> <div class="flex justify-between" style="border-top: 1px solid var(--border-color); padding-top: 8px; font-size: 12px; font-weight: 700;"> <span style="color: var(--cyan);">Matches: ${p.matches || 0}</span> <span style="color: var(--emerald);">Goals: ${p.goals || 0}</span> <span style="color: var(--amber);">Assists: ${p.assists || 0}</span> </div> </div>).join("");
 }
-​function openMyProfile() {
-if (!state.currentUser) return;
-openPlayerProfile(state.currentUser.id);
-}
+​function openMyProfile() { if (state.currentUser) openPlayerProfile(state.currentUser.id); }
 ​function openPlayerProfile(pid) {
 state.viewingProfileId = pid;
 renderProfileDetail(pid);
@@ -841,34 +1140,27 @@ switchTab("profile-detail");
 ​function renderProfileDetail(pid) {
 const p = state.players[pid];
 if (!p) return;
-​document.getElementById("profileDetailName").innerText = p.name;
+document.getElementById("profileDetailName").innerText = p.name;
 document.getElementById("profileDetailPosition").innerText = p.pos;
-document.getElementById("profileDetailBio").innerText = p.bio || "কোনো বায়ো যুক্ত করা হয়নি।";
+document.getElementById("profileDetailBio").innerText = p.bio || "Friday Football Club Member";
 document.getElementById("profStatMatches").innerText = p.matches || 0;
 document.getElementById("profStatGoals").innerText = p.goals || 0;
 document.getElementById("profStatAssists").innerText = p.assists || 0;
 document.getElementById("profStatMotm").innerText = p.motm || 0;
-​const avatarContainer = document.getElementById("profileDetailAvatar");
-if (p.photo) {
-avatarContainer.innerHTML = <img src="${p.photo}" class="w-full h-full object-cover">;
-} else {
-const initials = p.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
-avatarContainer.innerHTML = initials;
-}
-​// Only owner can edit their own bio/photo/pin
-const isOwner = state.currentUser && state.currentUser.id === pid;
+​const av = document.getElementById("profileDetailAvatar");
+av.innerHTML = p.photo ? <img src="${p.photo}"> : p.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+​const isOwner = state.currentUser && state.currentUser.id === pid;
 const editBox = document.getElementById("selfEditProfileBox");
-const photoLabel = document.getElementById("profilePhotoUploadLabel");
-​if (isOwner) {
+const photoLbl = document.getElementById("profilePhotoUploadLabel");
+if (isOwner) {
 editBox.classList.remove("hidden");
-photoLabel.classList.remove("hidden");
-photoLabel.classList.add("flex");
+photoLbl.classList.remove("hidden");
+photoLbl.style.display = "flex";
 document.getElementById("editBioInput").value = p.bio || "";
 document.getElementById("editPinInput").value = "";
 } else {
 editBox.classList.add("hidden");
-photoLabel.classList.add("hidden");
-photoLabel.classList.remove("flex");
+photoLbl.classList.add("hidden");
 }
 }
 ​async function handleProfilePhotoUpload(event) {
@@ -876,431 +1168,245 @@ const file = event.target.files[0];
 if (!file || !state.currentUser) return;
 const compressed = await compressImage(file, 400, 0.75);
 await db.ref(${ROOT}/players/${state.currentUser.id}/photo).set(compressed);
-alert("প্রোফাইল ছবি আপডেট হয়েছে!");
+alert(state.lang === "bn" ? "প্রোফাইল ছবি আপডেট হয়েছে!" : "Profile photo updated!");
 }
 ​async function saveOwnProfile() {
 if (!state.currentUser || state.viewingProfileId !== state.currentUser.id) return;
-const newBio = document.getElementById("editBioInput").value.trim();
+const updates = { bio: document.getElementById("editBioInput").value.trim() };
 const newPin = document.getElementById("editPinInput").value.trim();
-​const updates = { bio: newBio };
-if (newPin.length >= 4) {
-updates.pin = newPin;
-}
+if (newPin.length >= 4) updates.pin = newPin;
 await db.ref(${ROOT}/players/${state.currentUser.id}).update(updates);
-alert("আপনার প্রোফাইল তথ্য সেভ হয়েছে!");
+alert(state.lang === "bn" ? "প্রোফাইল সেভ হয়েছে!" : "Profile saved!");
 }
-​// Team Lineup Builder & Public View
-function renderLineupBuilderInputs() {
+​function renderLineupBuilderInputs() {
 const count = parseInt(document.getElementById("adminTeamCount").value || "2");
-const formation = document.getElementById("adminFormationType").value || "6";
-const grid = document.getElementById("lineupBuilderGrid");
-const teamLetters = ["A", "B", "C", "D", "E", "F", "G"];
-const playerOptions = <option value="">-- প্লেয়ার সিলেক্ট --</option> +
-Object.values(state.players).map(p => <option value="${p.id}">${p.name}</option>).join("");
-​let html = "";
+const form = parseInt(document.getElementById("adminFormationType").value || "6");
+const letters = ["A", "B", "C", "D", "E", "F", "G"];
+const opts = <option value="">-- Select Player --</option> + Object.values(state.players).map(p => <option value="${p.id}">${p.name}</option>).join("");
+let html = "";
 for (let i = 0; i < count; i++) {
-const letter = teamLetters[i];
-let slotInputs = "";
-for (let s = 1; s <= parseInt(formation); s++) {
-slotInputs += <div class="flex items-center gap-2"> <span class="text-[11px] text-slate-400 w-12">পজিশন ${s}:</span> <select id="lineup_t${i}_s${s}" class="flex-1 bg-[#111827] border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white">${playerOptions}</select> </div>;
+let slots = "";
+for (let s = 1; s <= form; s++) {
+slots += <div class="flex items-center gap-2 mb-2"><span style="font-size:11px; width:45px;">Pos ${s}:</span><select id="lineup_t${i}_s${s}">${opts}</select></div>;
 }
-html += <div class="bg-[#0b111e] border border-slate-800 rounded-xl p-4 space-y-2.5"> <div class="flex items-center justify-between"> <input type="text" id="lineup_t${i}_name" value="Team ${letter}" class="bg-transparent border-b border-slate-700 font-bold text-emerald-400 text-sm focus:outline-none w-32"> <div class="flex items-center gap-1.5"> <span class="text-[11px] text-amber-400 font-bold">ক্যাপ্টেন (C):</span> <select id="lineup_t${i}_cap" class="bg-[#111827] border border-amber-500/40 rounded-lg px-2 py-1 text-xs text-amber-300">${playerOptions}</select> </div> </div> <div class="space-y-1.5 pt-1">${slotInputs}</div> <div class="pt-1 border-t border-slate-800 flex items-center gap-2"> <span class="text-[11px] text-cyan-400 w-12">Sub:</span> <select id="lineup_t${i}_sub" class="flex-1 bg-[#111827] border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white">${playerOptions}</select> </div> </div>;
+html += <div class="sub-box"> <div class="flex justify-between items-center gap-2 mb-3"> <input type="text" id="lineup_t${i}_name" value="Team ${letters[i]}" style="width: 110px; font-weight:700;"> <div class="flex items-center gap-1"> <span style="font-size:11px; color:var(--amber);">Captain (C):</span> <select id="lineup_t${i}_cap" style="width: 130px;">${opts}</select> </div> </div> ${slots} <div class="flex items-center gap-2 mt-2"><span style="font-size:11px; color:var(--cyan); width:45px;">Sub:</span><select id="lineup_t${i}_sub">${opts}</select></div> </div>;
 }
-grid.innerHTML = html;
+document.getElementById("lineupBuilderGrid").innerHTML = html;
 }
 ​function publishLineups() {
 if (!state.isAdmin) return;
 const count = parseInt(document.getElementById("adminTeamCount").value);
-const formation = parseInt(document.getElementById("adminFormationType").value);
+const form = parseInt(document.getElementById("adminFormationType").value);
 const teams = [];
-​for (let i = 0; i < count; i++) {
-const name = document.getElementById(lineup_t${i}_name).value.trim() || Team ${i + 1};
-const captainId = document.getElementById(lineup_t${i}_cap).value;
-const subId = document.getElementById(lineup_t${i}_sub).value;
+for (let i = 0; i < count; i++) {
 const slots = [];
-for (let s = 1; s <= formation; s++) {
+for (let s = 1; s <= form; s++) {
 const pid = document.getElementById(lineup_t${i}_s${s}).value;
-if (pid && state.players[pid]) {
-slots.push({ id: pid, name: state.players[pid].name, pos: state.players[pid].pos });
+if (pid && state.players[pid]) slots.push({ id: pid, name: state.players[pid].name, pos: state.players[pid].pos });
 }
-}
+const subId = document.getElementById(lineup_t${i}_sub).value;
 teams.push({
-name,
-captainId,
+name: document.getElementById(lineup_t${i}_name).value.trim() || Team ${i + 1},
+captainId: document.getElementById(lineup_t${i}_cap).value,
 sub: subId && state.players[subId] ? state.players[subId].name : "",
 slots
 });
 }
-​db.ref(${ROOT}/lineups).set({
-formation: ${formation}v${formation},
-updatedAt: new Date().toLocaleDateString("bn-BD"),
-teams
-});
-alert("টিম লাইনআপ সফলভাবে পাবলিশ হয়েছে!");
+db.ref(${ROOT}/lineups).set({ formation: ${form}v${form}, updatedAt: new Date().toLocaleDateString(), teams });
+alert("Lineup Published!");
 switchTab("lineup");
 }
 ​function renderPublishedLineups() {
 const container = document.getElementById("publishedLineupsContainer");
 if (!state.lineups || !state.lineups.teams) {
-container.innerHTML = <div class="col-span-full text-center py-10 text-slate-500 text-sm">এখনো কোনো টিম লাইনআপ পাবলিশ করা হয়নি।</div>;
+container.innerHTML = <p style="color:var(--text-muted); font-size:13px;">No lineup published yet.</p>;
 return;
 }
-document.getElementById("lineupMetaSubtitle").innerText = ফরমেশন: ${state.lineups.formation} | প্রকাশিত: ${state.lineups.updatedAt};
-​container.innerHTML = state.lineups.teams.map(team => <div class="bg-[#0b111e] border border-slate-800 rounded-2xl p-4 space-y-3"> <div class="flex items-center justify-between border-b border-slate-800 pb-2"> <h3 class="font-bold text-emerald-400 text-base">${team.name}</h3> <span class="text-[11px] bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full">${state.lineups.formation}</span> </div> <div class="space-y-2"> ${(team.slots || []).map((slot, idx) => { const isCap = slot.id === team.captainId; return
-<div class="flex items-center justify-between bg-[#111827] px-3 py-2 rounded-xl border border-slate-800/80">
-<div class="flex items-center gap-2.5">
-<span class="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 text-xs font-bold flex items-center justify-center">{idx + 1}</span>
-<span class="text-xs sm:text-sm font-semibold text-white">{slot.name}</span>
-{isCap ? `<span class="w-5 h-5 rounded-full bg-amber-400 text-slate-950 font-extrabold text-[11px] flex items-center justify-center shadow" title="Captain">C</span>` : ''}
+document.getElementById("lineupMetaSubtitle").innerText = ${state.lineups.formation} | ${state.lineups.updatedAt};
+container.innerHTML = state.lineups.teams.map(t => <div class="sub-box"> <div class="flex justify-between items-center mb-3" style="border-bottom:1px solid var(--border-color); padding-bottom:8px;"> <strong style="color: var(--emerald);">${t.name}</strong> <span class="badge badge-paid">${state.lineups.formation}</span> </div> ${(t.slots || []).map((s, idx) =>
+<div class="flex justify-between items-center mb-2" style="background: var(--bg-card); padding: 8px 12px; border-radius: 10px;">
+<div class="flex items-center gap-2">
+<span style="font-size:12px; color:var(--cyan); font-weight:700;">{idx + 1}.</span>
+<span style="font-size:13px; font-weight:600;">{s.name}</span>
+{s.id === t.captainId ? `<span class="cap-badge">C</span>` : ''}
 </div>
-<span class="text-[11px] text-slate-400">{slot.pos}</span>
+<span style="font-size:11px; color:var(--text-muted);">{s.pos}</span>
 </div>
-; }).join("")} </div> ${team.sub ? 
-<div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
-<span class="text-amber-400 font-semibold"><i class="fa-solid fa-repeat mr-1"></i> সাবস্টিটিউট (Sub):</span>
-<span class="text-slate-200 font-medium">${team.sub}</span>
-</div>
-: ''} </div>).join("");
+).join("")} ${t.sub ? <div style="font-size:12px; color:var(--amber); margin-top:8px;">Sub: <strong>${t.sub}</strong></div>: ''} </div>).join("");
 }
-​// Interactive Tactics Maker (Local Drag-and-Drop, Locked for Visitors)
-const FORMATIONS_COORDS = {
-"2-1-2": [
-{ label: "GK", x: 10, y: 50, color: "bg-amber-500" },
-{ label: "DEF", x: 28, y: 30, color: "bg-cyan-500" },
-{ label: "DEF", x: 28, y: 70, color: "bg-cyan-500" },
-{ label: "MID", x: 50, y: 50, color: "bg-emerald-500" },
-{ label: "ST", x: 74, y: 32, color: "bg-rose-500" },
-{ label: "ST", x: 74, y: 68, color: "bg-rose-500" }
-],
-"2-2-1": [
-{ label: "GK", x: 10, y: 50, color: "bg-amber-500" },
-{ label: "DEF", x: 28, y: 30, color: "bg-cyan-500" },
-{ label: "DEF", x: 28, y: 70, color: "bg-cyan-500" },
-{ label: "MID", x: 54, y: 30, color: "bg-emerald-500" },
-{ label: "MID", x: 54, y: 70, color: "bg-emerald-500" },
-{ label: "ST", x: 78, y: 50, color: "bg-rose-500" }
-],
-"3-2-1": [
-{ label: "GK", x: 10, y: 50, color: "bg-amber-500" },
-{ label: "LB", x: 28, y: 22, color: "bg-cyan-500" },
-{ label: "CB", x: 25, y: 50, color: "bg-cyan-500" },
-{ label: "RB", x: 28, y: 78, color: "bg-cyan-500" },
-{ label: "CM", x: 54, y: 34, color: "bg-emerald-500" },
-{ label: "CM", x: 54, y: 66, color: "bg-emerald-500" },
-{ label: "ST", x: 78, y: 50, color: "bg-rose-500" }
-],
-"1-2-1": [
-{ label: "GK", x: 10, y: 50, color: "bg-amber-500" },
-{ label: "DEF", x: 30, y: 50, color: "bg-cyan-500" },
-{ label: "LW", x: 55, y: 26, color: "bg-emerald-500" },
-{ label: "RW", x: 55, y: 74, color: "bg-emerald-500" },
-{ label: "ST", x: 78, y: 50, color: "bg-rose-500" }
-]
+​const FORMATIONS_COORDS = {
+"2-1-2": [{ l: "GK", x: 10, y: 50, c: "#f59e0b" }, { l: "DEF", x: 28, y: 30, c: "#06b6d4" }, { l: "DEF", x: 28, y: 70, c: "#06b6d4" }, { l: "MID", x: 50, y: 50, c: "#10b981" }, { l: "ST", x: 74, y: 32, c: "#f43f5e" }, { l: "ST", x: 74, y: 68, c: "#f43f5e" }],
+"2-2-1": [{ l: "GK", x: 10, y: 50, c: "#f59e0b" }, { l: "DEF", x: 28, y: 30, c: "#06b6d4" }, { l: "DEF", x: 28, y: 70, c: "#06b6d4" }, { l: "MID", x: 54, y: 30, c: "#10b981" }, { l: "MID", x: 54, y: 70, c: "#10b981" }, { l: "ST", x: 78, y: 50, c: "#f43f5e" }],
+"3-2-1": [{ l: "GK", x: 10, y: 50, c: "#f59e0b" }, { l: "LB", x: 28, y: 22, c: "#06b6d4" }, { l: "CB", x: 25, y: 50, c: "#06b6d4" }, { l: "RB", x: 28, y: 78, c: "#06b6d4" }, { l: "CM", x: 54, y: 34, c: "#10b981" }, { l: "CM", x: 54, y: 66, c: "#10b981" }, { l: "ST", x: 78, y: 50, c: "#f43f5e" }],
+"1-2-1": [{ l: "GK", x: 10, y: 50, c: "#f59e0b" }, { l: "DEF", x: 30, y: 50, c: "#06b6d4" }, { l: "LW", x: 55, y: 26, c: "#10b981" }, { l: "RW", x: 55, y: 74, c: "#10b981" }, { l: "ST", x: 78, y: 50, c: "#f43f5e" }]
 };
 ​function applyTacticsFormation() {
-const formKey = document.getElementById("tacticsFormationSelect").value;
-const tokens = FORMATIONS_COORDS[formKey] || FORMATIONS_COORDS["2-1-2"];
+const list = FORMATIONS_COORDS[document.getElementById("tacticsFormationSelect").value] || FORMATIONS_COORDS["2-1-2"];
 const layer = document.getElementById("tacticsTokensLayer");
-​let html = tokens.map((t, i) => <div style="left:${t.x}%; top:${t.y}%;" class="draggable-token flex flex-col items-center"> <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full ${t.color} text-slate-950 font-extrabold text-xs flex items-center justify-center border-2 border-white shadow-lg"> ${t.label} </div> <span class="bg-slate-950/80 text-white text-[10px] px-1.5 rounded mt-0.5">P${i + 1}</span> </div>).join("");
-​// Add Football Token
-html += <div style="left:50%; top:50%;" class="draggable-token flex flex-col items-center"> <div class="w-6 h-6 rounded-full bg-white text-slate-950 flex items-center justify-center shadow-lg border border-slate-900"> <i class="fa-solid fa-futbol text-sm"></i> </div> </div>;
-layer.innerHTML = html;
+layer.innerHTML = list.map((t, i) => <div style="left:${t.x}%; top:${t.y}%;" class="draggable-token"> <div class="token-circle" style="background:${t.c};">${t.l}</div> <span style="background:rgba(0,0,0,0.75); color:#fff; font-size:10px; padding:1px 5px; border-radius:4px; margin-top:2px;">P${i+1}</span> </div>).join("") + <div style="left:50%; top:50%;" class="draggable-token"><div class="token-circle" style="width:24px; height:24px; background:#fff;"><i class="fa-solid fa-futbol"></i></div></div>;
 initPitchDrag();
 }
 ​function initPitchDrag() {
 const pitch = document.getElementById("tacticsPitch");
-const tokens = document.querySelectorAll(".draggable-token");
-​tokens.forEach(token => {
-let isDragging = false;
-​const onMove = (clientX, clientY) => {
-if (!isDragging) return;
-const rect = pitch.getBoundingClientRect();
-let xPercent = ((clientX - rect.left) / rect.width) * 100;
-let yPercent = ((clientY - rect.top) / rect.height) * 100;
-xPercent = Math.max(4, Math.min(96, xPercent));
-yPercent = Math.max(6, Math.min(94, yPercent));
-token.style.left = ${xPercent}%;
-token.style.top = ${yPercent}%;
+document.querySelectorAll(".draggable-token").forEach(token => {
+let dragging = false;
+const move = (cx, cy) => {
+if (!dragging) return;
+const r = pitch.getBoundingClientRect();
+token.style.left = ${Math.max(4, Math.min(96, ((cx - r.left) / r.width) * 100))}%;
+token.style.top = ${Math.max(6, Math.min(94, ((cy - r.top) / r.height) * 100))}%;
 };
-​token.addEventListener("mousedown", (e) => {
-if (!state.currentUser && !state.isAdmin) {
-alert("ভিজিটর মোডে ট্যাকটিকস বোর্ড ব্যবহার করা যাবে না। অনুগ্রহ করে লগইন করুন।");
-return;
-}
-isDragging = true;
+token.addEventListener("mousedown", () => {
+if (!state.currentUser && !state.isAdmin) return alert("Login required to use tactics board.");
+dragging = true;
 });
-​window.addEventListener("mousemove", (e) => onMove(e.clientX, e.clientY));
-window.addEventListener("mouseup", () => { isDragging = false; });
-​token.addEventListener("touchstart", (e) => {
-if (!state.currentUser && !state.isAdmin) {
-alert("ভিজিটর মোডে ট্যাকটিকস বোর্ড ব্যবহার করা যাবে না। অনুগ্রহ করে লগইন করুন।");
-return;
-}
-isDragging = true;
+window.addEventListener("mousemove", e => move(e.clientX, e.clientY));
+window.addEventListener("mouseup", () => dragging = false);
+token.addEventListener("touchstart", () => {
+if (!state.currentUser && !state.isAdmin) return alert("Login required to use tactics board.");
+dragging = true;
 }, { passive: true });
-​window.addEventListener("touchmove", (e) => {
-if (!isDragging) return;
-const touch = e.touches[0];
-onMove(touch.clientX, touch.clientY);
-}, { passive: true });
-​window.addEventListener("touchend", () => { isDragging = false; });
+window.addEventListener("touchmove", e => { if (dragging) move(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+window.addEventListener("touchend", () => dragging = false);
 });
 }
-​// Match History (Max 2 Photos + Admin Delete) & Discussion
-async function addMatchRecord() {
+​async function addMatchRecord() {
 if (!state.isAdmin) return;
 const title = document.getElementById("matchTitleInput").value.trim();
-const date = document.getElementById("matchDateInput").value;
 const score = document.getElementById("matchScoreInput").value.trim();
-const teamA = document.getElementById("matchTeamAInput").value.trim();
-const teamB = document.getElementById("matchTeamBInput").value.trim();
-const scorers = document.getElementById("matchScorersInput").value.trim();
+if (!title || !score) return alert("Enter title and score.");
 const files = Array.from(document.getElementById("matchPhotosInput").files).slice(0, 2);
-​if (!title || !score) return alert("ম্যাচের শিরোনাম ও ফলাফল দিন।");
-​const photos = [];
-for (const f of files) {
-photos.push(await compressImage(f, 700, 0.7));
-}
-​const newRef = db.ref(${ROOT}/matches).push();
-await newRef.set({
-id: newRef.key,
-title,
-date: date || new Date().toISOString().split("T")[0],
+const photos = [];
+for (const f of files) photos.push(await compressImage(f, 700, 0.7));
+const ref = db.ref(${ROOT}/matches).push();
+await ref.set({
+id: ref.key, title,
+date: document.getElementById("matchDateInput").value || new Date().toISOString().split("T")[0],
 score,
-teamA,
-teamB,
-scorers,
+teamA: document.getElementById("matchTeamAInput").value.trim(),
+teamB: document.getElementById("matchTeamBInput").value.trim(),
+scorers: document.getElementById("matchScorersInput").value.trim(),
 photos
 });
-​document.getElementById("matchTitleInput").value = "";
-document.getElementById("matchScoreInput").value = "";
-document.getElementById("matchTeamAInput").value = "";
-document.getElementById("matchTeamBInput").value = "";
-document.getElementById("matchScorersInput").value = "";
-document.getElementById("matchPhotosInput").value = "";
-alert("ম্যাচ রেকর্ড সেভ হয়েছে!");
+alert("Match Saved!");
 }
 ​function renderMatchHistory() {
-const container = document.getElementById("matchHistoryContainer");
+const c = document.getElementById("matchHistoryContainer");
 const list = Object.values(state.matches).reverse();
-if (list.length === 0) {
-container.innerHTML = <p class="text-center py-8 text-slate-500 text-sm">এখনো কোনো ম্যাচ রেকর্ড যোগ করা হয়নি।</p>;
-return;
-}
-​container.innerHTML = list.map(m => {
+if (!list.length) { c.innerHTML = <p style="color:var(--text-muted); font-size:13px;">No match records yet.</p>; return; }
+c.innerHTML = list.map(m => {
 const comments = m.comments ? Object.values(m.comments) : [];
-const photos = m.photos || [];
-return <div class="bg-[#0b111e] border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4"> <div class="flex items-center justify-between"> <span class="text-amber-400 font-bold text-sm sm:text-base flex items-center gap-2"> <i class="fa-solid fa-futbol"></i> ${m.title} </span> <div class="flex items-center gap-3"> <span class="text-xs text-slate-400"><i class="fa-regular fa-calendar mr-1"></i>${m.date}</span> ${state.isAdmin ?<button onclick="confirmDeleteMatch('${m.id}')" class="text-rose-400 hover:text-rose-300 text-xs"><i class="fa-solid fa-trash"></i></button>` : ''}
+return <div class="sub-box mb-4"> <div class="flex justify-between items-center mb-2"> <strong style="color: var(--amber);">${m.title} (${m.score})</strong> <div class="flex items-center gap-2"> <span style="font-size:12px; color:var(--text-muted);">${m.date}</span> ${state.isAdmin ?<button onclick="confirmDeleteMatch('${m.id}')" class="btn btn-rose" style="padding:4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button>: ''} </div> </div> <div class="grid-2 mb-2" style="font-size:12px;"> <div><strong>Team A:</strong> ${m.teamA || '-'}</div> <div><strong>Team B:</strong> ${m.teamB || '-'}</div> </div> <div style="font-size:12px; color:var(--emerald); margin-bottom:10px;">${m.scorers || ''}</div> ${(m.photos || []).length ?<div class="grid-2 mb-3">{m.photos.map((src, idx) => `
+<div style="position:relative;">
+<img src="${src}" style="width:100%; height:170px; object-fit:cover; border-radius:12px;">
+${state.isAdmin ? `<button onclick="deleteMatchPhoto('${m.id}', ${idx})" class="btn btn-rose" style="position:absolute; top:8px; right:8px; padding:5px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button>` : ''}
 </div>
-</div>
-​<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-<div class="bg-[#111827] border border-slate-800 rounded-xl p-3">
-<p class="text-xs font-bold text-cyan-400 mb-1">টিম A:</p>
-<p class="text-xs text-slate-300">{m.teamA || '-'}</p>
-</div>
-<div class="bg-[#111827] border border-slate-800 rounded-xl p-3">
-<p class="text-xs font-bold text-cyan-400 mb-1">টিম B:</p>
-<p class="text-xs text-slate-300">{m.teamB || '-'}</p>
-</div>
-</div>
-​<div class="flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm pt-1">
-<span class="font-bold text-emerald-400">ফলাফল: {m.score}</span>
-<span class="text-amber-400 text-xs"><i class="fa-solid fa-star mr-1"></i>{m.scorers || ''}</span>
-</div>
-​${photos.length > 0 ? <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2"> ${photos.map((src, idx) =>
-<div class="relative rounded-xl overflow-hidden border border-slate-800">
-<img src="${src}" class="w-full h-44 object-cover">
-${state.isAdmin ? <button onclick="deleteMatchPhoto('${m.id}', ${idx})" class="absolute top-2 right-2 bg-rose-600 text-white w-7 h-7 rounded-lg text-xs flex items-center justify-center shadow"><i class="fa-solid fa-trash"></i></button> : ''}
-</div>
-).join("")} </div>  : ''}
-​<!-- Match Comments -->
-<div class="pt-3 border-t border-slate-800 space-y-2.5">
-<p class="text-xs font-bold text-cyan-400"><i class="fa-solid fa-comment-dots mr-1"></i> ম্যাচ নিয়ে আলোচনা (${comments.length})</p>
-<div class="space-y-2 max-h-40 overflow-y-auto">
-${comments.map(c => <div class="bg-[#111827] border border-slate-800/80 rounded-xl px-3 py-2"> <div class="flex justify-between text-[11px]"> <span class="text-emerald-400 font-bold">${c.author}</span> <span class="text-slate-500">${c.time}</span> </div> <p class="text-xs text-slate-200 mt-0.5">${c.text}</p> </div>).join("")}
-</div>
-<div class="flex gap-2">
-<input type="text" id="matchCommentInput_${m.id}" placeholder="ম্যাচ নিয়ে আপনার মতামত লিখুন..." class="flex-1 bg-[#111827] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
-<button onclick="postMatchComment('${m.id}')" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-3.5 py-2 rounded-xl text-xs">কমেন্ট</button>
-</div>
-</div>
-</div>
-`;
+`).join("")}</div>` : ''}
+<div style="border-top:1px solid var(--border-color); padding-top:10px;">
+${comments.map(cm => `<div style="font-size:12px; margin-bottom:6px;"><strong style="color:var(--emerald);">{cm.author}:</strong> ${cm.text}</div>).join("")} <div class="flex gap-2 mt-2"> <input type="text" id="matchCommentInput_${m.id}" placeholder="Comment..."> <button onclick="postMatchComment('${m.id}')" class="btn btn-cyan" style="padding:8px 14px;">Post</button> </div> </div> </div> ;
 }).join("");
 }
-​function postMatchComment(matchId) {
-if (!state.currentUser) return alert("কমেন্ট করতে হলে অনুগ্রহ করে লগইন করুন।");
-const input = document.getElementById(matchCommentInput_${matchId});
-const text = input.value.trim();
-if (!text) return;
-db.ref(${ROOT}/matches/${matchId}/comments).push({
-author: state.currentUser.name,
-text,
-time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-});
-input.value = "";
+​function postMatchComment(mid) {
+if (!state.currentUser) return alert("Login required to comment.");
+const inp = document.getElementById(matchCommentInput_${mid});
+if (!inp.value.trim()) return;
+db.ref(${ROOT}/matches/${mid}/comments).push({ author: state.currentUser.name, text: inp.value.trim(), time: new Date().toLocaleTimeString() });
+inp.value = "";
 }
-​function deleteMatchPhoto(matchId, idx) {
+​function deleteMatchPhoto(mid, idx) {
 if (!state.isAdmin) return;
-const photos = [...(state.matches[matchId]?.photos || [])];
-photos.splice(idx, 1);
-db.ref(${ROOT}/matches/${matchId}/photos).set(photos);
+const arr = [...(state.matches[mid]?.photos || [])];
+arr.splice(idx, 1);
+db.ref(${ROOT}/matches/${mid}/photos).set(arr);
 }
-​function confirmDeleteMatch(matchId) {
-openConfirmModal("ম্যাচ রেকর্ড ডিলিট করবেন?", "এই ম্যাচের সকল তথ্য ও ছবি স্থায়ীভাবে মুছে যাবে।", () => {
-db.ref(${ROOT}/matches/${matchId}).remove();
-});
+​function confirmDeleteMatch(mid) {
+openConfirmModal("Delete Match?", "This will permanently delete this match record.", () => db.ref(${ROOT}/matches/${mid}).remove());
 }
-​// Unlimited Match Moments Gallery
-async function handleMomentUpload(event) {
-if (!state.currentUser && !state.isAdmin) return alert("ছবি আপলোড করতে লগইন করুন।");
-const files = Array.from(event.target.files);
-for (const file of files) {
-const compressed = await compressImage(file, 750, 0.72);
-const newRef = db.ref(${ROOT}/moments).push();
-await newRef.set({
-id: newRef.key,
-photo: compressed,
-uploadedBy: state.currentUser ? state.currentUser.name : "Admin",
-date: new Date().toLocaleDateString("bn-BD")
-});
+​async function handleMomentUpload(e) {
+if (!state.currentUser && !state.isAdmin) return;
+for (const f of Array.from(e.target.files)) {
+const compressed = await compressImage(f, 750, 0.72);
+const ref = db.ref(${ROOT}/moments).push();
+await ref.set({ id: ref.key, photo: compressed, uploadedBy: state.currentUser ? state.currentUser.name : "Admin", date: new Date().toLocaleDateString() });
 }
-event.target.value = "";
+e.target.value = "";
 }
 ​function renderMoments() {
 const grid = document.getElementById("matchMomentsGrid");
 const list = Object.values(state.moments).reverse();
-if (list.length === 0) {
-grid.innerHTML = <p class="col-span-full text-center py-6 text-slate-500 text-xs">কোনো মোমেন্ট ছবি নেই।</p>;
-return;
+if (!list.length) { grid.innerHTML = <p style="color:var(--text-muted); font-size:12px;">No moments uploaded yet.</p>; return; }
+grid.innerHTML = list.map(m => <div class="moment-card"> <img src="${m.photo}"> <div class="flex justify-between" style="padding:6px 8px; font-size:10px; color:var(--text-muted);"> <span>${m.uploadedBy}</span><span>${m.date}</span> </div> ${state.isAdmin ?<button onclick="db.ref('${ROOT}/moments/${m.id}').remove()" class="btn btn-rose" style="position:absolute; top:6px; right:6px; padding:5px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button>: ''} </div>).join("");
 }
-grid.innerHTML = list.map(item => <div class="relative group rounded-xl overflow-hidden border border-slate-800 bg-[#0b111e]"> <img src="${item.photo}" class="w-full h-36 sm:h-44 object-cover"> <div class="p-2 flex items-center justify-between text-[10px] text-slate-400"> <span>${item.uploadedBy}</span> <span>${item.date}</span> </div> ${state.isAdmin ?
-<button onclick="deleteMoment('${item.id}')" class="absolute top-2 right-2 bg-rose-600 hover:bg-rose-700 text-white w-7 h-7 rounded-lg text-xs flex items-center justify-center shadow-lg">
-<i class="fa-solid fa-trash"></i>
-</button>
-: ''} </div>).join("");
-}
-​function deleteMoment(momentId) {
-if (!state.isAdmin) return;
-db.ref(${ROOT}/moments/${momentId}).remove();
-}
-​// Club Chat Wall
-function sendChatMessage(e) {
+​function sendChatMessage(e) {
 e.preventDefault();
-if (!state.currentUser) return alert("ভিজিটর মোডে মেসেজ পাঠানো যাবে না। লগইন করুন।");
-const input = document.getElementById("chatInput");
-const text = input.value.trim();
-if (!text) return;
-db.ref(${ROOT}/chat).push({
-sender: state.currentUser.name,
-text,
-time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-});
-input.value = "";
+if (!state.currentUser) return alert("Login required to chat.");
+const inp = document.getElementById("chatInput");
+if (!inp.value.trim()) return;
+db.ref(${ROOT}/chat).push({ sender: state.currentUser.name, text: inp.value.trim(), time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+inp.value = "";
 }
 ​function renderChat() {
 const list = document.getElementById("chatMessagesList");
 const msgs = Object.values(state.chat);
-if (msgs.length === 0) {
-list.innerHTML = <p class="text-center py-8 text-slate-500 text-xs">এখনো কোনো বার্তা নেই। আলোচনা শুরু করুন!</p>;
-return;
-}
-list.innerHTML = msgs.map(m => <div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3"> <div class="flex items-center justify-between text-[11px] mb-1"> <span class="text-emerald-400 font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle-user"></i> ${m.sender}</span> <span class="text-slate-500">${m.time}</span> </div> <p class="text-xs sm:text-sm text-slate-200">${m.text}</p> </div>).join("");
+list.innerHTML = msgs.length ? msgs.map(m => <div class="sub-box"> <div class="flex justify-between" style="font-size:11px; margin-bottom:4px;"> <strong style="color:var(--emerald);">${m.sender}</strong> <span style="color:var(--text-muted);">${m.time}</span> </div> <div style="font-size:13px;">${m.text}</div> </div>).join("") : <p style="color:var(--text-muted); font-size:12px;">No messages yet.</p>;
 list.scrollTop = list.scrollHeight;
 }
-​// Admin Panel Actions
-function updateNotice() {
+​function updateNotice() {
 if (!state.isAdmin) return;
-const val = document.getElementById("adminNoticeInput").value.trim();
-if (!val) return;
-db.ref(${ROOT}/notice).set(val);
-document.getElementById("adminNoticeInput").value = "";
-alert("নোটিশ আপডেট হয়েছে!");
+const v = document.getElementById("adminNoticeInput").value.trim();
+if (v) { db.ref(${ROOT}/notice).set(v); document.getElementById("adminNoticeInput").value = ""; alert("Notice Updated!"); }
 }
-​function handleAdminMusicUpload(event) {
+​function handleAdminMusicUpload(e) {
 if (!state.isAdmin) return;
-const file = event.target.files[0];
-if (!file) return;
-if (file.size > 4 * 1024 * 1024) {
-return alert("ফাইল সাইজ ৪ এমবি-র কম হতে হবে যাতে দ্রুত লোড হয়।");
-}
-const reader = new FileReader();
-reader.onload = async (e) => {
-await db.ref(${ROOT}/musicUrl).set(e.target.result);
-alert("নতুন ব্যাকগ্রাউন্ড মিউজিক আপলোড ও সেট হয়েছে!");
-};
-reader.readAsDataURL(file);
+const f = e.target.files[0];
+if (!f) return;
+if (f.size > 4 * 1024 * 1024) return alert("Max 4MB audio file allowed.");
+const r = new FileReader();
+r.onload = async (ev) => { await db.ref(${ROOT}/musicUrl).set(ev.target.result); alert("Music Updated!"); };
+r.readAsDataURL(f);
 }
 ​function toggleBgMusic() {
-const audio = document.getElementById("bgAudioPlayer");
-const icon = document.getElementById("musicIcon");
-if (!audio.src) return alert("অ্যাডমিন এখনো কোনো ব্যাকগ্রাউন্ড মিউজিক আপলোড করেননি।");
-if (audio.paused) {
-audio.play();
-icon.className = "fa-solid fa-pause";
-} else {
-audio.pause();
-icon.className = "fa-solid fa-music";
-}
+const a = document.getElementById("bgAudioPlayer");
+const ic = document.getElementById("musicIcon");
+if (!a.src) return alert("No background music uploaded by admin yet.");
+if (a.paused) { a.play(); ic.className = "fa-solid fa-pause"; }
+else { a.pause(); ic.className = "fa-solid fa-music"; }
 }
 ​function addNewPlayer() {
 if (!state.isAdmin) return;
 const name = document.getElementById("newPlayerName").value.trim();
 const pos = document.getElementById("newPlayerPos").value;
 const pin = document.getElementById("newPlayerPin").value.trim();
-if (!name || pin.length < 4) return alert("প্লেয়ারের নাম এবং কমপক্ষে ৪ সংখ্যার গোপন পিন দিন।");
-​const newRef = db.ref(${ROOT}/players).push();
-newRef.set({
-id: newRef.key,
-name,
-pos,
-pin,
-matches: 0,
-goals: 0,
-assists: 0,
-motm: 0,
-feePaid: false,
-bio: "Friday Football Club Member",
-photo: ""
-});
+if (!name || pin.length < 4) return alert("Enter name and at least 4-digit PIN.");
+const ref = db.ref(${ROOT}/players).push();
+ref.set({ id: ref.key, name, pos, pin, matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Friday Football Club Member", photo: "" });
 document.getElementById("newPlayerName").value = "";
 document.getElementById("newPlayerPin").value = "";
-alert(${name}-কে স্কোয়াডে যুক্ত করা হয়েছে!);
+alert("Player Added!");
 }
 ​function renderAdminPlayersList() {
-const list = document.getElementById("adminPlayersManageList");
-list.innerHTML = Object.values(state.players).map(p => <div class="py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs"> <div> <span class="font-bold text-white">${p.name}</span> <span class="text-slate-400 ml-1">(${p.pos})</span> </div> <div class="flex items-center gap-2"> <button onclick="updateStat('${p.id}', 'matches', 1)" class="bg-cyan-500/20 text-cyan-400 px-2 py-1 rounded">+M (${p.matches || 0})</button> <button onclick="updateStat('${p.id}', 'goals', 1)" class="bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded">+G (${p.goals || 0})</button> <button onclick="updateStat('${p.id}', 'assists', 1)" class="bg-amber-500/20 text-amber-400 px-2 py-1 rounded">+A (${p.assists || 0})</button> <button onclick="confirmDeletePlayer('${p.id}', '${p.name}')" class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white px-2.5 py-1 rounded transition" title="প্লেয়ার ডিলিট"> <i class="fa-solid fa-trash"></i> </button> </div> </div>).join("");
+document.getElementById("adminPlayersManageList").innerHTML = Object.values(state.players).map(p => <div class="flex justify-between items-center flex-wrap gap-2" style="padding: 10px 0; border-bottom: 1px solid var(--border-color); font-size: 13px;"> <div><strong>${p.name}</strong> <span style="color:var(--text-muted);">(${p.pos})</span></div> <div class="flex gap-2"> <button onclick="updateStat('${p.id}','matches',1)" class="btn btn-dark" style="padding:4px 8px; font-size:11px;">+M (${p.matches||0})</button> <button onclick="updateStat('${p.id}','goals',1)" class="btn btn-dark" style="padding:4px 8px; font-size:11px;">+G (${p.goals||0})</button> <button onclick="updateStat('${p.id}','assists',1)" class="btn btn-dark" style="padding:4px 8px; font-size:11px;">+A (${p.assists||0})</button> <button onclick="confirmDeletePlayer('${p.id}','${p.name}')" class="btn btn-rose" style="padding:4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button> </div> </div>).join("");
 }
-​function updateStat(pid, field, delta) {
+​function updateStat(pid, f, d) {
 if (!state.isAdmin) return;
-const current = state.players[pid]?.[field] || 0;
-db.ref(${ROOT}/players/${pid}/${field}).set(Math.max(0, current + delta));
+db.ref(${ROOT}/players/${pid}/${f}).set(Math.max(0, (state.players[pid]?.[f] || 0) + d));
 }
 ​function confirmDeletePlayer(pid, name) {
-openConfirmModal(${name}-কে ডিলিট করবেন?, "এই প্লেয়ারের সমস্ত ডাটা স্থায়ীভাবে মুছে যাবে।", () => {
+openConfirmModal(Delete ${name}?, "All stats and profile data for this player will be deleted.", () => {
 db.ref(${ROOT}/players/${pid}).remove();
 db.ref(${ROOT}/rsvp/${pid}).remove();
 });
 }
-​// Confirm Modal Helpers
-let pendingConfirmAction = null;
-function openConfirmModal(title, msg, onConfirm) {
+​let pendingConfirm = null;
+function openConfirmModal(title, msg, cb) {
 document.getElementById("confirmTitle").innerText = title;
 document.getElementById("confirmMessage").innerText = msg;
-pendingConfirmAction = onConfirm;
+pendingConfirm = cb;
 document.getElementById("confirmModal").classList.remove("hidden");
-document.getElementById("confirmModal").classList.add("flex");
 }
-​function closeConfirmModal() {
-document.getElementById("confirmModal").classList.add("hidden");
-document.getElementById("confirmModal").classList.remove("flex");
-pendingConfirmAction = null;
-}
-​document.getElementById("confirmActionBtn").addEventListener("click", () => {
-if (pendingConfirmAction) pendingConfirmAction();
-closeConfirmModal();
-});
-​// Initialize Pitch on Load
+function closeConfirmModal() { document.getElementById("confirmModal").classList.add("hidden"); pendingConfirm = null; }
+document.getElementById("confirmActionBtn").addEventListener("click", () => { if (pendingConfirm) pendingConfirm(); closeConfirmModal(); });
+​setLanguage(state.lang);
 applyTacticsFormation();
 </script>
 </body>
