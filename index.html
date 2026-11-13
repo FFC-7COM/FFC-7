@@ -47,32 +47,32 @@
     <div id="loginModal" class="fixed inset-0 z-50 bg-[#0b111e]/95 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center">
             <div class="inline-flex items-center justify-center bg-emerald-500 text-slate-950 font-bold px-3.5 py-1.5 rounded-lg text-sm mb-3">FFC</div>
-            <h1 id="t_welcomeTitle" class="text-2xl font-bold text-white mb-1">ফুটবল ক্লাবে স্বাগতম</h1>
-            <p id="t_welcomeSub" class="text-xs text-slate-400 mb-6">আপনার আইডি সিলেক্ট করুন এবং গোপন পিন দিন</p>
+            <h1 class="text-2xl font-bold text-white mb-1">ফুটবল ক্লাবে স্বাগতম</h1>
+            <p class="text-xs text-slate-400 mb-6">আপনার আইডি সিলেক্ট করুন এবং গোপন পিন দিন</p>
 
             <div class="text-left space-y-4">
                 <div>
-                    <label id="t_selectNameLabel" class="block text-xs text-slate-400 mb-1.5">আপনার নাম সিলেক্ট করুন:</label>
+                    <label class="block text-xs text-slate-400 mb-1.5">আপনার নাম সিলেক্ট করুন:</label>
                     <select id="loginPlayerSelect" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
                         <option value="">-- প্লেয়ার সিলেক্ট করুন --</option>
                     </select>
                 </div>
                 <div>
-                    <label id="t_secretPinLabel" class="block text-xs text-slate-400 mb-1.5">গোপন পিন (PIN):</label>
+                    <label class="block text-xs text-slate-400 mb-1.5">গোপন পিন (PIN):</label>
                     <input type="password" id="loginPinInput" maxlength="6" placeholder="****" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
                 </div>
-                <button onclick="handleMemberLogin()" id="t_loginBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition cursor-pointer">
+                <button onclick="handleMemberLogin()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition cursor-pointer">
                     লগইন করুন
                 </button>
             </div>
 
             <div class="my-4 flex items-center gap-3">
                 <div class="h-px bg-slate-800 flex-1"></div>
-                <span id="t_orText" class="text-xs text-slate-500">অথবা</span>
+                <span class="text-xs text-slate-500">অথবা</span>
                 <div class="h-px bg-slate-800 flex-1"></div>
             </div>
 
-            <button onclick="enterVisitorMode()" id="t_visitorBtn" class="w-full bg-[#1e293b] hover:bg-slate-700 text-slate-200 font-medium py-2.5 rounded-xl text-sm border border-slate-700 transition flex items-center justify-center gap-2 cursor-pointer">
+            <button onclick="enterVisitorMode()" class="w-full bg-[#1e293b] hover:bg-slate-700 text-slate-200 font-medium py-2.5 rounded-xl text-sm border border-slate-700 transition flex items-center justify-center gap-2 cursor-pointer">
                 <i class="fa-solid fa-eye text-xs"></i> শুধু ভিজিটর হিসেবে দেখুন
             </button>
         </div>
@@ -94,7 +94,7 @@
                     <i class="fa-solid fa-user-circle"></i> <span id="headerProfileName">প্রোফাইল</span>
                 </button>
                 <button onclick="openLoginModal()" class="flex items-center gap-1.5 bg-[#162033] hover:bg-slate-700 text-slate-200 border border-slate-700/70 px-3 py-2 rounded-xl text-xs font-medium transition">
-                    <i class="fa-solid fa-users"></i> <span id="t_navSwitchId">আইডি পরিবর্তন</span>
+                    <i class="fa-solid fa-users"></i> আইডি পরিবর্তন
                 </button>
             </div>
         </div>
@@ -102,22 +102,22 @@
         <!-- Navigation Tabs -->
         <nav class="max-w-6xl mx-auto px-4 pb-3 flex items-center gap-2 overflow-x-auto">
             <button onclick="switchTab('home')" id="tab-btn-home" class="tab-btn tab-active px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-                <i class="fa-solid fa-house"></i> <span id="t_tabHome">হোম</span>
+                <i class="fa-solid fa-house"></i> হোম
             </button>
             <button onclick="switchTab('squad')" id="tab-btn-squad" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-                <i class="fa-solid fa-trophy"></i> <span id="t_tabSquad">স্কোয়াড ও প্রোফাইল</span>
+                <i class="fa-solid fa-trophy"></i> স্কোয়াড ও প্রোফাইল
             </button>
             <button onclick="switchTab('lineup')" id="tab-btn-lineup" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-                <i class="fa-solid fa-people-group"></i> <span id="t_tabLineup">টিম লাইনআপ</span>
+                <i class="fa-solid fa-people-group"></i> টিম লাইনআপ
             </button>
             <button onclick="switchTab('tactics')" id="tab-btn-tactics" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-                <i class="fa-solid fa-chalkboard-user"></i> <span id="t_tabTactics">ট্যাকটিকস বোর্ড</span>
+                <i class="fa-solid fa-chalkboard-user"></i> ট্যাকটিকস বোর্ড
             </button>
             <button onclick="switchTab('matches')" id="tab-btn-matches" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-                <i class="fa-solid fa-calendar-days"></i> <span id="t_tabMatches">ম্যাচ ও টুর্নামেন্ট</span>
+                <i class="fa-solid fa-calendar-days"></i> ম্যাচ ও টুর্নামেন্ট
             </button>
             <button onclick="switchTab('chat')" id="tab-btn-chat" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-                <i class="fa-solid fa-comments"></i> <span id="t_tabChat">চ্যাট ওয়াল</span>
+                <i class="fa-solid fa-comments"></i> চ্যাট ওয়াল
             </button>
         </nav>
     </header>
@@ -128,7 +128,7 @@
         <!-- Notice Bar -->
         <div class="bg-[#111827] border border-slate-800 rounded-2xl p-3.5 flex items-center gap-3 shadow-sm">
             <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 shrink-0">
-                <i class="fa-solid fa-bullhorn"></i> <span id="t_noticeTag">নোটিশ</span>
+                <i class="fa-solid fa-bullhorn"></i> নোটিশ
             </span>
             <p id="clubNoticeText" class="text-xs sm:text-sm text-slate-200 font-medium">শুক্রবারের ম্যাচে সবাইকে যথাসময়ে উপস্থিত থাকার জন্য অনুরোধ করা হলো।</p>
         </div>
@@ -156,13 +156,36 @@
             </div>
         </section>
 
-        <!-- TAB 2: SQUAD -->
+        <!-- TAB 2: SQUAD & PROFILE -->
         <section id="tab-squad" class="tab-content hidden space-y-6">
             <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
                 <h2 class="text-base sm:text-lg font-bold text-emerald-400 flex items-center gap-2 mb-4">
                     <i class="fa-solid fa-users-viewfinder"></i> স্কোয়াড ও প্লেয়ার প্রোফাইল
                 </h2>
                 <div id="squadCardsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+        </section>
+
+        <!-- PROFILE DETAIL SUB-VIEW -->
+        <section id="tab-profile-detail" class="tab-content hidden space-y-6">
+            <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 sm:p-7 shadow-lg max-w-2xl mx-auto">
+                <button onclick="switchTab('squad')" class="text-xs text-slate-400 hover:text-white flex items-center gap-1.5 mb-5">
+                    <i class="fa-solid fa-arrow-left"></i> স্কোয়াডে ফিরে যান
+                </button>
+                <div class="flex items-center gap-4 border-b border-slate-800 pb-5">
+                    <div id="profileDetailAvatar" class="w-20 h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center text-xl font-bold text-emerald-400"></div>
+                    <div>
+                        <h2 id="profileDetailName" class="text-lg font-bold text-white"></h2>
+                        <span id="profileDetailPosition" class="inline-block bg-slate-800 text-cyan-400 text-xs px-2.5 py-0.5 rounded mt-1"></span>
+                        <p id="profileDetailBio" class="text-xs text-slate-300 mt-2"></p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-4 gap-2 text-center my-5">
+                    <div class="bg-[#0b111e] p-3 rounded-xl"><p class="text-[10px] text-slate-400">ম্যাচ</p><p id="profStatMatches" class="text-base font-bold text-cyan-400">0</p></div>
+                    <div class="bg-[#0b111e] p-3 rounded-xl"><p class="text-[10px] text-slate-400">গোল</p><p id="profStatGoals" class="text-base font-bold text-emerald-400">0</p></div>
+                    <div class="bg-[#0b111e] p-3 rounded-xl"><p class="text-[10px] text-slate-400">অ্যাসিস্ট</p><p id="profStatAssists" class="text-base font-bold text-amber-400">0</p></div>
+                    <div class="bg-[#0b111e] p-3 rounded-xl"><p class="text-[10px] text-slate-400">MotM</p><p id="profStatMotm" class="text-base font-bold text-purple-400">0</p></div>
+                </div>
             </div>
         </section>
 
@@ -178,7 +201,7 @@
             </div>
         </section>
 
-        <!-- TAB 4: PRO TACTICS MANAGER (Fixed Curve & Smooth Dragging) -->
+        <!-- TAB 4: PRO TACTICS MANAGER (Fixed Curve Arrow & Ball & Smooth Drag) -->
         <section id="tab-tactics" class="tab-content hidden space-y-6">
             <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-3">
@@ -249,7 +272,7 @@
 
                     <div id="tacticsTokensLayer" class="absolute inset-0"></div>
                 </div>
-                <p class="text-[11px] text-amber-400">নির্দেশনা: <strong>Curve Arrow</strong> বা <strong>Straight Arrow</strong> সিলেক্ট করে যেকোনো প্লেয়ারের ওপর মাউস/আঙুল দিয়ে টেনে অন্য জায়গায় ছেড়ে দিন—সুন্দর তীর বা বাঁকা রেখা তৈরি হয়ে যাবে!</p>
+                <p class="text-[11px] text-amber-400">নির্দেশনা: <strong>Curve Arrow</strong> বা <strong>Straight Arrow</strong> সিলেক্ট করে প্লেয়ার বা বলের ওপর থেকে টেনে অন্য জায়গায় ছেড়ে দিন—সুন্দর তীর বা বাঁকা রেখা তৈরি হয়ে যাবে!</p>
             </div>
         </section>
 
@@ -296,14 +319,14 @@
         const ROOT = "ffc_v2";
 
         const INITIAL_PLAYERS = {
-            "p1":  { id: "p1",  name: "Sakib Al hasan",       pos: "Defender",   pin: "6769", matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Member", photo: "" },
-            "p2":  { id: "p2",  name: "Abu wali siddique",    pos: "Attacker",   pin: "1024", matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Member", photo: "" },
-            "p3":  { id: "p3",  name: "Jobayer hosen",        pos: "Attacker",   pin: "2048", matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Member", photo: "" },
-            "p4":  { id: "p4",  name: "Sihamur rahman",       pos: "Attacker",   pin: "3072", matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Member", photo: "" },
-            "p8":  { id: "p8",  name: "Maqsudul Alam nirob",  pos: "Midfielder", pin: "7168", matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Member", photo: "" },
-            "p12": { id: "p12", name: "Yousuf",               pos: "Attacker",   pin: "2468", matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Member", photo: "" },
-            "p16": { id: "p16", name: "Oshan",                pos: "Defender",   pin: "6802", matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Member", photo: "" },
-            "p17": { id: "p17", name: "Tasin ebne Shahid",    pos: "Midfielder", pin: "7913", matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Member", photo: "" }
+            "p1":  { id: "p1",  name: "Sakib Al hasan",       pos: "Defender",   pin: "6769", matches: 5, goals: 2, assists: 3, motm: 1, feePaid: false, bio: "Friday Football Club Member", photo: "" },
+            "p2":  { id: "p2",  name: "Abu wali siddique",    pos: "Attacker",   pin: "1024", matches: 5, goals: 4, assists: 1, motm: 2, feePaid: false, bio: "Friday Football Club Member", photo: "" },
+            "p3":  { id: "p3",  name: "Jobayer hosen",        pos: "Attacker",   pin: "2048", matches: 4, goals: 1, assists: 2, motm: 0, feePaid: false, bio: "Friday Football Club Member", photo: "" },
+            "p4":  { id: "p4",  name: "Sihamur rahman",       pos: "Attacker",   pin: "3072", matches: 4, goals: 3, assists: 0, motm: 1, feePaid: false, bio: "Friday Football Club Member", photo: "" },
+            "p8":  { id: "p8",  name: "Maqsudul Alam nirob",  pos: "Midfielder", pin: "7168", matches: 5, goals: 1, assists: 4, motm: 1, feePaid: false, bio: "Friday Football Club Member", photo: "" },
+            "p12": { id: "p12", name: "Yousuf",               pos: "Attacker",   pin: "2468", matches: 5, goals: 5, assists: 2, motm: 2, feePaid: false, bio: "Friday Football Club Member", photo: "" },
+            "p16": { id: "p16", name: "Oshan",                pos: "Defender",   pin: "6802", matches: 5, goals: 0, assists: 1, motm: 0, feePaid: false, bio: "Friday Football Club Member", photo: "" },
+            "p17": { id: "p17", name: "Tasin ebne Shahid",    pos: "Midfielder", pin: "7913", matches: 4, goals: 1, assists: 3, motm: 0, feePaid: false, bio: "Friday Football Club Member", photo: "" }
         };
 
         let state = {
@@ -345,7 +368,7 @@
             if (!player || String(player.pin) !== pin) return alert("ভুল পিন দিয়েছেন!");
             state.currentUser = player;
             document.getElementById("loginModal").classList.add("hidden");
-            document.getElementById("userStatusBadge.innerText") = `লগইন: ${player.name}`;
+            document.getElementById("userStatusBadge").innerText = `লগইন: ${player.name}`;
             document.getElementById("userStatusBadge").className = "text-[11px] text-emerald-400 font-semibold";
             document.getElementById("myProfileHeaderBtn").classList.remove("hidden");
             document.getElementById("myProfileHeaderBtn").classList.add("flex");
@@ -358,7 +381,20 @@
         }
 
         function openLoginModal() { document.getElementById("loginModal").classList.remove("hidden"); }
-        function openMyProfile() { if (state.currentUser) alert(`প্রোফাইল: ${state.currentUser.name} (${state.currentUser.pos})`); }
+        function openMyProfile() { if (state.currentUser) openPlayerProfile(state.currentUser.id); }
+        function openPlayerProfile(pid) {
+            const p = state.players[pid];
+            if (!p) return;
+            document.getElementById("profileDetailName").innerText = p.name;
+            document.getElementById("profileDetailPosition").innerText = p.pos;
+            document.getElementById("profileDetailBio").innerText = p.bio || "Friday Football Club Member";
+            document.getElementById("profStatMatches").innerText = p.matches || 0;
+            document.getElementById("profStatGoals").innerText = p.goals || 0;
+            document.getElementById("profStatAssists").innerText = p.assists || 0;
+            document.getElementById("profStatMotm").innerText = p.motm || 0;
+            document.getElementById("profileDetailAvatar").innerHTML = p.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+            switchTab("profile-detail");
+        }
 
         function switchTab(tabName) {
             document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
@@ -374,7 +410,7 @@
             if (!tbody) return;
             const sorted = Object.values(state.players).sort((a, b) => (b.goals - a.goals) || (b.assists - a.assists));
             tbody.innerHTML = sorted.map(p => `
-                <tr class="hover:bg-slate-800/40 transition">
+                <tr onclick="openPlayerProfile('${p.id}')" class="hover:bg-slate-800/40 cursor-pointer transition">
                     <td class="py-3 px-2 font-semibold text-white">${p.name}</td>
                     <td class="py-3 px-2 text-slate-400 text-xs">${p.pos}</td>
                     <td class="py-3 px-2 text-center font-bold text-cyan-400">${p.matches || 0}</td>
@@ -388,9 +424,13 @@
             const grid = document.getElementById("squadCardsGrid");
             if (!grid) return;
             grid.innerHTML = Object.values(state.players).map(p => `
-                <div class="bg-[#0b111e] border border-slate-800 rounded-2xl p-4 space-y-3">
+                <div onclick="openPlayerProfile('${p.id}')" class="bg-[#0b111e] hover:bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer transition space-y-2">
                     <h3 class="font-bold text-white text-base">${p.name}</h3>
                     <span class="inline-block bg-slate-800 text-cyan-400 text-[11px] px-2.5 py-0.5 rounded-md">${p.pos}</span>
+                    <div class="flex gap-4 text-xs pt-2 border-t border-slate-800 text-slate-400">
+                        <span>Goals: <strong class="text-emerald-400">${p.goals || 0}</strong></span>
+                        <span>Assists: <strong class="text-amber-400">${p.assists || 0}</strong></span>
+                    </div>
                 </div>
             `).join("");
         }
@@ -406,7 +446,7 @@
         }
 
         // ==========================================
-        // PRO TACTICS MANAGER (Fixed Curve & Smooth Dragging)
+        // PRO TACTICS MANAGER (Fixed Curve & Ball & Smooth Drag)
         // ==========================================
         const INITIAL_TACTICS_TOKENS = [
             { id: "tk_gk", name: "Oshan", type: "club", origX: 10, origY: 50, x: 10, y: 50 },
@@ -414,7 +454,8 @@
             { id: "tk_cb2", name: "Nirob", type: "club", origX: 30, origY: 70, x: 30, y: 70 },
             { id: "tk_cm", name: "Sakib", type: "club", origX: 52, origY: 50, x: 52, y: 50 },
             { id: "tk_st1", name: "Wali", type: "club", origX: 75, origY: 32, x: 75, y: 32 },
-            { id: "tk_st2", name: "Yousuf", type: "club", origX: 75, origY: 68, x: 75, y: 68 }
+            { id: "tk_st2", name: "Yousuf", type: "club", origX: 75, origY: 68, x: 75, y: 68 },
+            { id: "tk_ball", name: "BALL", type: "ball", origX: 50, origY: 50, x: 50, y: 50 }
         ];
 
         let tacticsState = {
@@ -523,6 +564,15 @@
             renderTacticsArrows();
 
             layer.innerHTML = tacticsState.tokens.map(t => {
+                if (t.type === "ball") {
+                    return `
+                        <div id="tactic_el_${t.id}" data-id="${t.id}" style="left:${t.x}%; top:${t.y}%;" class="draggable-token flex flex-col items-center">
+                            <div class="w-7 h-7 rounded-full bg-white text-slate-950 flex items-center justify-center shadow-lg border border-slate-950">
+                                <i class="fa-solid fa-futbol text-xs"></i>
+                            </div>
+                        </div>
+                    `;
+                }
                 const bg = t.type === "opp" ? "bg-rose-600 text-white" : "bg-emerald-400 text-slate-950";
                 return `
                     <div id="tactic_el_${t.id}" data-id="${t.id}" style="left:${t.x}%; top:${t.y}%;" class="draggable-token flex flex-col items-center">
@@ -570,9 +620,9 @@
                         
                         tacticsState.arrows = tacticsState.arrows.filter(a => a.tokenId !== tid);
                         if (tacticsState.mode === "curve") {
-                            // Calculate proper control point for smooth curve
-                            const ctrlX = (startX + toX) / 2 + (toY - startY) * 0.35;
-                            const ctrlY = (startY + toY) / 2 - (toX - startX) * 0.35;
+                            // Perfect curve offset calculation
+                            const ctrlX = (startX + toX) / 2 - (toY - startY) * 0.4;
+                            const ctrlY = (startY + toY) / 2 + (toX - startX) * 0.4;
                             tacticsState.arrows.push({ type: "curve", tokenId: tid, fromX: startX, fromY: startY, toX, toY, ctrlX, ctrlY });
                         } else {
                             tacticsState.arrows.push({ type: "straight", tokenId: tid, fromX: startX, fromY: startY, toX, toY });
