@@ -33,8 +33,8 @@
         .pitch-circle-center { position: absolute; top: 50%; left: 50%; width: 84px; height: 84px; border: 2px solid rgba(255, 255, 255, 0.35); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; }
         .pitch-box-left { position: absolute; top: 22%; bottom: 22%; left: 0; width: 14%; border: 2px solid rgba(255, 255, 255, 0.35); border-left: none; pointer-events: none; }
         .pitch-box-right { position: absolute; top: 22%; bottom: 22%; right: 0; width: 14%; border: 2px solid rgba(255, 255, 255, 0.35); border-right: none; pointer-events: none; }
-        .draggable-token { position: absolute; transform: translate(-50%, -50%); cursor: grab; z-index: 20; transition: left 0.05s linear, top 0.05s linear; }
-        .draggable-token.animating { transition: left 1.4s ease-in-out, top 1.4s ease-in-out; }
+        .draggable-token { position: absolute; transform: translate(-50%, -50%); cursor: grab; z-index: 20; will-change: left, top; }
+        .draggable-token.animating { transition: left 1.5s ease-in-out, top 1.5s ease-in-out; }
         .draggable-token:active { cursor: grabbing; z-index: 30; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -78,7 +78,7 @@
         </div>
     </div>
 
-    <!-- Settings Modal (Language, Theme, Music, Admin Login) -->
+    <!-- Settings Modal -->
     <div id="settingsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl space-y-5">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -86,7 +86,6 @@
                 <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <!-- Language -->
             <div>
                 <label id="t_langLabel" class="block text-xs text-slate-400 mb-2">ভাষা পরিবর্তন করুন (Language):</label>
                 <div class="grid grid-cols-2 gap-2">
@@ -95,7 +94,6 @@
                 </div>
             </div>
 
-            <!-- Theme -->
             <div>
                 <label id="t_themeLabel" class="block text-xs text-slate-400 mb-2">থিম মোড (Theme):</label>
                 <button onclick="toggleTheme()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 py-2.5 rounded-xl text-xs font-medium flex items-center justify-center gap-2">
@@ -103,7 +101,6 @@
                 </button>
             </div>
 
-            <!-- Background Music Control -->
             <div>
                 <label id="t_musicLabel" class="block text-xs text-slate-400 mb-2">ব্যাকগ্রাউন্ড মিউজিক (Background Music):</label>
                 <button onclick="toggleBgMusic()" id="settingsMusicBtn" class="w-full bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/40 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2">
@@ -111,7 +108,6 @@
                 </button>
             </div>
 
-            <!-- Admin Access inside Settings -->
             <div class="pt-3 border-t border-slate-800">
                 <label id="t_adminAccessLabel" class="block text-xs text-amber-400 font-semibold mb-2"><i class="fa-solid fa-shield-halved"></i> অ্যাডমিন অ্যাক্সেস (Admin Access):</label>
                 <div id="settingsAdminLoginBox" class="flex gap-2">
@@ -271,7 +267,7 @@
             </div>
         </section>
 
-        <!-- DEDICATED PROFILE VIEW / EDIT -->
+        <!-- PROFILE DETAIL -->
         <section id="tab-profile-detail" class="tab-content hidden space-y-6">
             <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 sm:p-7 shadow-lg max-w-2xl mx-auto">
                 <button onclick="switchTab('squad')" class="text-xs text-slate-400 hover:text-white flex items-center gap-1.5 mb-5">
@@ -334,26 +330,32 @@
             </div>
         </section>
 
-        <!-- TAB 4: PRO TACTICS MANAGER -->
+        <!-- TAB 4: PRO TACTICS MANAGER (Updated with Smooth Move, Straight/Curve Arrows & Persistent Positions) -->
         <section id="tab-tactics" class="tab-content hidden space-y-6">
             <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <div>
                         <h2 id="t_tacticsTitle" class="text-base sm:text-lg font-bold text-cyan-400 flex items-center gap-2">
-                            <i class="fa-solid fa-chalkboard"></i> প্রো ট্যাকটিকস ম্যানেজার
+                            <i class="fa-solid fa-chalkboard"></i> ডব্লিউ বলার্স ট্যাকটিকস ম্যানেজার (W Ballers)
                         </h2>
-                        <p id="t_tacticsSub" class="text-xs text-slate-400">ক্লাব প্লেয়ার যোগ করুন, অ্যারো দিয়ে মুভমেন্ট আঁকুন এবং Play দিয়ে অ্যানিমেশন দেখুন</p>
+                        <p id="t_tacticsSub" class="text-xs text-slate-400">স্মুথ মুভমেন্ট, সোজা বা বাঁকা তীর (Curve Arrow) এবং অ্যানিমেশন টুল</p>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
-                        <button onclick="toggleTacticsMode('move')" id="tacticModeMoveBtn" class="bg-emerald-500 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs">
+                        <button onclick="setTacticsMode('move')" id="tacModeMove" class="bg-emerald-500 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs">
                             <i class="fa-solid fa-arrows-up-down-left-right"></i> Move
                         </button>
-                        <button onclick="toggleTacticsMode('arrow')" id="tacticModeArrowBtn" class="bg-slate-800 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs">
-                            <i class="fa-solid fa-arrow-trend-up"></i> Arrow / Roadmap
+                        <button onclick="setTacticsMode('straight')" id="tacModeStraight" class="bg-slate-800 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs">
+                            <i class="fa-solid fa-arrow-right"></i> Straight Arrow
+                        </button>
+                        <button onclick="setTacticsMode('curve')" id="tacModeCurve" class="bg-slate-800 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs">
+                            <i class="fa-solid fa-route"></i> Curve Arrow
                         </button>
                         <button onclick="playTacticsAnimation()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-3.5 py-1.5 rounded-xl text-xs flex items-center gap-1">
-                            <i class="fa-solid fa-play"></i> Play Animation
+                            <i class="fa-solid fa-play"></i> Play Anim
+                        </button>
+                        <button onclick="resetTacticsPositions()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 px-3 py-1.5 rounded-xl text-xs">
+                            Reset Positions
                         </button>
                         <button onclick="clearTacticsArrows()" class="bg-slate-800 hover:bg-slate-700 text-rose-400 px-3 py-1.5 rounded-xl text-xs">
                             Clear Arrows
@@ -361,7 +363,7 @@
                     </div>
                 </div>
 
-                <!-- Add Club Player & Opponent Controls -->
+                <!-- Controls -->
                 <div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3">
                     <div class="flex items-center gap-2 flex-1 min-w-[220px]">
                         <select id="tacticsClubPlayerSelect" class="flex-1 bg-[#111827] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
@@ -374,16 +376,16 @@
 
                     <div class="flex items-center gap-2">
                         <button onclick="toggleOpponentTeam()" id="toggleOpponentBtn" class="bg-rose-600/20 text-rose-400 border border-rose-500/40 px-3 py-2 rounded-xl text-xs font-bold">
-                            <i class="fa-solid fa-users-slash"></i> Opponent Team: OFF
+                            <i class="fa-solid fa-users-slash"></i> Opposition Marker: OFF
                         </button>
-                        <button onclick="resetTacticsPitch()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-xl text-xs">
-                            Reset Pitch
+                        <button onclick="fullResetTactics()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-xl text-xs">
+                            Full Reset
                         </button>
                     </div>
                 </div>
 
-                <!-- Interactive Pitch with SVG Arrow Layer -->
-                <div id="tacticsPitch" class="pitch-bg w-full h-[360px] sm:h-[450px] rounded-2xl overflow-hidden shadow-inner">
+                <!-- Interactive Pitch with SVG Path Layer -->
+                <div id="tacticsPitch" class="pitch-bg w-full h-[380px] sm:h-[460px] rounded-2xl overflow-hidden shadow-inner relative">
                     <div class="pitch-line-center"></div>
                     <div class="pitch-circle-center"></div>
                     <div class="pitch-box-left"></div>
@@ -394,12 +396,15 @@
                             <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
                                 <polygon points="0 0, 8 3, 0 6" fill="#fbbf24" />
                             </marker>
+                            <marker id="arrowhead-pass" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                                <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+                            </marker>
                         </defs>
                     </svg>
 
                     <div id="tacticsTokensLayer" class="absolute inset-0"></div>
                 </div>
-                <p id="tacticsModeHint" class="text-[11px] text-amber-400">টিপস: "Arrow / Roadmap" মোড চালু করে যেকোনো প্লেয়ার থেকে টেনে অন্য জায়গায় ছাড়লে অ্যারো তৈরি হবে, এরপর "Play Animation" চাপুন!</p>
+                <p class="text-[11px] text-amber-400">নির্দেশনা: প্লেয়ার ড্র্যাগ করার সময় এখন আর কোনো ল্যাগ করবে না। Arrow মোড সিলেক্ট করে প্লেয়ার থেকে টেনে তীর চিহ্ন (Straight বা Curve) আঁকুন এবং Play Anim চাপুন!</p>
             </div>
         </section>
 
@@ -430,7 +435,7 @@
                 <div id="tournamentsContainer" class="space-y-5"></div>
             </div>
 
-            <!-- Unlimited Match Moments Gallery -->
+            <!-- Moments -->
             <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
                     <div>
@@ -477,7 +482,6 @@
                 </button>
             </div>
 
-            <!-- Notice & Music Upload -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-3">
                     <h3 class="text-sm font-bold text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-bullhorn"></i> ক্লাব নোটিশ আপডেট</h3>
@@ -487,7 +491,7 @@
 
                 <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-3">
                     <h3 class="text-sm font-bold text-purple-400 flex items-center gap-2"><i class="fa-solid fa-music"></i> ব্যাকগ্রাউন্ড মিউজিক আপলোড</h3>
-                    <p class="text-[11px] text-slate-400">নতুন MP3 আপলোড করলে পুরোনো মিউজিক বদলে যাবে (সেটিংস থেকে চালু করা যাবে)।</p>
+                    <p class="text-[11px] text-slate-400">নতুন MP3 আপলোড করলে পুরোনো মিউজিক বদলে যাবে।</p>
                     <label class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer transition">
                         <i class="fa-solid fa-upload"></i> নতুন অডিও ফাইল সিলেক্ট করুন
                         <input type="file" accept="audio/*" onchange="handleAdminMusicUpload(event)" class="hidden">
@@ -495,7 +499,6 @@
                 </div>
             </div>
 
-            <!-- Add New Player & Squad Management -->
             <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-4">
                 <h3 class="text-sm font-bold text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-user-plus"></i> নতুন প্লেয়ার যোগ ও স্কোয়াড ম্যানেজমেন্ট</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
@@ -512,12 +515,11 @@
                 <div id="adminPlayersManageList" class="divide-y divide-slate-800 max-h-72 overflow-y-auto pt-2"></div>
             </div>
 
-            <!-- Interactive Field Lineup Builder -->
             <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <div>
                         <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2"><i class="fa-solid fa-sitemap"></i> ভিজ্যুয়াল পিচ লাইনআপ বিল্ডার (২–৭ টিম)</h3>
-                        <p class="text-[11px] text-slate-400">প্লেয়ার সিলেক্ট করে নিচের মাঠে ড্র্যাগ করে GK, ডিফেন্স বা যেকোনো জায়গায় বসান এবং ক্যাপ্টেন (C) দিন</p>
+                        <p class="text-[11px] text-slate-400">প্লেয়ার সিলেক্ট করে নিচের মাঠে ড্র্যাগ করে পজিশনে বসান এবং ক্যাপ্টেন (C) দিন</p>
                     </div>
                     <div class="flex gap-2">
                         <select id="adminTeamCount" onchange="initAdminLineupDrafts()" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
@@ -543,7 +545,6 @@
                 </button>
             </div>
 
-            <!-- Add Regular Match History -->
             <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-3">
                 <h3 class="text-sm font-bold text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-futbol"></i> সাধারণ ম্যাচ রেকর্ড যোগ করুন (সর্বোচ্চ ২টি ছবি)</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -560,7 +561,6 @@
                 <button onclick="addMatchRecord()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs">সাধারণ ম্যাচ সেভ করুন</button>
             </div>
 
-            <!-- Add Multi-Match Tournament History -->
             <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-4">
                 <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2"><i class="fa-solid fa-trophy"></i> টুর্নামেন্ট ম্যাচ হিস্ট্রি যোগ করুন (৩–৭ টিম ও একাধিক ম্যাচ)</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -578,7 +578,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">টুর্নামেন্টের ছবি আপলোড করুন (একাধিক ছবি সিলেক্ট করা যাবে):</label>
+                    <label class="block text-xs text-slate-400 mb-1">টুর্নামেন্টের ছবি আপলোড করুন:</label>
                     <input type="file" id="tournPhotosInput" accept="image/*" multiple class="text-xs text-slate-300">
                 </div>
 
@@ -666,8 +666,8 @@
                 t_newPinLabel: "নতুন গোপন পিন (খালি রাখলে আগেরটাই থাকবে):",
                 t_saveProfileBtn: "প্রোফাইল সেভ করুন",
                 t_lineupTitle: "অফিশিয়াল টিম লাইনআপ (Field View)",
-                t_tacticsTitle: "প্রো ট্যাকটিকস ম্যানেজার",
-                t_tacticsSub: "ক্লাব প্লেয়ার যোগ করুন, অ্যারো দিয়ে মুভমেন্ট আঁকুন এবং Play দিয়ে অ্যানিমেশন দেখুন",
+                t_tacticsTitle: "ডব্লিউ বলার্স ট্যাকটিকস ম্যানেজার",
+                t_tacticsSub: "স্মুথ মুভমেন্ট, সোজা ও কার্ভড অ্যারো এবং অ্যানিমেশন টুল",
                 t_momentsTitle: "ম্যাচ মোমেন্টস গ্যালারি (Unlimited)",
                 t_momentsSub: "মাঠের সেরা মুহূর্তগুলোর ছবি",
                 t_uploadMomentBtn: "ছবি আপলোড",
@@ -711,8 +711,8 @@
                 t_newPinLabel: "New Secret PIN (leave blank to keep current):",
                 t_saveProfileBtn: "Save Profile",
                 t_lineupTitle: "Official Team Lineup (Field View)",
-                t_tacticsTitle: "Pro Tactics Manager",
-                t_tacticsSub: "Add club players, draw movement arrows, and click Play Animation",
+                t_tacticsTitle: "W Ballers Tactics Manager",
+                t_tacticsSub: "Smooth movement, straight & curved arrows, and animation tools",
                 t_momentsTitle: "Match Moments Gallery (Unlimited)",
                 t_momentsSub: "Best moments from the pitch",
                 t_uploadMomentBtn: "Upload Photos",
@@ -1059,12 +1059,7 @@
                 for (let s = 0; s < form; s++) {
                     slots.push({ playerId: "", x: coords[s].x, y: coords[s].y });
                 }
-                adminLineupDrafts.push({
-                    name: `Team ${letters[i]}`,
-                    captainId: "",
-                    subId: "",
-                    slots
-                });
+                adminLineupDrafts.push({ name: `Team ${letters[i]}`, captainId: "", subId: "", slots });
             }
             renderAdminVisualLineupGrid();
         }
@@ -1085,7 +1080,6 @@
                             </select>
                         </div>
                     </div>
-
                     <div class="grid grid-cols-2 gap-1.5">
                         ${team.slots.map((slot, sIdx) => `
                             <select onchange="adminLineupDrafts[${tIdx}].slots[${sIdx}].playerId=this.value; renderAdminVisualPitchTokens(${tIdx})" class="bg-[#111827] border border-slate-700 rounded-lg px-2 py-1.5 text-[11px] text-white">
@@ -1094,7 +1088,6 @@
                             </select>
                         `).join("")}
                     </div>
-
                     <div id="adminLineupPitch_${tIdx}" class="pitch-bg w-full h-56 rounded-xl overflow-hidden">
                         <div class="pitch-line-center"></div>
                         <div class="pitch-circle-center" style="width:54px; height:54px;"></div>
@@ -1102,7 +1095,6 @@
                         <div class="pitch-box-right"></div>
                         <div id="adminLineupTokens_${tIdx}" class="absolute inset-0"></div>
                     </div>
-
                     <div class="flex items-center gap-2">
                         <span class="text-[11px] text-cyan-400 font-bold">Sub:</span>
                         <select onchange="adminLineupDrafts[${tIdx}].subId=this.value" class="flex-1 bg-[#111827] border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white">${opts}</select>
@@ -1142,8 +1134,7 @@
                     const r = pitch.getBoundingClientRect();
                     const x = Math.max(6, Math.min(94, ((cx - r.left) / r.width) * 100));
                     const y = Math.max(10, Math.min(90, ((cy - r.top) / r.height) * 100));
-                    el.style.left = `${x}%`;
-                    el.style.top = `${y}%`;
+                    el.style.left = `${x}%`; el.style.top = `${y}%`;
                     adminLineupDrafts[tIdx].slots[sIdx].x = x;
                     adminLineupDrafts[tIdx].slots[sIdx].y = y;
                 };
@@ -1167,16 +1158,10 @@
                     playerId: s.playerId,
                     name: s.playerId && state.players[s.playerId] ? state.players[s.playerId].name : "Empty",
                     photo: s.playerId && state.players[s.playerId] ? state.players[s.playerId].photo : "",
-                    x: s.x,
-                    y: s.y
+                    x: s.x, y: s.y
                 }))
             }));
-
-            db.ref(`${ROOT}/lineups`).set({
-                formation: `${form}v${form}`,
-                updatedAt: new Date().toLocaleDateString("bn-BD"),
-                teams
-            });
+            db.ref(`${ROOT}/lineups`).set({ formation: `${form}v${form}`, updatedAt: new Date().toLocaleDateString("bn-BD"), teams });
             alert("ভিজ্যুয়াল টিম লাইনআপ পাবলিশ হয়েছে!");
             switchTab("lineup");
         }
@@ -1195,13 +1180,11 @@
                         <h3 class="font-bold text-emerald-400 text-base">${team.name}</h3>
                         <span class="text-[11px] bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full">${state.lineups.formation}</span>
                     </div>
-
                     <div class="pitch-bg w-full h-64 sm:h-72 rounded-xl overflow-hidden shadow-inner">
                         <div class="pitch-line-center"></div>
                         <div class="pitch-circle-center" style="width:60px; height:60px;"></div>
                         <div class="pitch-box-left"></div>
                         <div class="pitch-box-right"></div>
-
                         ${(team.slots || []).map((s, idx) => {
                             const isCap = s.playerId && s.playerId === team.captainId;
                             const shortName = s.name !== "Empty" ? s.name.split(" ")[0] : `Pos ${idx+1}`;
@@ -1216,64 +1199,70 @@
                             `;
                         }).join("")}
                     </div>
-
-                    ${team.sub ? `
-                        <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
-                            <span class="text-amber-400 font-semibold"><i class="fa-solid fa-repeat mr-1"></i> সাবস্টিটিউট (Sub):</span>
-                            <span class="text-slate-200 font-bold">${team.sub}</span>
-                        </div>
-                    ` : ''}
+                    ${team.sub ? `<div class="pt-2 border-t border-slate-800 flex items-center justify-between text-xs"><span class="text-amber-400 font-semibold"><i class="fa-solid fa-repeat mr-1"></i> সাব (Sub):</span><span class="text-slate-200 font-bold">${team.sub}</span></div>` : ''}
                 </div>
             `).join("");
         }
 
+        // ==========================================
+        // PRO TACTICS MANAGER LOGIC (Optimized & Smooth)
+        // ==========================================
+        const INITIAL_TACTICS_TOKENS = [
+            { id: "tk_gk", name: "Oshan", type: "club", photo: "", origX: 10, origY: 50, x: 10, y: 50 },
+            { id: "tk_cb1", name: "Taseen", type: "club", photo: "", origX: 30, origY: 30, x: 30, y: 30 },
+            { id: "tk_cb2", name: "Nirob", type: "club", photo: "", origX: 30, origY: 70, x: 30, y: 70 },
+            { id: "tk_cm", name: "Sakib", type: "club", photo: "", origX: 52, origY: 50, x: 52, y: 50 },
+            { id: "tk_st1", name: "Wali", type: "club", photo: "", origX: 75, origY: 32, x: 75, y: 32 },
+            { id: "tk_st2", name: "Yousuf", type: "club", photo: "", origX: 75, origY: 68, x: 75, y: 68 },
+            { id: "tk_ball", name: "BALL", type: "ball", photo: "", origX: 50, origY: 50, x: 50, y: 50 }
+        ];
+
         let tacticsState = {
-            mode: "move",
+            mode: "move", // 'move', 'straight', 'curve'
             showOpponents: false,
-            tokens: [
-                { id: "tk_gk", name: "GK", type: "club", photo: "", x: 10, y: 50 },
-                { id: "tk_ball", name: "BALL", type: "ball", photo: "", x: 50, y: 50 }
-            ],
-            arrows: []
+            tokens: JSON.parse(JSON.stringify(INITIAL_TACTICS_TOKENS)),
+            arrows: [], // { type: 'straight'|'curve', tokenId, fromX, fromY, toX, toY, ctrlX, ctrlY }
+            drawingArrow: null
         };
 
-        function toggleTacticsMode(mode) {
+        function setTacticsMode(mode) {
             tacticsState.mode = mode;
-            document.getElementById("tacticModeMoveBtn").className = mode === "move" ? "bg-emerald-500 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs" : "bg-slate-800 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs";
-            document.getElementById("tacticModeArrowBtn").className = mode === "arrow" ? "bg-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs" : "bg-slate-800 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs";
+            document.getElementById("tacModeMove").className = mode === "move" ? "bg-emerald-500 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs" : "bg-slate-800 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs";
+            document.getElementById("tacModeStraight").className = mode === "straight" ? "bg-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs" : "bg-slate-800 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs";
+            document.getElementById("tacModeCurve").className = mode === "curve" ? "bg-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs" : "bg-slate-800 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs";
         }
 
         function addClubPlayerToTactics() {
-            if (!state.currentUser && !state.isAdmin) return alert("ভিজিটর মোডে ট্যাকটিকস বোর্ড ব্যবহার করা যাবে না।");
             const pid = document.getElementById("tacticsClubPlayerSelect").value;
-            if (!pid || !state.players[pid]) return alert("প্রথমে একজন ক্লাব প্লেয়ার সিলেক্ট করুন।");
+            if (!pid || !state.players[pid]) return alert("প্রথমে প্লেয়ার সিলেক্ট করুন।");
             const p = state.players[pid];
             if (tacticsState.tokens.some(t => t.id === pid)) return alert("এই প্লেয়ার ইতিমধ্যে মাঠে আছেন!");
 
-            tacticsState.tokens.push({
+            const newTok = {
                 id: pid,
                 name: p.name.split(" ")[0],
                 type: "club",
                 photo: p.photo || "",
-                x: 30 + (tacticsState.tokens.length * 5) % 40,
-                y: 25 + (tacticsState.tokens.length * 12) % 50
-            });
+                origX: 45, origY: 50,
+                x: 45, y: 50
+            };
+            tacticsState.tokens.push(newTok);
             renderTacticsBoard();
         }
 
         function toggleOpponentTeam() {
-            if (!state.currentUser && !state.isAdmin) return alert("ভিজিটর মোডে ট্যাকটিকস বোর্ড ব্যবহার করা যাবে না।");
             tacticsState.showOpponents = !tacticsState.showOpponents;
             const btn = document.getElementById("toggleOpponentBtn");
             if (tacticsState.showOpponents) {
-                btn.innerHTML = `<i class="fa-solid fa-users"></i> Opponent Team: ON`;
+                btn.innerHTML = `<i class="fa-solid fa-users"></i> Opposition Marker: ON`;
                 btn.className = "bg-rose-600 text-white px-3 py-2 rounded-xl text-xs font-bold";
-                const oppCoords = [{x:88,y:50},{x:72,y:28},{x:72,y:72},{x:58,y:50},{x:42,y:35},{x:42,y:65}];
-                oppCoords.forEach((c, idx) => {
-                    tacticsState.tokens.push({ id: `opp_${idx}`, name: `OPP ${idx+1}`, type: "opp", photo: "", x: c.x, y: c.y });
-                });
+                const opps = [
+                    { id: "opp_1", name: "OPP 1", type: "opp", origX: 82, origY: 50, x: 82, y: 50 },
+                    { id: "opp_2", name: "OPP 2", type: "opp", origX: 65, origY: 30, x: 65, y: 30 }
+                ];
+                opps.forEach(o => tacticsState.tokens.push(o));
             } else {
-                btn.innerHTML = `<i class="fa-solid fa-users-slash"></i> Opponent Team: OFF`;
+                btn.innerHTML = `<i class="fa-solid fa-users-slash"></i> Opposition Marker: OFF`;
                 btn.className = "bg-rose-600/20 text-rose-400 border border-rose-500/40 px-3 py-2 rounded-xl text-xs font-bold";
                 tacticsState.tokens = tacticsState.tokens.filter(t => t.type !== "opp");
             }
@@ -1285,14 +1274,19 @@
             renderTacticsArrows();
         }
 
-        function resetTacticsPitch() {
+        function resetTacticsPositions() {
+            tacticsState.tokens.forEach(t => {
+                t.x = t.origX;
+                t.y = t.origY;
+            });
+            renderTacticsBoard();
+        }
+
+        function fullResetTactics() {
             tacticsState.showOpponents = false;
             tacticsState.arrows = [];
-            tacticsState.tokens = [
-                { id: "tk_gk", name: "GK", type: "club", photo: "", x: 10, y: 50 },
-                { id: "tk_ball", name: "BALL", type: "ball", photo: "", x: 50, y: 50 }
-            ];
-            document.getElementById("toggleOpponentBtn").innerHTML = `<i class="fa-solid fa-users-slash"></i> Opponent Team: OFF`;
+            tacticsState.tokens = JSON.parse(JSON.stringify(INITIAL_TACTICS_TOKENS));
+            document.getElementById("toggleOpponentBtn").innerHTML = `<i class="fa-solid fa-users-slash"></i> Opposition Marker: OFF`;
             document.getElementById("toggleOpponentBtn").className = "bg-rose-600/20 text-rose-400 border border-rose-500/40 px-3 py-2 rounded-xl text-xs font-bold";
             renderTacticsBoard();
         }
@@ -1300,26 +1294,30 @@
         function renderTacticsArrows() {
             const svg = document.getElementById("tacticsArrowsSvg");
             const defs = svg.querySelector("defs").outerHTML;
-            const lines = tacticsState.arrows.map(a => `
-                <line x1="${a.fromX}%" y1="${a.fromY}%" x2="${a.toX}%" y2="${a.toY}%" stroke="#fbbf24" stroke-width="3" stroke-dasharray="6,4" marker-end="url(#arrowhead)" />
-            `).join("");
-            svg.innerHTML = defs + lines;
+            const paths = tacticsState.arrows.map(a => {
+                if (a.type === "curve") {
+                    return `<path d="M ${a.fromX} ${a.fromY} Q ${a.ctrlX} ${a.ctrlY} ${a.toX} ${a.toY}" fill="none" stroke="#fbbf24" stroke-width="3.5" stroke-dasharray="6,4" marker-end="url(#arrowhead)" />`;
+                } else {
+                    return `<line x1="${a.fromX}%" y1="${a.fromY}%" x2="${a.toX}%" y2="${a.toY}%" stroke="#fbbf24" stroke-width="3.5" stroke-dasharray="6,4" marker-end="url(#arrowhead)" />`;
+                }
+            }).join("");
+            svg.innerHTML = defs + paths;
         }
 
         function playTacticsAnimation() {
-            if (tacticsState.arrows.length === 0) return alert("প্রথমে Arrow / Roadmap মোডে প্লেয়ার থেকে তীর চিহ্ন আঁকুন!");
+            if (tacticsState.arrows.length === 0) return alert("প্রথমে Arrow মোড দিয়ে তীর চিহ্ন আঁকুন!");
             tacticsState.arrows.forEach(arrow => {
-                const tokenObj = tacticsState.tokens.find(t => t.id === arrow.tokenId);
                 const el = document.getElementById(`tactic_el_${arrow.tokenId}`);
-                if (tokenObj && el) {
+                if (el) {
                     el.classList.add("animating");
                     el.style.left = `${arrow.toX}%`;
                     el.style.top = `${arrow.toY}%`;
                     setTimeout(() => {
                         el.classList.remove("animating");
-                        el.style.left = `${arrow.fromX}%`;
-                        el.style.top = `${arrow.fromY}%`;
-                    }, 1800);
+                        // Update logical token position so they stay where animated!
+                        const tokenObj = tacticsState.tokens.find(t => t.id === arrow.tokenId);
+                        if (tokenObj) { tokenObj.x = arrow.toX; tokenObj.y = arrow.toY; }
+                    }, 1500);
                 }
             });
         }
@@ -1339,66 +1337,71 @@
                         </div>
                     `;
                 }
-                const bgClass = t.type === "opp" ? "bg-rose-600 text-white" : "bg-emerald-400 text-slate-950";
+                const bg = t.type === "opp" ? "bg-rose-600 text-white" : "bg-emerald-400 text-slate-950";
                 return `
                     <div id="tactic_el_${t.id}" data-id="${t.id}" style="left:${t.x}%; top:${t.y}%;" class="draggable-token flex flex-col items-center">
-                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full ${bgClass} font-extrabold text-xs flex items-center justify-center border-2 border-white shadow-lg overflow-hidden">
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full ${bg} font-extrabold text-xs flex items-center justify-center border-2 border-white shadow-lg overflow-hidden">
                             ${t.photo ? `<img src="${t.photo}" class="w-full h-full object-cover">` : t.name.substring(0, 3).toUpperCase()}
                         </div>
-                        <span class="bg-slate-950/85 text-white text-[10px] px-1.5 rounded mt-0.5 whitespace-nowrap">${t.name}</span>
+                        <span class="bg-slate-950/85 text-white text-[10px] px-1.5 rounded mt-0.5 whitespace-nowrap shadow">${t.name}</span>
                     </div>
                 `;
             }).join("");
 
+            // Smooth dragging and arrow drawing without lag
             layer.querySelectorAll(".draggable-token").forEach(el => {
                 const tid = el.dataset.id;
-                let active = false;
+                let isDragging = false;
                 let startX = 0, startY = 0;
 
-                const startHandler = (cx, cy) => {
-                    if (!state.currentUser && !state.isAdmin) {
-                        alert("ভিজিটর মোডে ট্যাকটিকস বোর্ড ব্যবহার করা যাবে না। অনুগ্রহ করে লগইন করুন।");
-                        return;
-                    }
-                    active = true;
+                const onStart = (cx, cy) => {
+                    isDragging = true;
                     const tObj = tacticsState.tokens.find(x => x.id === tid);
-                    startX = tObj.x;
-                    startY = tObj.y;
+                    startX = tObj.x; startY = tObj.y;
                 };
 
-                const moveHandler = (cx, cy) => {
-                    if (!active) return;
+                const onMove = (cx, cy) => {
+                    if (!isDragging) return;
                     const r = pitch.getBoundingClientRect();
                     const x = Math.max(4, Math.min(96, ((cx - r.left) / r.width) * 100));
                     const y = Math.max(6, Math.min(94, ((cy - r.top) / r.height) * 100));
+
                     if (tacticsState.mode === "move") {
+                        // Direct DOM manipulation for zero lag
                         el.style.left = `${x}%`;
                         el.style.top = `${y}%`;
-                        const tObj = tacticsState.tokens.find(x => x.id === tid);
+                        const tObj = tacticsState.tokens.find(t => t.id === tid);
                         if (tObj) { tObj.x = x; tObj.y = y; }
                     }
                 };
 
-                const endHandler = (cx, cy) => {
-                    if (!active) return;
-                    active = false;
-                    if (tacticsState.mode === "arrow" && cx && cy) {
+                const onEnd = (cx, cy) => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    if ((tacticsState.mode === "straight" || tacticsState.mode === "curve") && cx && cy) {
                         const r = pitch.getBoundingClientRect();
                         const toX = Math.max(4, Math.min(96, ((cx - r.left) / r.width) * 100));
                         const toY = Math.max(6, Math.min(94, ((cy - r.top) / r.height) * 100));
+                        
                         tacticsState.arrows = tacticsState.arrows.filter(a => a.tokenId !== tid);
-                        tacticsState.arrows.push({ tokenId: tid, fromX: startX, fromY: startY, toX, toY });
+                        if (tacticsState.mode === "curve") {
+                            const ctrlX = (startX + toX) / 2 + (toY - startY) * 0.25;
+                            const ctrlY = (startY + toY) / 2 - (toX - startX) * 0.25;
+                            tacticsState.arrows.push({ type: "curve", tokenId: tid, fromX: startX, fromY: startY, toX, toY, ctrlX, ctrlY });
+                        } else {
+                            tacticsState.arrows.push({ type: "straight", tokenId: tid, fromX: startX, fromY: startY, toX, toY });
+                        }
                         renderTacticsArrows();
                     }
                 };
 
-                el.addEventListener("mousedown", e => startHandler(e.clientX, e.clientY));
-                window.addEventListener("mousemove", e => moveHandler(e.clientX, e.clientY));
-                window.addEventListener("mouseup", e => endHandler(e.clientX, e.clientY));
+                el.addEventListener("mousedown", e => onStart(e.clientX, e.clientY));
+                window.addEventListener("mousemove", e => onMove(e.clientX, e.clientY));
+                window.addEventListener("mouseup", e => onEnd(e.clientX, e.clientY));
 
-                el.addEventListener("touchstart", e => startHandler(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
-                window.addEventListener("touchmove", e => { if (active) moveHandler(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
-                window.addEventListener("touchend", e => { if (active && e.changedTouches[0]) endHandler(e.changedTouches[0].clientX, e.changedTouches[0].clientY); });
+                el.addEventListener("touchstart", e => onStart(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+                window.addEventListener("touchmove", e => { if (isDragging) onMove(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+                window.addEventListener("touchend", e => { if (isDragging && e.changedTouches[0]) onEnd(e.changedTouches[0].clientX, e.changedTouches[0].clientY); });
             });
         }
 
@@ -1413,7 +1416,7 @@
             if (!state.isAdmin) return;
             const title = document.getElementById("matchTitleInput").value.trim();
             const score = document.getElementById("matchScoreInput").value.trim();
-            if (!title || !score) return alert("ম্যাচের শিরোনাম ও ফলাফল দিন।");
+            if (!title || !score) return alert("শিরোনাম ও ফলাফল দিন।");
             const files = Array.from(document.getElementById("matchPhotosInput").files).slice(0, 2);
             const photos = [];
             for (const f of files) photos.push(await compressImage(f, 700, 0.7));
@@ -1427,67 +1430,29 @@
                 scorers: document.getElementById("matchScorersInput").value.trim(),
                 photos
             });
-            alert("সাধারণ ম্যাচ রেকর্ড সেভ হয়েছে!");
+            alert("ম্যাচ রেকর্ড সেভ হয়েছে!");
         }
 
         function renderMatchHistory() {
             const c = document.getElementById("matchHistoryContainer");
             const list = Object.values(state.matches).reverse();
-            if (!list.length) { c.innerHTML = `<p class="text-center py-8 text-slate-500 text-sm">কোনো সাধারণ ম্যাচ রেকর্ড নেই।</p>`; return; }
-            c.innerHTML = list.map(m => {
-                const comments = m.comments ? Object.values(m.comments) : [];
-                return `
-                    <div class="bg-[#0b111e] border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4">
-                        <div class="flex items-center justify-between">
-                            <span class="text-amber-400 font-bold text-sm sm:text-base flex items-center gap-2"><i class="fa-solid fa-futbol"></i> ${m.title}</span>
-                            <div class="flex items-center gap-3">
-                                <span class="text-xs text-slate-400">${m.date}</span>
-                                ${state.isAdmin ? `<button onclick="confirmDeleteMatch('${m.id}')" class="text-rose-400 text-xs"><i class="fa-solid fa-trash"></i></button>` : ''}
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                            <div class="bg-[#111827] border border-slate-800 rounded-xl p-3"><strong class="text-cyan-400">Team A:</strong> ${m.teamA || '-'}</div>
-                            <div class="bg-[#111827] border border-slate-800 rounded-xl p-3"><strong class="text-cyan-400">Team B:</strong> ${m.teamB || '-'}</div>
-                        </div>
-                        <div class="flex justify-between text-xs sm:text-sm">
-                            <span class="font-bold text-emerald-400">Score: ${m.score}</span>
-                            <span class="text-amber-400 text-xs">${m.scorers || ''}</span>
-                        </div>
-                        ${(m.photos || []).length ? `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${m.photos.map((src, idx) => `
-                            <div class="relative rounded-xl overflow-hidden border border-slate-800">
-                                <img src="${src}" class="w-full h-44 object-cover">
-                                ${state.isAdmin ? `<button onclick="deleteMatchPhoto('${m.id}', ${idx})" class="absolute top-2 right-2 bg-rose-600 text-white w-7 h-7 rounded-lg text-xs flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>` : ''}
-                            </div>
-                        `).join("")}</div>` : ''}
-                        <div class="pt-3 border-t border-slate-800 space-y-2">
-                            ${comments.map(cm => `<div class="bg-[#111827] rounded-xl px-3 py-2 text-xs"><strong class="text-emerald-400">${cm.author}:</strong> ${cm.text}</div>`).join("")}
-                            <div class="flex gap-2">
-                                <input type="text" id="matchCommentInput_${m.id}" placeholder="Comment..." class="flex-1 bg-[#111827] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-                                <button onclick="postMatchComment('${m.id}')" class="bg-cyan-500 text-slate-950 font-bold px-3.5 py-2 rounded-xl text-xs">Post</button>
-                            </div>
-                        </div>
+            if (!list.length) { c.innerHTML = `<p class="text-center py-8 text-slate-500 text-sm">কোনো ম্যাচ রেকর্ড নেই।</p>`; return; }
+            c.innerHTML = list.map(m => `
+                <div class="bg-[#0b111e] border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-amber-400 font-bold text-sm sm:text-base"><i class="fa-solid fa-futbol mr-2"></i>${m.title}</span>
+                        <span class="text-xs text-slate-400">${m.date}</span>
                     </div>
-                `;
-            }).join("");
-        }
-
-        function postMatchComment(mid) {
-            if (!state.currentUser) return alert("কমেন্ট করতে লগইন করুন।");
-            const inp = document.getElementById(`matchCommentInput_${mid}`);
-            if (!inp.value.trim()) return;
-            db.ref(`${ROOT}/matches/${mid}/comments`).push({ author: state.currentUser.name, text: inp.value.trim(), time: new Date().toLocaleTimeString() });
-            inp.value = "";
-        }
-
-        function deleteMatchPhoto(mid, idx) {
-            if (!state.isAdmin) return;
-            const arr = [...(state.matches[mid]?.photos || [])];
-            arr.splice(idx, 1);
-            db.ref(`${ROOT}/matches/${mid}/photos`).set(arr);
-        }
-
-        function confirmDeleteMatch(mid) {
-            openConfirmModal("ম্যাচ ডিলিট করবেন?", "এই ম্যাচের সকল তথ্য মুছে যাবে।", () => db.ref(`${ROOT}/matches/${mid}`).remove());
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div class="bg-[#111827] p-3 rounded-xl"><strong class="text-cyan-400">Team A:</strong> ${m.teamA || '-'}</div>
+                        <div class="bg-[#111827] p-3 rounded-xl"><strong class="text-cyan-400">Team B:</strong> ${m.teamB || '-'}</div>
+                    </div>
+                    <div class="flex justify-between text-xs sm:text-sm font-bold text-emerald-400">
+                        <span>Score: ${m.score}</span>
+                        <span class="text-amber-400 text-xs">${m.scorers || ''}</span>
+                    </div>
+                </div>
+            `).join("");
         }
 
         function addTournamentMatchRow() {
@@ -1495,10 +1460,10 @@
             const row = document.createElement("div");
             row.className = "tourn-match-row grid grid-cols-1 sm:grid-cols-4 gap-2 bg-[#0b111e] p-2.5 rounded-xl border border-slate-800";
             row.innerHTML = `
-                <input type="text" placeholder="ম্যাচ নাম (যেমন: Match 1 / Final)" class="tm-stage bg-[#111827] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                <input type="text" placeholder="ম্যাচ নাম (Final)" class="tm-stage bg-[#111827] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
                 <input type="text" placeholder="টিম ১ বনাম টিম ২" class="tm-teams bg-[#111827] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
-                <input type="text" placeholder="স্কোর (যেমন: 3-2)" class="tm-score bg-[#111827] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
-                <input type="text" placeholder="গোলদাতা / নোট" class="tm-scorers bg-[#111827] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                <input type="text" placeholder="স্কোর (3-2)" class="tm-score bg-[#111827] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                <input type="text" placeholder="গোলদাতা" class="tm-scorers bg-[#111827] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
             `;
             container.appendChild(row);
         }
@@ -1506,8 +1471,7 @@
         async function saveTournamentRecord() {
             if (!state.isAdmin) return;
             const name = document.getElementById("tournNameInput").value.trim();
-            if (!name) return alert("টুর্নামেন্টের নাম লিখুন।");
-
+            if (!name) return alert("টুর্নামেন্টের নাম দিন।");
             const matchList = [];
             document.querySelectorAll(".tourn-match-row").forEach(row => {
                 const stage = row.querySelector(".tm-stage").value.trim();
@@ -1516,72 +1480,43 @@
                 const scorers = row.querySelector(".tm-scorers").value.trim();
                 if (teams || score) matchList.push({ stage, teams, score, scorers });
             });
-
             const files = Array.from(document.getElementById("tournPhotosInput").files);
             const photos = [];
             for (const f of files) photos.push(await compressImage(f, 700, 0.7));
 
             const ref = db.ref(`${ROOT}/tournaments`).push();
             await ref.set({
-                id: ref.key,
-                name,
+                id: ref.key, name,
                 date: document.getElementById("tournDateInput").value || new Date().toISOString().split("T")[0],
                 champion: document.getElementById("tournChampionInput").value.trim(),
-                matches: matchList,
-                photos
+                matches: matchList, photos
             });
-
-            document.getElementById("tournNameInput").value = "";
-            document.getElementById("tournChampionInput").value = "";
-            document.getElementById("tournMatchRowsContainer").innerHTML = "";
-            addTournamentMatchRow();
-            document.getElementById("tournPhotosInput").value = "";
-            alert("টুর্নামেন্ট হিস্ট্রি পাবলিশ হয়েছে!");
+            alert("টুর্নামেন্ট হিস্ট্রি সেভ হয়েছে!");
         }
 
         function renderTournaments() {
             const container = document.getElementById("tournamentsContainer");
             const list = Object.values(state.tournaments).reverse();
-            if (!list.length) {
-                container.innerHTML = `<p class="text-center py-8 text-slate-500 text-sm">এখনো কোনো টুর্নামেন্ট হিস্ট্রি যোগ করা হয়নি।</p>`;
-                return;
-            }
+            if (!list.length) { container.innerHTML = `<p class="text-center py-8 text-slate-500 text-sm">কোনো টুর্নামেন্ট নেই।</p>`; return; }
             container.innerHTML = list.map(t => `
                 <div class="bg-[#0b111e] border border-amber-500/30 rounded-2xl p-4 sm:p-5 space-y-4">
-                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                        <div>
-                            <h3 class="text-base sm:text-lg font-bold text-amber-400 flex items-center gap-2"><i class="fa-solid fa-trophy"></i> ${t.name}</h3>
-                            <p class="text-xs text-slate-400">তারিখ: ${t.date} ${t.champion ? `| <span class="text-emerald-400 font-bold">চ্যাম্পিয়ন: ${t.champion}</span>` : ''}</p>
-                        </div>
-                        ${state.isAdmin ? `<button onclick="openConfirmModal('টুর্নামেন্ট ডিলিট?', 'পুরো টুর্নামেন্ট মুছে যাবে।', () => db.ref('${ROOT}/tournaments/${t.id}').remove())" class="bg-rose-600/20 text-rose-400 px-3 py-1 rounded-lg text-xs"><i class="fa-solid fa-trash"></i></button>` : ''}
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <h3 class="font-bold text-amber-400 text-base"><i class="fa-solid fa-trophy mr-2"></i>${t.name}</h3>
+                        <span class="text-xs text-emerald-400 font-bold">চ্যাম্পিয়ন: ${t.champion || 'N/A'}</span>
                     </div>
-
                     <div class="space-y-2">
                         ${(t.matches || []).map((m, idx) => `
-                            <div class="bg-[#111827] border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
-                                <div>
-                                    <span class="text-cyan-400 font-bold mr-2">${m.stage || `Match ${idx+1}`}:</span>
-                                    <span class="text-white font-semibold">${m.teams}</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <span class="bg-emerald-500/15 text-emerald-400 px-2.5 py-0.5 rounded font-bold">${m.score}</span>
-                                    <span class="text-slate-400">${m.scorers || ''}</span>
-                                </div>
+                            <div class="bg-[#111827] p-3 rounded-xl flex justify-between items-center text-xs">
+                                <div><strong class="text-cyan-400">${m.stage || `Match ${idx+1}`}:</strong> ${m.teams}</div>
+                                <span class="bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded font-bold">${m.score}</span>
                             </div>
                         `).join("")}
                     </div>
-
-                    ${(t.photos || []).length ? `
-                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
-                            ${t.photos.map(src => `<img src="${src}" class="w-full h-36 sm:h-44 object-cover rounded-xl border border-slate-800">`).join("")}
-                        </div>
-                    ` : ''}
                 </div>
             `).join("");
         }
 
         async function handleMomentUpload(e) {
-            if (!state.currentUser && !state.isAdmin) return;
             for (const f of Array.from(e.target.files)) {
                 const compressed = await compressImage(f, 750, 0.72);
                 const ref = db.ref(`${ROOT}/moments`).push();
@@ -1593,19 +1528,18 @@
         function renderMoments() {
             const grid = document.getElementById("matchMomentsGrid");
             const list = Object.values(state.moments).reverse();
-            if (!list.length) { grid.innerHTML = `<p class="col-span-full text-center py-6 text-slate-500 text-xs">কোনো মোমেন্ট ছবি নেই।</p>`; return; }
+            if (!list.length) { grid.innerHTML = `<p class="col-span-full text-center py-6 text-slate-500 text-xs">কোনো ছবি নেই।</p>`; return; }
             grid.innerHTML = list.map(m => `
-                <div class="relative group rounded-xl overflow-hidden border border-slate-800 bg-[#0b111e]">
-                    <img src="${m.photo}" class="w-full h-36 sm:h-44 object-cover">
-                    <div class="p-2 flex items-center justify-between text-[10px] text-slate-400"><span>${m.uploadedBy}</span><span>${m.date}</span></div>
-                    ${state.isAdmin ? `<button onclick="db.ref('${ROOT}/moments/${m.id}').remove()" class="absolute top-2 right-2 bg-rose-600 text-white w-7 h-7 rounded-lg text-xs flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>` : ''}
+                <div class="relative rounded-xl overflow-hidden border border-slate-800 bg-[#0b111e]">
+                    <img src="${m.photo}" class="w-full h-36 object-cover">
+                    <div class="p-2 text-[10px] text-slate-400 flex justify-between"><span>${m.uploadedBy}</span><span>${m.date}</span></div>
                 </div>
             `).join("");
         }
 
         function sendChatMessage(e) {
             e.preventDefault();
-            if (!state.currentUser) return alert("মেসেজ পাঠাতে লগইন করুন।");
+            if (!state.currentUser) return alert("লগইন করুন।");
             const inp = document.getElementById("chatInput");
             if (!inp.value.trim()) return;
             db.ref(`${ROOT}/chat`).push({ sender: state.currentUser.name, text: inp.value.trim(), time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
@@ -1617,29 +1551,23 @@
             const msgs = Object.values(state.chat);
             list.innerHTML = msgs.length ? msgs.map(m => `
                 <div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3">
-                    <div class="flex items-center justify-between text-[11px] mb-1">
-                        <span class="text-emerald-400 font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle-user"></i> ${m.sender}</span>
-                        <span class="text-slate-500">${m.time}</span>
-                    </div>
-                    <p class="text-xs sm:text-sm text-slate-200">${m.text}</p>
+                    <div class="flex justify-between text-[11px] mb-1"><span class="text-emerald-400 font-bold">${m.sender}</span><span class="text-slate-500">${m.time}</span></div>
+                    <p class="text-xs text-slate-200">${m.text}</p>
                 </div>
             `).join("") : `<p class="text-center py-8 text-slate-500 text-xs">কোনো বার্তা নেই।</p>`;
             list.scrollTop = list.scrollHeight;
         }
 
         function updateNotice() {
-            if (!state.isAdmin) return;
             const v = document.getElementById("adminNoticeInput").value.trim();
             if (v) { db.ref(`${ROOT}/notice`).set(v); document.getElementById("adminNoticeInput").value = ""; alert("নোটিশ আপডেট হয়েছে!"); }
         }
 
         function handleAdminMusicUpload(e) {
-            if (!state.isAdmin) return;
             const f = e.target.files[0];
             if (!f) return;
-            if (f.size > 4 * 1024 * 1024) return alert("অডিও ফাইল ৪ এমবি-র কম হতে হবে।");
             const r = new FileReader();
-            r.onload = async (ev) => { await db.ref(`${ROOT}/musicUrl`).set(ev.target.result); alert("নতুন মিউজিক আপলোড হয়েছে!"); };
+            r.onload = async (ev) => { await db.ref(`${ROOT}/musicUrl`).set(ev.target.result); alert("মিউজিক আপলোড হয়েছে!"); };
             r.readAsDataURL(f);
         }
 
@@ -1647,55 +1575,40 @@
             const a = document.getElementById("bgAudioPlayer");
             const ic = document.getElementById("musicIcon");
             const txt = document.getElementById("musicBtnText");
-            if (!a.src) return alert("অ্যাডমিন এখনো কোনো মিউজিক আপলোড করেননি।");
-            if (a.paused) {
-                a.play();
-                ic.className = "fa-solid fa-pause";
-                txt.innerText = state.lang === "bn" ? "মিউজিক বন্ধ করুন" : "Pause Music";
-            } else {
-                a.pause();
-                ic.className = "fa-solid fa-play";
-                txt.innerText = state.lang === "bn" ? "মিউজিক চালু করুন" : "Play Music";
-            }
+            if (!a.src) return alert("কোনো মিউজিক নেই।");
+            if (a.paused) { a.play(); ic.className = "fa-solid fa-pause"; txt.innerText = "Pause Music"; }
+            else { a.pause(); ic.className = "fa-solid fa-play"; txt.innerText = "Play Music"; }
         }
 
         function addNewPlayer() {
-            if (!state.isAdmin) return;
             const name = document.getElementById("newPlayerName").value.trim();
             const pos = document.getElementById("newPlayerPos").value;
             const pin = document.getElementById("newPlayerPin").value.trim();
-            if (!name || pin.length < 4) return alert("নাম ও কমপক্ষে ৪ সংখ্যার পিন দিন।");
+            if (!name || pin.length < 4) return alert("নাম ও পিন দিন।");
             const ref = db.ref(`${ROOT}/players`).push();
-            ref.set({ id: ref.key, name, pos, pin, matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Friday Football Club Member", photo: "" });
-            document.getElementById("newPlayerName").value = "";
-            document.getElementById("newPlayerPin").value = "";
-            alert("প্লেয়ার অ্যাড হয়েছে!");
+            ref.set({ id: ref.key, name, pos, pin, matches: 0, goals: 0, assists: 0, motm: 0, feePaid: false, bio: "Member", photo: "" });
+            document.getElementById("newPlayerName").value = ""; document.getElementById("newPlayerPin").value = "";
+            alert("প্লেয়ার যোগ হয়েছে!");
         }
 
         function renderAdminPlayersList() {
             document.getElementById("adminPlayersManageList").innerHTML = Object.values(state.players).map(p => `
-                <div class="py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
-                    <div><span class="font-bold text-white">${p.name}</span> <span class="text-slate-400 ml-1">(${p.pos})</span></div>
-                    <div class="flex items-center gap-2">
-                        <button onclick="updateStat('${p.id}','matches',1)" class="bg-cyan-500/20 text-cyan-400 px-2 py-1 rounded">+M (${p.matches||0})</button>
-                        <button onclick="updateStat('${p.id}','goals',1)" class="bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded">+G (${p.goals||0})</button>
-                        <button onclick="updateStat('${p.id}','assists',1)" class="bg-amber-500/20 text-amber-400 px-2 py-1 rounded">+A (${p.assists||0})</button>
-                        <button onclick="confirmDeletePlayer('${p.id}','${p.name}')" class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white px-2.5 py-1 rounded transition"><i class="fa-solid fa-trash"></i></button>
+                <div class="py-2.5 flex justify-between items-center text-xs">
+                    <span class="font-bold text-white">${p.name} (${p.pos})</span>
+                    <div class="flex gap-2">
+                        <button onclick="updateStat('${p.id}','goals',1)" class="bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded">+G</button>
+                        <button onclick="confirmDeletePlayer('${p.id}','${p.name}')" class="bg-rose-600/20 text-rose-400 px-2 py-1 rounded"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             `).join("");
         }
 
         function updateStat(pid, f, d) {
-            if (!state.isAdmin) return;
             db.ref(`${ROOT}/players/${pid}/${f}`).set(Math.max(0, (state.players[pid]?.[f] || 0) + d));
         }
 
         function confirmDeletePlayer(pid, name) {
-            openConfirmModal(`${name}-কে ডিলিট করবেন?`, "এই প্লেয়ারের সমস্ত ডাটা স্থায়ীভাবে মুছে যাবে।", () => {
-                db.ref(`${ROOT}/players/${pid}`).remove();
-                db.ref(`${ROOT}/rsvp/${pid}`).remove();
-            });
+            openConfirmModal(`ডিলিট ${name}?`, "সব মুছে যাবে।", () => db.ref(`${ROOT}/players/${pid}`).remove());
         }
 
         let pendingConfirm = null;
