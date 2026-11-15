@@ -89,7 +89,7 @@
 
     <!-- Settings Modal (Language, Theme, Music, Admin Login) -->
     <div id="settingsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
-        <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl space-y-5">
+        <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 id="t_settingsTitle" class="text-base font-bold text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-gear"></i> সেটিংস (Settings)</h3>
                 <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
@@ -128,6 +128,12 @@
                     <button id="animBtn_normal" onclick="setAnimSpeed('normal')" class="py-2 rounded-xl text-xs">স্বাভাবিক</button>
                     <button id="animBtn_fast" onclick="setAnimSpeed('fast')" class="py-2 rounded-xl text-xs">দ্রুত</button>
                 </div>
+            </div>
+
+            <!-- Admin Contact -->
+            <div>
+                <label class="block text-xs text-slate-400 mb-2"><i class="fa-solid fa-address-book"></i> অ্যাডমিনের সাথে যোগাযোগ (Contact):</label>
+                <div id="settingsContact" class="flex flex-wrap gap-2"></div>
             </div>
 
             <!-- Admin Access inside Settings -->
@@ -239,12 +245,6 @@
                 </div>
             </div>
 
-            <!-- Awards -->
-            <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
-                <h2 class="text-sm sm:text-base font-bold text-amber-400 flex items-center gap-2 mb-3"><i class="fa-solid fa-medal"></i> ক্লাব অ্যাওয়ার্ডস</h2>
-                <div id="awardsGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div>
-            </div>
-
             <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
                 <h2 id="t_leaderboardTitle" class="text-base sm:text-lg font-bold text-amber-400 flex items-center gap-2 mb-4">
                     <i class="fa-solid fa-trophy"></i> লাইভ লিডারবোর্ড
@@ -293,18 +293,6 @@
                 <div id="feeTrackerGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
             </div>
 
-            <!-- Auto Team Maker -->
-            <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
-                <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
-                    <h2 class="text-sm sm:text-base font-bold text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-people-arrows"></i> অটো টিম মেকার</h2>
-                    <div class="flex gap-2">
-                        <button onclick="makeTeams()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs"><i class="fa-solid fa-shuffle"></i> টিম বানান</button>
-                        <button onclick="copyTeams()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl text-xs"><i class="fa-solid fa-copy"></i> কপি</button>
-                    </div>
-                </div>
-                <p class="text-xs text-slate-400 mb-3">যারা "খেলব" দিয়েছে তাদের গোল, অ্যাসিস্ট ও পজিশন দেখে দুই টিম সমান শক্তিতে ভাগ হবে।</p>
-                <div id="teamMakerOut" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-            </div>
         </section>
 
         <!-- TAB 2: SQUAD & PROFILE -->
@@ -330,47 +318,10 @@
 
         <!-- DEDICATED PROFILE VIEW / EDIT -->
         <section id="tab-profile-detail" class="tab-content hidden space-y-6">
-            <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 sm:p-7 shadow-lg max-w-2xl mx-auto">
-                <button onclick="switchTab('squad')" class="text-xs text-slate-400 hover:text-white flex items-center gap-1.5 mb-5">
-                    <i class="fa-solid fa-arrow-left"></i> <span id="t_backToSquad">স্কোয়াডে ফিরে যান</span>
-                </button>
-
-                <div class="flex flex-col sm:flex-row items-center gap-5 border-b border-slate-800 pb-6">
-                    <div class="relative">
-                        <div id="profileDetailAvatar" class="w-24 h-24 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center text-2xl font-bold text-emerald-400 overflow-hidden"></div>
-                        <label id="profilePhotoUploadLabel" class="hidden absolute bottom-0 right-0 w-8 h-8 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-full items-center justify-center cursor-pointer shadow-lg">
-                            <i class="fa-solid fa-camera text-xs"></i>
-                            <input type="file" id="profilePhotoInput" accept="image/*" onchange="handleProfilePhotoUpload(event)" class="hidden">
-                        </label>
-                    </div>
-                    <div class="text-center sm:text-left flex-1">
-                        <h2 id="profileDetailName" class="text-xl font-bold text-white"></h2>
-                        <span id="profileDetailPosition" class="inline-block bg-slate-800 text-cyan-400 text-xs px-3 py-1 rounded-lg mt-1 font-medium"></span>
-                        <p id="profileDetailBio" class="text-xs sm:text-sm text-slate-300 mt-3 bg-[#0b111e] p-3 rounded-xl border border-slate-800/80"></p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-4 gap-2 sm:gap-4 my-6 text-center">
-                    <div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3"><p class="text-[11px] text-slate-400">ম্যাচ</p><p id="profStatMatches" class="text-lg font-bold text-cyan-400">0</p></div>
-                    <div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3"><p class="text-[11px] text-slate-400">গোল</p><p id="profStatGoals" class="text-lg font-bold text-emerald-400">0</p></div>
-                    <div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3"><p class="text-[11px] text-slate-400">অ্যাসিস্ট</p><p id="profStatAssists" class="text-lg font-bold text-amber-400">0</p></div>
-                    <div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3"><p class="text-[11px] text-slate-400">MotM</p><p id="profStatMotm" class="text-lg font-bold text-purple-400">0</p></div>
-                </div>
-
-                <div id="selfEditProfileBox" class="hidden space-y-4 pt-4 border-t border-slate-800">
-                    <h3 id="t_editProfileTitle" class="text-sm font-bold text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-pen-to-square"></i> নিজের প্রোফাইল এডিট করুন</h3>
-                    <div>
-                        <label id="t_bioLabel" class="block text-xs text-slate-400 mb-1">নিজের সম্পর্কে বায়ো (Bio):</label>
-                        <textarea id="editBioInput" rows="2" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500"></textarea>
-                    </div>
-                    <div>
-                        <label id="t_newPinLabel" class="block text-xs text-slate-400 mb-1">নতুন গোপন পিন (খালি রাখলে আগেরটাই থাকবে):</label>
-                        <input type="password" id="editPinInput" maxlength="6" placeholder="****" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <button onclick="saveOwnProfile()" id="t_saveProfileBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition">
-                        প্রোফাইল সেভ করুন
-                    </button>
-                </div>
+            <div class="max-w-4xl mx-auto space-y-5">
+                <button onclick="switchTab('squad')" class="text-xs text-slate-400 hover:text-white flex items-center gap-1.5"><i class="fa-solid fa-arrow-left"></i> <span id="t_backToSquad">স্কোয়াডে ফিরে যান</span></button>
+                <div id="profileDetailRoot" class="space-y-5"></div>
+                <div id="selfEditProfileBox" class="hidden"></div>
             </div>
         </section>
 
@@ -448,7 +399,7 @@
                         <button onclick="applyFormation('2-3-1')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl text-xs">2-3-1</button>
                         <button onclick="applyFormation('4-3-3')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl text-xs">4-3-3</button>
                     </div>
-                    <div class="flex flex-wrap items-center gap-2">
+                    <div id="tacSaveRow" class="flex flex-wrap items-center gap-2">
                         <input id="tacSaveName" type="text" maxlength="30" placeholder="ট্যাকটিক্সের নাম (যেমন: কাউন্টার অ্যাটাক)" class="flex-1 min-w-[180px] bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
                         <button onclick="saveTactic()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-2 rounded-xl text-xs"><i class="fa-solid fa-floppy-disk"></i> সেভ করুন</button>
                     </div>
@@ -587,6 +538,8 @@
                     </label>
                 </div>
             </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5"><div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-3"><h3 class="text-sm font-bold text-rose-400 flex items-center gap-2"><i class="fa-solid fa-key"></i> অ্যাডমিন পাসওয়ার্ড বদলান</h3><input type="password" id="adminOldPin" placeholder="বর্তমান পাসওয়ার্ড" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="password" id="adminNewPin" placeholder="নতুন পাসওয়ার্ড (কমপক্ষে ৪ অক্ষর)" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="password" id="adminNewPin2" placeholder="নতুন পাসওয়ার্ড আবার লিখুন" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><button onclick="changeAdminPin()" class="w-full bg-rose-500 hover:bg-rose-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs">পাসওয়ার্ড বদলান</button></div><div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-3"><h3 class="text-sm font-bold text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-address-book"></i> সেটিংসের যোগাযোগ তথ্য</h3><p class="text-[11px] text-slate-400">এগুলো সেটিংসে সবাই দেখতে পাবে। খালি রাখলে দেখাবে না।</p><div class="grid grid-cols-2 gap-2"><input type="text" id="ct_email" placeholder="Gmail / Email" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="text" id="ct_phone" placeholder="ফোন নম্বর" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="text" id="ct_whatsapp" placeholder="WhatsApp নম্বর" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="text" id="ct_facebook" placeholder="Facebook লিংক" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="text" id="ct_instagram" placeholder="Instagram লিংক" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="text" id="ct_youtube" placeholder="YouTube লিংক" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="text" id="ct_telegram" placeholder="Telegram লিংক" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"></div><input type="text" id="ct_note" placeholder="ছোট নোট (যেমন: কল করার সময়)" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><button onclick="saveContact()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs">যোগাযোগ তথ্য সেভ করুন</button></div></div><div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-3"><h3 class="text-sm font-bold text-fuchsia-400 flex items-center gap-2"><i class="fa-solid fa-crown"></i> বিশেষ ব্যাজ / সম্মান প্রদান</h3><p class="text-[11px] text-slate-400">স্ট্যাটস দিয়ে পাওয়া যায় না এমন বিশেষ সম্মান সদস্যদের দিন। এগুলো প্রোফাইলের গ্যালারিতে Special হিসেবে দেখাবে।</p><div class="grid grid-cols-1 sm:grid-cols-4 gap-2"><select id="spPlayer" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"></select><select id="spBadge" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><option value="captain">Captain</option><option value="founder">Club Founder</option><option value="fairplay">Fair Play</option><option value="teammate">Best Teammate</option><option value="legend">Club Legend</option><option value="honor">Honorary Member</option><option value="mvp">Season MVP</option><option value="fire">On Fire</option><option value="custom">নিজের ব্যাজ বানান...</option></select><input id="spCustom" placeholder="কাস্টম ব্যাজের নাম" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><button onclick="grantSpecial()" class="bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-bold rounded-xl text-xs py-2">প্রদান করুন</button></div><div id="spList" class="flex flex-wrap gap-2"></div></div>
 
             <!-- Add New Player & Squad Management -->
             <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-4">
@@ -977,9 +930,9 @@
             renderTournaments();
         }
 
-        function verifyAdminPin() {
+        async function verifyAdminPin() {
             const pin = document.getElementById("adminPinInput").value.trim();
-            if (pin === ADMIN_PIN) {
+            if (await xAdminOk(pin)) {
                 state.isAdmin = true;
                 document.getElementById("adminPinInput").value = "";
                 document.getElementById("settingsAdminLoginBox").classList.add("hidden");
@@ -1083,35 +1036,7 @@
         }
 
         function openMyProfile() { if (state.currentUser) openPlayerProfile(state.currentUser.id); }
-        function openPlayerProfile(pid) { state.viewingProfileId = pid; renderProfileDetail(pid); switchTab("profile-detail"); }
 
-        function renderProfileDetail(pid) {
-            const p = state.players[pid];
-            if (!p) return;
-            document.getElementById("profileDetailName").innerText = p.name;
-            document.getElementById("profileDetailPosition").innerText = p.pos;
-            document.getElementById("profileDetailBio").innerText = p.bio || "Friday Football Club Member";
-            document.getElementById("profStatMatches").innerText = p.matches || 0;
-            document.getElementById("profStatGoals").innerText = p.goals || 0;
-            document.getElementById("profStatAssists").innerText = p.assists || 0;
-            document.getElementById("profStatMotm").innerText = p.motm || 0;
-
-            const av = document.getElementById("profileDetailAvatar");
-            av.innerHTML = p.photo ? `<img src="${p.photo}" class="w-full h-full object-cover">` : p.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
-
-            const isOwner = state.currentUser && state.currentUser.id === pid;
-            const editBox = document.getElementById("selfEditProfileBox");
-            const photoLbl = document.getElementById("profilePhotoUploadLabel");
-            if (isOwner) {
-                editBox.classList.remove("hidden");
-                photoLbl.classList.remove("hidden"); photoLbl.classList.add("flex");
-                document.getElementById("editBioInput").value = p.bio || "";
-                document.getElementById("editPinInput").value = "";
-            } else {
-                editBox.classList.add("hidden");
-                photoLbl.classList.add("hidden"); photoLbl.classList.remove("flex");
-            }
-        }
 
         async function handleProfilePhotoUpload(event) {
             const file = event.target.files[0];
@@ -1121,14 +1046,6 @@
             alert(state.lang === "bn" ? "প্রোফাইল ছবি আপডেট হয়েছে!" : "Profile photo updated!");
         }
 
-        async function saveOwnProfile() {
-            if (!state.currentUser || state.viewingProfileId !== state.currentUser.id) return;
-            const updates = { bio: document.getElementById("editBioInput").value.trim() };
-            const newPin = document.getElementById("editPinInput").value.trim();
-            if (newPin.length >= 4) updates.pin = newPin;
-            await db.ref(`${ROOT}/players/${state.currentUser.id}`).update(updates);
-            alert(state.lang === "bn" ? "প্রোফাইল সেভ হয়েছে!" : "Profile saved!");
-        }
 
         let adminLineupDrafts = [];
 
@@ -1862,17 +1779,16 @@
         }
 
         function renderAdminPlayersList() {
+            const g = (pid, f, l, c) => `<span class="inline-flex rounded overflow-hidden"><button onclick="updateStat('${pid}','${f}',-1)" class="bg-slate-800 text-slate-300 px-1.5 py-1 hover:bg-slate-700">−</button><button onclick="updateStat('${pid}','${f}',1)" class="${c} px-2 py-1">+${l} (${(state.players[pid][f] || 0)})</button></span>`;
             document.getElementById("adminPlayersManageList").innerHTML = Object.values(state.players).map(p => `
                 <div class="py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
-                    <div><span class="font-bold text-white">${p.name}</span> <span class="text-slate-400 ml-1">(${p.pos})</span></div>
-                    <div class="flex items-center gap-2">
-                        <button onclick="updateStat('${p.id}','matches',1)" class="bg-cyan-500/20 text-cyan-400 px-2 py-1 rounded">+M (${p.matches||0})</button>
-                        <button onclick="updateStat('${p.id}','goals',1)" class="bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded">+G (${p.goals||0})</button>
-                        <button onclick="updateStat('${p.id}','assists',1)" class="bg-amber-500/20 text-amber-400 px-2 py-1 rounded">+A (${p.assists||0})</button>
-                        <button onclick="confirmDeletePlayer('${p.id}','${p.name}')" class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white px-2.5 py-1 rounded transition"><i class="fa-solid fa-trash"></i></button>
+                    <div><span class="font-bold text-white">${xEsc(p.name)}</span> <span class="text-slate-400 ml-1">(${xEsc(p.pos)})</span></div>
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        ${g(p.id, "matches", "M", "bg-cyan-500/20 text-cyan-400")}${g(p.id, "goals", "G", "bg-emerald-500/20 text-emerald-400")}${g(p.id, "assists", "A", "bg-amber-500/20 text-amber-400")}${g(p.id, "motm", "MOTM", "bg-purple-500/20 text-purple-300")}
+                        <button onclick="confirmDeletePlayer('${p.id}','${xEsc(p.name).replace(/'/g, "")}')" class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white px-2.5 py-1 rounded transition"><i class="fa-solid fa-trash"></i></button>
                     </div>
-                </div>
-            `).join("");
+                </div>`).join("");
+            if (typeof renderAdminAwards === "function") renderAdminAwards();
         }
 
         function updateStat(pid, f, d) {
@@ -1900,7 +1816,7 @@
 
         setLanguage(state.lang);
 
-        // ===== New features: match info, awards, team maker, formations, saved tactics -----
+        // ===== New features: match info, awards, team maker, formations, saved tactics =====
         const xEsc = v => String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
         let xNextMatch = null, xTeams = null;
 
@@ -1938,52 +1854,6 @@
         db.ref(`${ROOT}/nextMatch`).on("value", snap => { xNextMatch = snap.val(); renderNextMatchInfo(); });
         setInterval(renderCountdown, 1000);
 
-        function renderAwards() {
-            const g = document.getElementById("awardsGrid"); if (!g) return;
-            const L = Object.values(state.players || {});
-            const best = f => { const top = L.slice().sort((a, b) => (b[f] || 0) - (a[f] || 0))[0]; return top && (top[f] || 0) > 0 ? top : null; };
-            const items = [
-                ["গোল্ডেন বুট", "goals", "fa-futbol", "text-emerald-400", "গোল"],
-                ["প্লেমেকার", "assists", "fa-handshake-angle", "text-amber-400", "অ্যাসিস্ট"],
-                ["আয়রন ম্যান", "matches", "fa-shield", "text-cyan-400", "ম্যাচ"],
-                ["MOTM কিং", "motm", "fa-star", "text-fuchsia-400", "বার"]
-            ];
-            g.innerHTML = items.map(([t, f, ic, col, u]) => {
-                const p = best(f);
-                return `<div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3 text-center">
-                    <i class="fa-solid ${ic} ${col} text-lg"></i>
-                    <div class="text-[11px] text-slate-400 mt-1">${t}</div>
-                    ${p ? `<div class="flex justify-center my-1.5">${getAvatarHTML(p, "w-9 h-9 text-xs")}</div><div class="text-xs font-bold text-white truncate">${xEsc(p.name)}</div><div class="text-[11px] ${col} font-bold">${p[f]} ${u}</div>` : `<div class="text-xs text-slate-500 py-3">এখনো কেউ নেই</div>`}
-                </div>`;
-            }).join("");
-        }
-        { const _rl = renderLeaderboard; renderLeaderboard = function () { _rl(); renderAwards(); }; }
-
-        function makeTeams() {
-            const ids = Object.keys(state.rsvp || {}).filter(id => state.rsvp[id] && state.rsvp[id].playing && state.players[id]);
-            if (ids.length < 2) return alert("টিম বানাতে অন্তত ২ জনের \"খেলব\" দেওয়া দরকার।");
-            const sc = p => (p.goals || 0) * 2 + (p.assists || 0) * 1.5 + (p.motm || 0) * 3 + (p.matches || 0) * 0.3 + Math.random() * 0.8;
-            const pl = ids.map(id => ({ p: state.players[id], s: sc(state.players[id]) })).sort((a, b) => b.s - a.s);
-            const T = [{ n: "টিম A", m: [], s: 0 }, { n: "টিম B", m: [], s: 0 }];
-            const gks = pl.filter(x => x.p.pos === "Goalkeeper");
-            gks.forEach((x, i) => { T[i % 2].m.push(x); T[i % 2].s += x.s; });
-            pl.filter(x => x.p.pos !== "Goalkeeper").forEach(x => {
-                const t = (T[0].m.length > T[1].m.length || (T[0].m.length === T[1].m.length && T[0].s > T[1].s)) ? T[1] : T[0];
-                t.m.push(x); t.s += x.s;
-            });
-            xTeams = T;
-            document.getElementById("teamMakerOut").innerHTML = T.map((t, i) => `
-                <div class="bg-[#0b111e] border ${i ? "border-rose-500/40" : "border-emerald-500/40"} rounded-xl p-3">
-                    <div class="flex justify-between items-center mb-2"><b class="${i ? "text-rose-400" : "text-emerald-400"} text-sm">${t.n}</b><span class="text-[11px] text-slate-400">${t.m.length} জন</span></div>
-                    ${t.m.map(x => `<div class="flex items-center gap-2 py-1">${getAvatarHTML(x.p, "w-7 h-7 text-[10px]")}<span class="text-xs text-white flex-1">${xEsc(x.p.name)}</span><span class="text-[10px] text-slate-400">${xEsc(x.p.pos)}</span></div>`).join("")}
-                </div>`).join("");
-        }
-        function copyTeams() {
-            if (!xTeams) return alert("আগে \"টিম বানান\" চাপুন।");
-            const txt = "⚽ FFC টিম\n\n" + xTeams.map(t => t.n + ":\n" + t.m.map((x, i) => `${i + 1}. ${x.p.name} (${x.p.pos})`).join("\n")).join("\n\n");
-            if (navigator.clipboard) navigator.clipboard.writeText(txt).then(() => alert("কপি হয়েছে! WhatsApp-এ পেস্ট করুন।"), () => alert(txt)); else alert(txt);
-        }
-
         // ----- Formations -----
         const TAC_FORMS = {
             "2-1-2": [[10,50],[28,32],[28,68],[48,50],[68,30],[68,70]],
@@ -2006,15 +1876,27 @@
             setTimeout(() => document.querySelectorAll(".draggable-token.returning").forEach(e => e.classList.remove("returning")), 800);
         }
 
-        // ----- Saved tactics (Firebase) -----
-        let xSavedTactics = {};
+        // ----- Saved tactics: private per login, max 3 -----
+        let xSavedTactics = {}, xTacOwner = null, xTacRef = null;
+        const xTacKey = () => state.currentUser ? state.currentUser.id : (state.isAdmin ? "admin" : null);
+        function xSyncTacOwner() {
+            const k = xTacKey();
+            if (k === xTacOwner) return;
+            if (xTacRef) xTacRef.off();
+            xTacOwner = k; xSavedTactics = {}; xTacRef = null;
+            if (k) { xTacRef = db.ref(`${ROOT}/userTactics/${k}`); xTacRef.on("value", snap => { xSavedTactics = snap.val() || {}; renderSavedTactics(); }); }
+            renderSavedTactics();
+        }
+        setInterval(xSyncTacOwner, 800);
         function saveTactic() {
-            if (!state.currentUser && !state.isAdmin) return alert("সেভ করতে লগইন করুন।");
+            const k = xTacKey();
+            if (!k) return alert("সেভ করতে আগে নিজের আইডি দিয়ে লগইন করুন।");
+            if (Object.keys(xSavedTactics).length >= 3) return alert("সর্বোচ্চ ৩টি ট্যাকটিক্স সেভ করা যায়। নতুন সেভ করতে আগে একটা ✕ চেপে ডিলিট করুন।");
             const name = document.getElementById("tacSaveName").value.trim();
             if (!name) return alert("ট্যাকটিক্সের একটা নাম দিন।");
-            const ref = db.ref(`${ROOT}/tactics`).push();
+            const ref = db.ref(`${ROOT}/userTactics/${k}`).push();
             ref.set({
-                id: ref.key, name, by: state.isAdmin ? "Admin" : state.currentUser.name,
+                id: ref.key, name,
                 tokens: tacticsState.tokens.map(t => ({ id: t.id, name: t.name, type: t.type, gk: !!t.gk, x: t.x, y: t.y })),
                 arrows: tacticsState.arrows.map(a => ({ id: a.id, tokenId: a.tokenId, type: a.type, pts: a.pts }))
             });
@@ -2030,16 +1912,220 @@
             b.className = tacticsState.showOpponents ? "bg-rose-600 text-white px-3 py-2 rounded-xl text-xs font-bold" : "bg-rose-600/20 text-rose-400 border border-rose-500/40 px-3 py-2 rounded-xl text-xs font-bold";
             renderTacticsBoard();
         }
-        function deleteTactic(id) { if (state.isAdmin) openConfirmModal("ট্যাকটিক্স ডিলিট?", "এই সেভ করা ট্যাকটিক্স মুছে যাবে।", () => db.ref(`${ROOT}/tactics/${id}`).remove()); }
-        function renderSavedTactics() {
-            const box = document.getElementById("tacSavedList"); if (!box) return;
-            const L = Object.values(xSavedTactics);
-            box.innerHTML = L.length ? L.map(t => `<span class="inline-flex items-center bg-slate-800 border border-slate-700 rounded-xl overflow-hidden text-xs">
-                <button onclick="loadTactic('${t.id}')" class="px-3 py-1.5 text-amber-300 hover:bg-slate-700"><i class="fa-solid fa-folder-open"></i> ${xEsc(t.name)}</button>
-                ${state.isAdmin ? `<button onclick="deleteTactic('${t.id}')" class="px-2 py-1.5 text-rose-400 hover:bg-rose-900/40"><i class="fa-solid fa-xmark"></i></button>` : ""}</span>`).join("") : `<span class="text-[11px] text-slate-500">এখনো কোনো ট্যাকটিক্স সেভ করা নেই।</span>`;
+        function deleteTactic(id) {
+            const k = xTacKey(); if (!k) return;
+            openConfirmModal("ট্যাকটিক্স ডিলিট?", "এই সেভ করা ট্যাকটিক্স মুছে যাবে।", () => db.ref(`${ROOT}/userTactics/${k}/${id}`).remove());
         }
-        db.ref(`${ROOT}/tactics`).on("value", snap => { xSavedTactics = snap.val() || {}; renderSavedTactics(); });
-        setInterval(() => { if (state.isAdmin !== window.__xAdm) { window.__xAdm = state.isAdmin; renderSavedTactics(); } }, 1000);
+        function renderSavedTactics() {
+            const box = document.getElementById("tacSavedList"), row = document.getElementById("tacSaveRow"); if (!box) return;
+            const k = xTacKey(), L = Object.values(xSavedTactics);
+            if (row) row.classList.toggle("hidden", !k);
+            if (!k) { box.innerHTML = `<span class="text-[11px] text-slate-500"><i class="fa-solid fa-lock"></i> ট্যাকটিক্স সেভ করতে নিজের আইডি দিয়ে লগইন করুন।</span>`; return; }
+            box.innerHTML = `<span class="text-[11px] text-slate-400 self-center">আপনার সেভ (${L.length}/3):</span>` + L.map(t => `<span class="inline-flex items-center bg-slate-800 border border-slate-700 rounded-xl overflow-hidden text-xs">
+                <button onclick="loadTactic('${t.id}')" class="px-3 py-1.5 text-amber-300 hover:bg-slate-700"><i class="fa-solid fa-folder-open"></i> ${xEsc(t.name)}</button>
+                <button onclick="deleteTactic('${t.id}')" class="px-2 py-1.5 text-rose-400 hover:bg-rose-900/40" title="ডিলিট"><i class="fa-solid fa-xmark"></i></button></span>`).join("");
+        }
+
+        // ===== Achievements, profile, contact & admin tools =====
+        const ACH_TIER = { R: ["Rookie", "#cd7f32"], P: ["Pro", "#cbd5e1"], E: ["Elite", "#facc15"], S: ["Special", "#c084fc"] };
+        const ACH_STATS = [
+            { k: "goals", ic: "fa-futbol", f: p => p.goals || 0, d: n => `মোট ${n}টি গোল করুন`, lv: [[1,"R","First Blood"],[2,"R","Opening Act"],[3,"R","Hat-trick Hunter"],[5,"P","Sharp Shooter"],[8,"P","Goal Getter"],[12,"P","Net Buster"],[18,"E","Finisher"],[25,"E","Golden Boot"],[40,"E","Goal Machine"]] },
+            { k: "assists", ic: "fa-handshake-angle", f: p => p.assists || 0, d: n => `মোট ${n}টি অ্যাসিস্ট করুন`, lv: [[1,"R","First Pass"],[2,"R","Helping Hand"],[3,"R","Team Player"],[5,"P","Playmaker"],[8,"P","Creator"],[12,"P","Assist Master"],[20,"E","Magician"]] },
+            { k: "matches", ic: "fa-shield", f: p => p.matches || 0, d: n => `${n}টি ম্যাচ খেলুন`, lv: [[1,"R","Debut"],[3,"R","Regular"],[5,"R","Squad Member"],[8,"P","Committed"],[12,"P","Veteran"],[20,"E","Iron Man"],[30,"E","Club Legend"],[50,"E","Immortal"]] },
+            { k: "motm", ic: "fa-star", f: p => p.motm || 0, d: n => `${n} বার MOTM হোন`, lv: [[1,"R","Star Moment"],[2,"R","Rising Star"],[3,"P","Match Winner"],[5,"P","Fan Favourite"],[8,"E","MOTM King"],[12,"E","Superstar"]] },
+            { k: "combo", ic: "fa-bolt", f: p => (p.goals || 0) + (p.assists || 0), d: n => `গোল + অ্যাসিস্ট মিলিয়ে ${n}`, lv: [[5,"R","Contributor"],[10,"P","Impact Player"],[20,"P","Key Man"],[40,"E","Game Changer"],[80,"E","Club Icon"]] }
+        ];
+        const ACH = [];
+        ACH_STATS.forEach(S => S.lv.forEach(([n, t, name]) => ACH.push({ id: S.k + n, t, name, ic: S.ic, desc: S.d(n), f: S.f, n })));
+        const xMin = p => Math.min(p.goals || 0, p.assists || 0);
+        const xRate = p => (p.matches || 0) >= 5 ? Math.floor((p.goals || 0) / (p.matches || 1) * 100) : 0;
+        [
+            ["allr1", "P", "All-Rounder", "fa-circle-nodes", "৫ গোল ও ৫ অ্যাসিস্ট", xMin, 5],
+            ["allr2", "E", "Complete Player", "fa-gem", "১৫ গোল ও ১৫ অ্যাসিস্ট", xMin, 15],
+            ["shp1", "P", "Sharpshooter", "fa-bullseye", "৫+ ম্যাচে ম্যাচপ্রতি ০.৫ গোল", xRate, 50, "%"],
+            ["shp2", "E", "Prolific", "fa-fire", "৫+ ম্যাচে ম্যাচপ্রতি ১ গোল", xRate, 100, "%"],
+            ["rel", "P", "Reliable Star", "fa-medal", "১০ ম্যাচ খেলে অন্তত ১ MOTM", p => (p.matches || 0) >= 10 ? Math.min(p.motm || 0, 1) : 0, 1],
+            ["hero", "E", "Season Hero", "fa-trophy", "১০ গোল করে ৩ MOTM", p => (p.goals || 0) >= 10 ? Math.min(p.motm || 0, 3) : 0, 3],
+            ["photo", "R", "Photogenic", "fa-camera", "প্রোফাইল ছবি দিন", p => p.photo ? 1 : 0, 1],
+            ["dob", "R", "Birthday Set", "fa-cake-candles", "জন্ম তারিখ দিন", p => p.dob ? 1 : 0, 1],
+            ["conn", "R", "Connected", "fa-link", "যোগাযোগের তথ্য দিন", p => (p.email || p.phone || p.whatsapp || p.facebook || p.instagram) ? 1 : 0, 1],
+            ["bio", "R", "Storyteller", "fa-pen-nib", "নিজের বায়ো লিখুন", p => (p.bio && p.bio !== "Friday Football Club Member") ? 1 : 0, 1],
+            ["fee", "R", "Always Paid", "fa-wallet", "চাঁদা পরিশোধ করুন", p => p.feePaid ? 1 : 0, 1]
+        ].forEach(([id, t, name, ic, desc, f, n, sfx]) => ACH.push({ id, t, name, ic, desc, f, n, sfx }));
+
+        const SPECIALS = { captain: ["Captain", "fa-crown"], founder: ["Club Founder", "fa-flag"], fairplay: ["Fair Play", "fa-handshake"], teammate: ["Best Teammate", "fa-heart"], legend: ["Club Legend", "fa-gem"], honor: ["Honorary Member", "fa-award"], mvp: ["Season MVP", "fa-trophy"], fire: ["On Fire", "fa-fire"] };
+        state.awards = {};
+        let xProfFilter = "all", xEditKey = null, xContact = {};
+
+        function xAch(pid, p) {
+            const auto = ACH.map(a => { const cur = a.f(p); return { ...a, cur, got: cur >= a.n }; });
+            const sp = Object.entries(state.awards[pid] || {}).map(([k, v]) => ({ id: k, k, t: "S", name: v.name, ic: v.ic || "fa-award", desc: "অ্যাডমিন প্রদত্ত বিশেষ সম্মান", got: true, cur: 1, n: 1 }));
+            return auto.concat(sp);
+        }
+        function xAge(d) {
+            const b = new Date(d); if (!d || isNaN(b)) return "";
+            const n = new Date(); let a = n.getFullYear() - b.getFullYear();
+            if (n < new Date(n.getFullYear(), b.getMonth(), b.getDate())) a--;
+            return a;
+        }
+        const XC = [["email", "fa-solid fa-envelope", "Email"], ["phone", "fa-solid fa-phone", "Phone"], ["whatsapp", "fa-brands fa-whatsapp", "WhatsApp"], ["facebook", "fa-brands fa-facebook", "Facebook"], ["instagram", "fa-brands fa-instagram", "Instagram"], ["youtube", "fa-brands fa-youtube", "YouTube"], ["telegram", "fa-brands fa-telegram", "Telegram"]];
+        function xLink(k, v) {
+            v = String(v || "").trim();
+            if (k === "email") return "mailto:" + v;
+            if (k === "phone") return "tel:" + v.replace(/\s/g, "");
+            if (k === "whatsapp") return "https://wa.me/" + v.replace(/\D/g, "");
+            return /^https?:\/\//i.test(v) ? v : "https://" + v.replace(/^\/+/, "");
+        }
+        function xChips(o) {
+            return XC.filter(([k]) => o && o[k]).map(([k, ic, l]) => `<a href="${xEsc(xLink(k, o[k]))}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3 py-1.5 rounded-xl text-xs"><i class="${ic}"></i> ${(k === "email" || k === "phone") ? xEsc(o[k]) : l}</a>`).join("");
+        }
+        function xAchCard(a) {
+            const [tn, col] = ACH_TIER[a.t], pct = Math.min(100, Math.round(a.cur / a.n * 100));
+            return `<div class="rounded-xl border p-3 text-center ${a.got ? "" : "opacity-50"}" style="border-color:${a.got ? col + "88" : "#1e293b"};background:${a.got ? col + "14" : "#0b111e"};${a.got && a.t === "E" ? "box-shadow:0 0 14px " + col + "44" : ""}">
+                <div class="mx-auto w-11 h-11 rounded-full flex items-center justify-center text-lg" style="background:${a.got ? col + "26" : "#111827"};color:${a.got ? col : "#475569"};border:2px solid ${a.got ? col : "#334155"}"><i class="fa-solid ${a.got ? a.ic : "fa-lock"}"></i></div>
+                <div class="text-xs font-bold mt-2 ${a.got ? "text-white" : "text-slate-400"}">${xEsc(a.name)}</div>
+                <div class="text-[10px] text-slate-400 mt-0.5 leading-snug">${xEsc(a.desc)}</div>
+                ${!a.got && a.n > 1 ? `<div class="h-1 bg-slate-800 rounded mt-2"><div class="h-1 rounded" style="width:${pct}%;background:${col}"></div></div><div class="text-[10px] text-slate-500 mt-0.5">${a.cur}${a.sfx || ""}/${a.n}${a.sfx || ""}</div>` : ""}
+                <div class="text-[9px] mt-1 font-semibold" style="color:${col}">${tn}</div></div>`;
+        }
+        function setProfFilter(f) { xProfFilter = f; if (state.viewingProfileId) renderProfileDetail(state.viewingProfileId); }
+
+        function renderProfileDetail(pid) {
+            const p = state.players[pid]; if (!p) return;
+            const mem = !!(state.currentUser || state.isAdmin), own = !!(state.currentUser && state.currentUser.id === pid);
+            const all = xAch(pid, p), auto = all.filter(a => a.t !== "S"), earned = auto.filter(a => a.got).length, sp = all.filter(a => a.t === "S");
+            const lvl = earned < 10 ? "Rookie" : earned < 25 ? "Pro" : "Elite", lc = earned < 10 ? "#cd7f32" : earned < 25 ? "#cbd5e1" : "#facc15";
+            const shown = all.filter(a => xProfFilter === "all" || a.t === xProfFilter).sort((a, b) => (b.got ? 1 : 0) - (a.got ? 1 : 0));
+            const tabs = [["all", "সব"], ["R", "Rookie"], ["P", "Pro"], ["E", "Elite"], ["S", "Special"]].map(([k, l]) => {
+                const c = k === "all" ? all : all.filter(a => a.t === k);
+                return `<button onclick="setProfFilter('${k}')" class="px-3 py-1.5 rounded-xl text-xs ${xProfFilter === k ? "bg-emerald-500 text-slate-950 font-bold" : "bg-slate-800 text-slate-300"}">${l} <span class="opacity-70">${c.filter(a => a.got).length}/${c.length}</span></button>`;
+            }).join("");
+            const age = xAge(p.dob), dobTxt = p.dob ? new Date(p.dob).toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" }) : "";
+            const avatar = p.photo ? `<img src="${p.photo}" class="w-full h-full object-cover">` : xEsc(p.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase());
+            const stat = (l, v, c) => `<div class="bg-[#111827] border border-slate-800 rounded-xl p-3 text-center"><p class="text-[11px] text-slate-400">${l}</p><p class="text-xl font-extrabold ${c}">${v}</p></div>`;
+            const ct = xChips(p);
+            document.getElementById("profileDetailRoot").innerHTML = `
+                <div class="bg-[#111827] border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+                    <div class="h-24 sm:h-28" style="background:linear-gradient(120deg,#065f46,#0e7490 60%,#1e293b)"></div>
+                    <div class="px-5 pb-5 -mt-12 sm:-mt-14">
+                        <div class="flex flex-col sm:flex-row sm:items-end gap-4">
+                            <div class="relative w-24 h-24 sm:w-28 sm:h-28 shrink-0">
+                                <div class="w-full h-full rounded-full border-4 border-[#111827] ring-2 ring-emerald-500 bg-slate-800 overflow-hidden flex items-center justify-center text-3xl font-bold text-emerald-400">${avatar}</div>
+                                ${own ? `<label class="absolute bottom-0 right-0 w-8 h-8 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-full flex items-center justify-center cursor-pointer"><i class="fa-solid fa-camera text-xs"></i><input type="file" id="profilePhotoInput" accept="image/*" onchange="handleProfilePhotoUpload(event)" class="hidden"></label>` : ""}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h2 class="text-xl sm:text-2xl font-extrabold text-white">${xEsc(p.name)}</h2>
+                                <div class="flex flex-wrap gap-2 mt-1.5 text-xs">
+                                    <span class="bg-slate-800 text-cyan-400 px-3 py-1 rounded-lg font-medium">${xEsc(p.pos)}</span>
+                                    ${dobTxt ? `<span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-lg"><i class="fa-solid fa-cake-candles text-amber-400"></i> ${dobTxt}${age !== "" ? ` · ${age} বছর` : ""}</span>` : ""}
+                                    ${sp.map(a => `<span class="px-3 py-1 rounded-lg font-semibold" style="background:#c084fc22;color:#c084fc"><i class="fa-solid ${a.ic}"></i> ${xEsc(a.name)}</span>`).join("")}
+                                </div>
+                            </div>
+                            <div class="sm:w-44">
+                                <div class="flex justify-between text-[11px] mb-1"><span class="font-bold" style="color:${lc}">${lvl} Level</span><span class="text-slate-400">${earned}/${ACH.length}</span></div>
+                                <div class="h-2 bg-slate-800 rounded-full"><div class="h-2 rounded-full" style="width:${Math.round(earned / ACH.length * 100)}%;background:${lc}"></div></div>
+                            </div>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-300 mt-4 bg-[#0b111e] p-3 rounded-xl border border-slate-800/80">${xEsc(p.bio || "Friday Football Club Member")}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-4 gap-2 sm:gap-4">${stat("ম্যাচ", p.matches || 0, "text-cyan-400")}${stat("গোল", p.goals || 0, "text-emerald-400")}${stat("অ্যাসিস্ট", p.assists || 0, "text-amber-400")}${stat("MOTM", p.motm || 0, "text-purple-400")}</div>
+                <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5">
+                    <h3 class="text-sm font-bold text-cyan-400 mb-3"><i class="fa-solid fa-address-card"></i> যোগাযোগ</h3>
+                    ${mem ? (ct ? `<div class="flex flex-wrap gap-2">${ct}</div>` : `<p class="text-xs text-slate-500">এখনো কোনো তথ্য দেওয়া হয়নি।</p>`) : `<p class="text-xs text-slate-500"><i class="fa-solid fa-lock"></i> যোগাযোগের তথ্য দেখতে সদস্য হিসেবে লগইন করুন।</p>`}
+                </div>
+                <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5">
+                    <h3 class="text-sm font-bold text-amber-400 mb-3"><i class="fa-solid fa-trophy"></i> অ্যাচিভমেন্ট গ্যালারি</h3>
+                    <div class="flex flex-wrap gap-2 mb-4">${tabs}</div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">${shown.length ? shown.map(xAchCard).join("") : `<p class="col-span-full text-xs text-slate-500 text-center py-4">এখনো কোনো বিশেষ সম্মান পাওয়া যায়নি।</p>`}</div>
+                </div>`;
+            const box = document.getElementById("selfEditProfileBox"), key = own ? pid : null;
+            if (!own) { box.classList.add("hidden"); xEditKey = null; return; }
+            if (xEditKey === key) return;
+            xEditKey = key;
+            const f = (id, l, v, ty = "text", ph = "") => `<div><label class="block text-xs text-slate-400 mb-1">${l}</label><input type="${ty}" id="${id}" value="${xEsc(v || "")}" placeholder="${ph}" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500"></div>`;
+            box.classList.remove("hidden");
+            box.innerHTML = `<div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-4">
+                <h3 class="text-sm font-bold text-emerald-400"><i class="fa-solid fa-pen-to-square"></i> নিজের প্রোফাইল এডিট করুন</h3>
+                <div><label class="block text-xs text-slate-400 mb-1">বায়ো (Bio)</label><textarea id="editBioInput" rows="2" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500">${xEsc(p.bio || "")}</textarea></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    ${f("editDob", "জন্ম তারিখ", p.dob, "date")}${f("editEmail", "Gmail / Email", p.email, "text", "name@gmail.com")}${f("editPhone", "ফোন নম্বর", p.phone, "text", "01XXXXXXXXX")}${f("editWhatsapp", "WhatsApp নম্বর", p.whatsapp, "text", "88017XXXXXXXX")}${f("editFacebook", "Facebook লিংক", p.facebook, "text", "facebook.com/...")}${f("editInstagram", "Instagram লিংক", p.instagram, "text", "instagram.com/...")}
+                </div>
+                <p class="text-[11px] text-slate-500"><i class="fa-solid fa-lock"></i> যোগাযোগের তথ্য শুধু লগইন করা সদস্যরা দেখতে পারবে, ভিজিটররা নয়।</p>
+                ${f("editPinInput", "নতুন গোপন পিন (খালি রাখলে আগেরটাই থাকবে)", "", "password", "****")}
+                <button onclick="saveOwnProfile()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm">প্রোফাইল সেভ করুন</button></div>`;
+        }
+        function openPlayerProfile(pid) { state.viewingProfileId = pid; xEditKey = null; xProfFilter = "all"; renderProfileDetail(pid); switchTab("profile-detail"); }
+        async function saveOwnProfile() {
+            if (!state.currentUser || state.viewingProfileId !== state.currentUser.id) return;
+            const v = id => (document.getElementById(id).value || "").trim();
+            const u = { bio: v("editBioInput"), dob: v("editDob"), email: v("editEmail"), phone: v("editPhone"), whatsapp: v("editWhatsapp"), facebook: v("editFacebook"), instagram: v("editInstagram") };
+            const pin = v("editPinInput"); if (pin.length >= 4) u.pin = pin;
+            await db.ref(`${ROOT}/players/${state.currentUser.id}`).update(u);
+            alert("প্রোফাইল সেভ হয়েছে!");
+        }
+
+        // ----- Admin PIN (stored as hash) -----
+        async function xHash(v) {
+            try { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("ffc:" + v)); return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, "0")).join(""); }
+            catch (e) { return "plain:" + v; }
+        }
+        async function xAdminOk(pin) {
+            const stored = (await db.ref(`${ROOT}/adminPin`).once("value")).val();
+            return stored ? (await xHash(pin)) === stored : pin === ADMIN_PIN;
+        }
+        async function changeAdminPin() {
+            if (!state.isAdmin) return;
+            const g = id => document.getElementById(id).value.trim();
+            if (!(await xAdminOk(g("adminOldPin")))) return alert("বর্তমান পাসওয়ার্ড ভুল!");
+            if (g("adminNewPin").length < 4) return alert("নতুন পাসওয়ার্ড কমপক্ষে ৪ অক্ষরের হতে হবে।");
+            if (g("adminNewPin") !== g("adminNewPin2")) return alert("দুটি নতুন পাসওয়ার্ড মেলেনি।");
+            await db.ref(`${ROOT}/adminPin`).set(await xHash(g("adminNewPin")));
+            ["adminOldPin", "adminNewPin", "adminNewPin2"].forEach(id => document.getElementById(id).value = "");
+            alert("অ্যাডমিন পাসওয়ার্ড বদলে গেছে। পরের বার নতুনটা দিয়ে আনলক করুন।");
+        }
+
+        // ----- Admin contact (Settings) -----
+        function renderSettingsContact() {
+            const box = document.getElementById("settingsContact"); if (!box) return;
+            box.innerHTML = (xChips(xContact) || `<span class="text-[11px] text-slate-500">এখনো কোনো তথ্য দেওয়া হয়নি।</span>`) + (xContact.note ? `<p class="w-full text-[11px] text-slate-400">${xEsc(xContact.note)}</p>` : "");
+            XC.forEach(([k]) => { const el = document.getElementById("ct_" + k); if (el && document.activeElement !== el) el.value = xContact[k] || ""; });
+            const n = document.getElementById("ct_note"); if (n && document.activeElement !== n) n.value = xContact.note || "";
+        }
+        function saveContact() {
+            if (!state.isAdmin) return;
+            const o = { note: document.getElementById("ct_note").value.trim() };
+            XC.forEach(([k]) => o[k] = document.getElementById("ct_" + k).value.trim());
+            db.ref(`${ROOT}/contact`).set(o); alert("যোগাযোগ তথ্য সেভ হয়েছে!");
+        }
+        db.ref(`${ROOT}/contact`).on("value", snap => { xContact = snap.val() || {}; renderSettingsContact(); });
+
+        // ----- Admin special badges -----
+        function renderAdminAwards() {
+            const ps = document.getElementById("spPlayer"); if (!ps) return;
+            const pv = ps.value;
+            ps.innerHTML = `<option value="">-- প্লেয়ার --</option>` + Object.values(state.players).map(p => `<option value="${p.id}">${xEsc(p.name)}</option>`).join("");
+            ps.value = pv;
+            const rows = [];
+            Object.entries(state.awards || {}).forEach(([pid, o]) => Object.entries(o || {}).forEach(([k, v]) => { if (state.players[pid]) rows.push(`<span class="inline-flex items-center gap-1 bg-fuchsia-500/10 border border-fuchsia-500/30 text-fuchsia-300 rounded-xl pl-3 text-xs"><i class="fa-solid ${v.ic || "fa-award"}"></i> ${xEsc(state.players[pid].name.split(" ")[0])} · ${xEsc(v.name)}<button onclick="removeSpecial('${pid}','${k}')" class="px-2 py-1.5 text-rose-400"><i class="fa-solid fa-xmark"></i></button></span>`); }));
+            document.getElementById("spList").innerHTML = rows.join("") || `<span class="text-[11px] text-slate-500">এখনো কোনো বিশেষ ব্যাজ দেওয়া হয়নি।</span>`;
+        }
+        function grantSpecial() {
+            if (!state.isAdmin) return;
+            const pid = document.getElementById("spPlayer").value, b = document.getElementById("spBadge").value;
+            if (!pid) return alert("প্লেয়ার সিলেক্ট করুন।");
+            let key = b, name, ic;
+            if (b === "custom") { name = document.getElementById("spCustom").value.trim(); if (!name) return alert("কাস্টম ব্যাজের নাম লিখুন।"); key = "c" + Date.now(); ic = "fa-award"; }
+            else [name, ic] = SPECIALS[b];
+            db.ref(`${ROOT}/awards/${pid}/${key}`).set({ name, ic });
+            document.getElementById("spCustom").value = "";
+        }
+        function removeSpecial(pid, k) { if (state.isAdmin) db.ref(`${ROOT}/awards/${pid}/${k}`).remove(); }
+        db.ref(`${ROOT}/awards`).on("value", snap => {
+            state.awards = snap.val() || {};
+            renderAdminAwards();
+            if (state.viewingProfileId && state.players[state.viewingProfileId]) renderProfileDetail(state.viewingProfileId);
+        });
 
         try { if (localStorage.getItem("ffc_theme") === "light") toggleThemeRaw(); } catch (e) {}
         setAnimSpeed(tacAnimSpeed);
