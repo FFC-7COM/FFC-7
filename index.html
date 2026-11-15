@@ -220,6 +220,31 @@
 
         <!-- TAB 1: HOME -->
         <section id="tab-home" class="tab-content space-y-6">
+            <!-- Next Match Info + Countdown -->
+            <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
+                <div class="flex items-center justify-between gap-2 mb-3">
+                    <h2 class="text-sm sm:text-base font-bold text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-stopwatch"></i> পরবর্তী ম্যাচ</h2>
+                    <span id="nmWhen" class="text-[11px] text-slate-400"></span>
+                </div>
+                <div id="nmCountdown" class="grid grid-cols-4 gap-2 text-center mb-3"></div>
+                <div class="flex flex-wrap items-center gap-3 text-xs text-slate-300">
+                    <span><i class="fa-solid fa-location-dot text-rose-400"></i> <span id="nmVenue">ভেন্যু এখনো দেওয়া হয়নি</span></span>
+                    <a id="nmMap" href="#" target="_blank" rel="noopener" class="hidden text-cyan-400 underline"><i class="fa-solid fa-map"></i> ম্যাপে দেখুন</a>
+                </div>
+                <div id="nmAdminBox" class="hidden mt-4 pt-3 border-t border-slate-800 grid grid-cols-1 sm:grid-cols-4 gap-2">
+                    <input type="datetime-local" id="nmDtInput" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                    <input type="text" id="nmVenueInput" placeholder="ভেন্যু / মাঠের নাম" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                    <input type="text" id="nmMapInput" placeholder="Google Maps লিংক (ঐচ্ছিক)" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                    <button onclick="saveNextMatch()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs py-2">সেভ করুন</button>
+                </div>
+            </div>
+
+            <!-- Awards -->
+            <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
+                <h2 class="text-sm sm:text-base font-bold text-amber-400 flex items-center gap-2 mb-3"><i class="fa-solid fa-medal"></i> ক্লাব অ্যাওয়ার্ডস</h2>
+                <div id="awardsGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div>
+            </div>
+
             <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
                 <h2 id="t_leaderboardTitle" class="text-base sm:text-lg font-bold text-amber-400 flex items-center gap-2 mb-4">
                     <i class="fa-solid fa-trophy"></i> লাইভ লিডারবোর্ড
@@ -266,6 +291,19 @@
                 </div>
                 <p id="t_feeSub" class="text-xs text-slate-400 mb-4">টার্ফ ও বল ফান্ডের বর্তমান স্ট্যাটাস (অ্যাডমিন ক্লিক করে পরিবর্তন করতে পারবেন)</p>
                 <div id="feeTrackerGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+            </div>
+
+            <!-- Auto Team Maker -->
+            <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+                    <h2 class="text-sm sm:text-base font-bold text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-people-arrows"></i> অটো টিম মেকার</h2>
+                    <div class="flex gap-2">
+                        <button onclick="makeTeams()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs"><i class="fa-solid fa-shuffle"></i> টিম বানান</button>
+                        <button onclick="copyTeams()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl text-xs"><i class="fa-solid fa-copy"></i> কপি</button>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-400 mb-3">যারা "খেলব" দিয়েছে তাদের গোল, অ্যাসিস্ট ও পজিশন দেখে দুই টিম সমান শক্তিতে ভাগ হবে।</p>
+                <div id="teamMakerOut" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
             </div>
         </section>
 
@@ -399,6 +437,22 @@
                             Reset Pitch
                         </button>
                     </div>
+                </div>
+
+                <!-- Formation presets & saved tactics -->
+                <div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3 space-y-3">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <span class="text-[11px] text-slate-400">ফরমেশন:</span>
+                        <button onclick="applyFormation('2-1-2')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl text-xs">2-1-2</button>
+                        <button onclick="applyFormation('3-2-1')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl text-xs">3-2-1</button>
+                        <button onclick="applyFormation('2-3-1')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl text-xs">2-3-1</button>
+                        <button onclick="applyFormation('4-3-3')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl text-xs">4-3-3</button>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <input id="tacSaveName" type="text" maxlength="30" placeholder="ট্যাকটিক্সের নাম (যেমন: কাউন্টার অ্যাটাক)" class="flex-1 min-w-[180px] bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                        <button onclick="saveTactic()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-2 rounded-xl text-xs"><i class="fa-solid fa-floppy-disk"></i> সেভ করুন</button>
+                    </div>
+                    <div id="tacSavedList" class="flex flex-wrap gap-2"></div>
                 </div>
 
                 <!-- Arrow tools -->
@@ -1845,6 +1899,148 @@
         document.getElementById("confirmActionBtn").addEventListener("click", () => { if (pendingConfirm) pendingConfirm(); closeConfirmModal(); });
 
         setLanguage(state.lang);
+
+        // ===== New features: match info, awards, team maker, formations, saved tactics -----
+        const xEsc = v => String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        let xNextMatch = null, xTeams = null;
+
+        function xDefaultKickoff() {
+            const d = new Date(); d.setHours(17, 0, 0, 0);
+            d.setDate(d.getDate() + ((5 - d.getDay() + 7) % 7));
+            if (d < new Date()) d.setDate(d.getDate() + 7);
+            return d;
+        }
+        function renderCountdown() {
+            const box = document.getElementById("nmCountdown"); if (!box) return;
+            const adm = document.getElementById("nmAdminBox");
+            if (adm) adm.classList.toggle("hidden", !state.isAdmin);
+            const t = xNextMatch && xNextMatch.dt ? new Date(xNextMatch.dt) : xDefaultKickoff();
+            document.getElementById("nmWhen").innerText = t.toLocaleString("bn-BD", { weekday: "long", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
+            let ms = t - new Date();
+            if (ms <= 0) { box.innerHTML = `<div class="col-span-4 text-emerald-400 font-bold text-sm py-2">⚽ ম্যাচের সময় হয়ে গেছে!</div>`; return; }
+            const v = [[Math.floor(ms / 864e5), "দিন"], [Math.floor(ms / 36e5) % 24, "ঘণ্টা"], [Math.floor(ms / 6e4) % 60, "মিনিট"], [Math.floor(ms / 1e3) % 60, "সেকেন্ড"]];
+            box.innerHTML = v.map(([n, l]) => `<div class="bg-[#0b111e] border border-slate-800 rounded-xl py-2"><div class="text-xl sm:text-2xl font-extrabold text-white">${String(n).padStart(2, "0")}</div><div class="text-[10px] text-slate-400">${l}</div></div>`).join("");
+        }
+        function renderNextMatchInfo() {
+            const m = xNextMatch || {};
+            document.getElementById("nmVenue").textContent = m.venue || "ভেন্যু এখনো দেওয়া হয়নি";
+            const a = document.getElementById("nmMap");
+            if (m.map && /^https?:\/\//i.test(m.map)) { a.href = m.map; a.classList.remove("hidden"); } else a.classList.add("hidden");
+            renderCountdown();
+        }
+        function saveNextMatch() {
+            if (!state.isAdmin) return;
+            const dt = document.getElementById("nmDtInput").value;
+            if (!dt) return alert("তারিখ ও সময় দিন।");
+            db.ref(`${ROOT}/nextMatch`).set({ dt, venue: document.getElementById("nmVenueInput").value.trim(), map: document.getElementById("nmMapInput").value.trim() });
+            alert("পরবর্তী ম্যাচের তথ্য আপডেট হয়েছে!");
+        }
+        db.ref(`${ROOT}/nextMatch`).on("value", snap => { xNextMatch = snap.val(); renderNextMatchInfo(); });
+        setInterval(renderCountdown, 1000);
+
+        function renderAwards() {
+            const g = document.getElementById("awardsGrid"); if (!g) return;
+            const L = Object.values(state.players || {});
+            const best = f => { const top = L.slice().sort((a, b) => (b[f] || 0) - (a[f] || 0))[0]; return top && (top[f] || 0) > 0 ? top : null; };
+            const items = [
+                ["গোল্ডেন বুট", "goals", "fa-futbol", "text-emerald-400", "গোল"],
+                ["প্লেমেকার", "assists", "fa-handshake-angle", "text-amber-400", "অ্যাসিস্ট"],
+                ["আয়রন ম্যান", "matches", "fa-shield", "text-cyan-400", "ম্যাচ"],
+                ["MOTM কিং", "motm", "fa-star", "text-fuchsia-400", "বার"]
+            ];
+            g.innerHTML = items.map(([t, f, ic, col, u]) => {
+                const p = best(f);
+                return `<div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3 text-center">
+                    <i class="fa-solid ${ic} ${col} text-lg"></i>
+                    <div class="text-[11px] text-slate-400 mt-1">${t}</div>
+                    ${p ? `<div class="flex justify-center my-1.5">${getAvatarHTML(p, "w-9 h-9 text-xs")}</div><div class="text-xs font-bold text-white truncate">${xEsc(p.name)}</div><div class="text-[11px] ${col} font-bold">${p[f]} ${u}</div>` : `<div class="text-xs text-slate-500 py-3">এখনো কেউ নেই</div>`}
+                </div>`;
+            }).join("");
+        }
+        { const _rl = renderLeaderboard; renderLeaderboard = function () { _rl(); renderAwards(); }; }
+
+        function makeTeams() {
+            const ids = Object.keys(state.rsvp || {}).filter(id => state.rsvp[id] && state.rsvp[id].playing && state.players[id]);
+            if (ids.length < 2) return alert("টিম বানাতে অন্তত ২ জনের \"খেলব\" দেওয়া দরকার।");
+            const sc = p => (p.goals || 0) * 2 + (p.assists || 0) * 1.5 + (p.motm || 0) * 3 + (p.matches || 0) * 0.3 + Math.random() * 0.8;
+            const pl = ids.map(id => ({ p: state.players[id], s: sc(state.players[id]) })).sort((a, b) => b.s - a.s);
+            const T = [{ n: "টিম A", m: [], s: 0 }, { n: "টিম B", m: [], s: 0 }];
+            const gks = pl.filter(x => x.p.pos === "Goalkeeper");
+            gks.forEach((x, i) => { T[i % 2].m.push(x); T[i % 2].s += x.s; });
+            pl.filter(x => x.p.pos !== "Goalkeeper").forEach(x => {
+                const t = (T[0].m.length > T[1].m.length || (T[0].m.length === T[1].m.length && T[0].s > T[1].s)) ? T[1] : T[0];
+                t.m.push(x); t.s += x.s;
+            });
+            xTeams = T;
+            document.getElementById("teamMakerOut").innerHTML = T.map((t, i) => `
+                <div class="bg-[#0b111e] border ${i ? "border-rose-500/40" : "border-emerald-500/40"} rounded-xl p-3">
+                    <div class="flex justify-between items-center mb-2"><b class="${i ? "text-rose-400" : "text-emerald-400"} text-sm">${t.n}</b><span class="text-[11px] text-slate-400">${t.m.length} জন</span></div>
+                    ${t.m.map(x => `<div class="flex items-center gap-2 py-1">${getAvatarHTML(x.p, "w-7 h-7 text-[10px]")}<span class="text-xs text-white flex-1">${xEsc(x.p.name)}</span><span class="text-[10px] text-slate-400">${xEsc(x.p.pos)}</span></div>`).join("")}
+                </div>`).join("");
+        }
+        function copyTeams() {
+            if (!xTeams) return alert("আগে \"টিম বানান\" চাপুন।");
+            const txt = "⚽ FFC টিম\n\n" + xTeams.map(t => t.n + ":\n" + t.m.map((x, i) => `${i + 1}. ${x.p.name} (${x.p.pos})`).join("\n")).join("\n\n");
+            if (navigator.clipboard) navigator.clipboard.writeText(txt).then(() => alert("কপি হয়েছে! WhatsApp-এ পেস্ট করুন।"), () => alert(txt)); else alert(txt);
+        }
+
+        // ----- Formations -----
+        const TAC_FORMS = {
+            "2-1-2": [[10,50],[28,32],[28,68],[48,50],[68,30],[68,70]],
+            "3-2-1": [[10,50],[27,25],[27,50],[27,75],[48,35],[48,65],[70,50]],
+            "2-3-1": [[10,50],[27,35],[27,65],[46,25],[46,50],[46,75],[70,50]],
+            "4-3-3": [[8,50],[25,18],[25,38],[25,62],[25,82],[46,28],[46,50],[46,72],[68,22],[72,50],[68,78]]
+        };
+        function applyFormation(name) {
+            if (tacAnimating) return;
+            const club = tacticsState.tokens.filter(t => t.type === "club").sort((a, b) => (b.gk ? 1 : 0) - (a.gk ? 1 : 0));
+            if (!club.length) return alert("আগে মাঠে ক্লাব প্লেয়ার যোগ করুন।");
+            const { w, h } = tacSize();
+            club.forEach((t, i) => {
+                const c = TAC_FORMS[name][i]; if (!c) return;
+                t.x = c[0]; t.y = c[1];
+                const el = document.getElementById("tactic_el_" + t.id);
+                if (el) { el.classList.add("returning"); tacPlace(el, c[0] / 100 * w, c[1] / 100 * h); }
+            });
+            tacticsState.arrows = []; renderTacticsArrows();
+            setTimeout(() => document.querySelectorAll(".draggable-token.returning").forEach(e => e.classList.remove("returning")), 800);
+        }
+
+        // ----- Saved tactics (Firebase) -----
+        let xSavedTactics = {};
+        function saveTactic() {
+            if (!state.currentUser && !state.isAdmin) return alert("সেভ করতে লগইন করুন।");
+            const name = document.getElementById("tacSaveName").value.trim();
+            if (!name) return alert("ট্যাকটিক্সের একটা নাম দিন।");
+            const ref = db.ref(`${ROOT}/tactics`).push();
+            ref.set({
+                id: ref.key, name, by: state.isAdmin ? "Admin" : state.currentUser.name,
+                tokens: tacticsState.tokens.map(t => ({ id: t.id, name: t.name, type: t.type, gk: !!t.gk, x: t.x, y: t.y })),
+                arrows: tacticsState.arrows.map(a => ({ id: a.id, tokenId: a.tokenId, type: a.type, pts: a.pts }))
+            });
+            document.getElementById("tacSaveName").value = "";
+        }
+        function loadTactic(id) {
+            const t = xSavedTactics[id]; if (!t || tacAnimating) return;
+            tacticsState.tokens = (t.tokens || []).map(k => ({ ...k, photo: (state.players[k.id] && state.players[k.id].photo) || "" }));
+            tacticsState.arrows = t.arrows || [];
+            tacticsState.showOpponents = tacticsState.tokens.some(k => k.type === "opp");
+            const b = document.getElementById("toggleOpponentBtn");
+            b.innerHTML = tacticsState.showOpponents ? `<i class="fa-solid fa-users"></i> Opponent Team: ON` : `<i class="fa-solid fa-users-slash"></i> Opponent Team: OFF`;
+            b.className = tacticsState.showOpponents ? "bg-rose-600 text-white px-3 py-2 rounded-xl text-xs font-bold" : "bg-rose-600/20 text-rose-400 border border-rose-500/40 px-3 py-2 rounded-xl text-xs font-bold";
+            renderTacticsBoard();
+        }
+        function deleteTactic(id) { if (state.isAdmin) openConfirmModal("ট্যাকটিক্স ডিলিট?", "এই সেভ করা ট্যাকটিক্স মুছে যাবে।", () => db.ref(`${ROOT}/tactics/${id}`).remove()); }
+        function renderSavedTactics() {
+            const box = document.getElementById("tacSavedList"); if (!box) return;
+            const L = Object.values(xSavedTactics);
+            box.innerHTML = L.length ? L.map(t => `<span class="inline-flex items-center bg-slate-800 border border-slate-700 rounded-xl overflow-hidden text-xs">
+                <button onclick="loadTactic('${t.id}')" class="px-3 py-1.5 text-amber-300 hover:bg-slate-700"><i class="fa-solid fa-folder-open"></i> ${xEsc(t.name)}</button>
+                ${state.isAdmin ? `<button onclick="deleteTactic('${t.id}')" class="px-2 py-1.5 text-rose-400 hover:bg-rose-900/40"><i class="fa-solid fa-xmark"></i></button>` : ""}</span>`).join("") : `<span class="text-[11px] text-slate-500">এখনো কোনো ট্যাকটিক্স সেভ করা নেই।</span>`;
+        }
+        db.ref(`${ROOT}/tactics`).on("value", snap => { xSavedTactics = snap.val() || {}; renderSavedTactics(); });
+        setInterval(() => { if (state.isAdmin !== window.__xAdm) { window.__xAdm = state.isAdmin; renderSavedTactics(); } }, 1000);
+
         try { if (localStorage.getItem("ffc_theme") === "light") toggleThemeRaw(); } catch (e) {}
         setAnimSpeed(tacAnimSpeed);
         tacRefreshUI();
