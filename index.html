@@ -39,6 +39,15 @@
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+
+        /* ===== Pro Tactics Board ===== */
+        .tpitch { position: relative; width: 100%; aspect-ratio: 105 / 68; border-radius: 16px; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; border: 1px solid rgba(251,191,36,0.35); box-shadow: 0 10px 30px rgba(0,0,0,.45), inset 0 0 60px rgba(0,0,0,.35); background: #14532d; }
+        .tpitch .tp-vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, rgba(255,255,255,.06) 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,.38) 100%); }
+        .tpitch .draggable-token { position: absolute; left: 0; top: 0; cursor: grab; z-index: 20; will-change: transform; touch-action: none; transition: none; }
+        .tpitch .draggable-token.returning { transition: transform .7s cubic-bezier(.45,0,.2,1); }
+        .tpitch .draggable-token .tk-body { transition: transform .15s ease, box-shadow .15s ease; }
+        .tpitch .draggable-token.dragging { cursor: grabbing; z-index: 30; }
+        .tpitch .draggable-token.dragging .tk-body { transform: scale(1.18); box-shadow: 0 0 0 3px rgba(251,191,36,.9), 0 8px 18px rgba(0,0,0,.6); }
     </style>
 </head>
 <body class="bg-[#0b111e] text-slate-100 min-h-screen transition-colors duration-200">
@@ -109,6 +118,16 @@
                 <button onclick="toggleBgMusic()" id="settingsMusicBtn" class="w-full bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/40 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2">
                     <i id="musicIcon" class="fa-solid fa-play"></i> <span id="musicBtnText">মিউজিক চালু করুন</span>
                 </button>
+            </div>
+
+            <!-- Tactics animation speed -->
+            <div>
+                <label class="block text-xs text-slate-400 mb-2">ট্যাকটিক্স অ্যানিমেশন স্পিড (Animation Speed):</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button id="animBtn_slow" onclick="setAnimSpeed('slow')" class="py-2 rounded-xl text-xs">ধীর</button>
+                    <button id="animBtn_normal" onclick="setAnimSpeed('normal')" class="py-2 rounded-xl text-xs">স্বাভাবিক</button>
+                    <button id="animBtn_fast" onclick="setAnimSpeed('fast')" class="py-2 rounded-xl text-xs">দ্রুত</button>
+                </div>
             </div>
 
             <!-- Admin Access inside Settings -->
@@ -382,24 +401,44 @@
                     </div>
                 </div>
 
-                <!-- Interactive Pitch with SVG Arrow Layer -->
-                <div id="tacticsPitch" class="pitch-bg w-full h-[360px] sm:h-[450px] rounded-2xl overflow-hidden shadow-inner">
-                    <div class="pitch-line-center"></div>
-                    <div class="pitch-circle-center"></div>
-                    <div class="pitch-box-left"></div>
-                    <div class="pitch-box-right"></div>
-
-                    <svg id="tacticsArrowsSvg" class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 15;">
-                        <defs>
-                            <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-                                <polygon points="0 0, 8 3, 0 6" fill="#fbbf24" />
-                            </marker>
-                        </defs>
-                    </svg>
-
-                    <div id="tacticsTokensLayer" class="absolute inset-0"></div>
+                <!-- Arrow tools -->
+                <div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="text-[11px] text-slate-400">তীর:</span>
+                        <button id="tacType_pass" onclick="setArrowType('pass')" class="px-3 py-1.5 rounded-xl text-xs"><span style="color:#22c55e">●</span> Pass</button>
+                        <button id="tacType_run" onclick="setArrowType('run')" class="px-3 py-1.5 rounded-xl text-xs"><span style="color:#fbbf24">●</span> Run</button>
+                        <button id="tacType_def" onclick="setArrowType('def')" class="px-3 py-1.5 rounded-xl text-xs"><span style="color:#ef4444">●</span> Defend</button>
+                        <button id="tacType_pos" onclick="setArrowType('pos')" class="px-3 py-1.5 rounded-xl text-xs"><span style="color:#38bdf8">●</span> Position</button>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[11px] text-slate-400">ধরন:</span>
+                        <button id="tacStyle_curve" onclick="setArrowStyle('curve')" class="px-3 py-1.5 rounded-xl text-xs"><i class="fa-solid fa-bezier-curve"></i> Curve</button>
+                        <button id="tacStyle_straight" onclick="setArrowStyle('straight')" class="px-3 py-1.5 rounded-xl text-xs"><i class="fa-solid fa-minus"></i> Straight</button>
+                        <button onclick="undoTacticsArrow()" class="bg-slate-800 hover:bg-slate-700 text-amber-300 px-3 py-1.5 rounded-xl text-xs"><i class="fa-solid fa-rotate-left"></i> Undo</button>
+                    </div>
                 </div>
-                <p id="tacticsModeHint" class="text-[11px] text-amber-400">টিপস: "Arrow / Roadmap" মোড চালু করে যেকোনো প্লেয়ার থেকে টেনে অন্য জায়গায় ছাড়লে অ্যারো তৈরি হবে, এরপর "Play Animation" চাপুন!</p>
+
+                <!-- Pro Pitch -->
+                <div id="tacticsPitch" class="tpitch">
+                    <svg viewBox="0 0 105 68" class="absolute inset-0 w-full h-full" preserveAspectRatio="none" style="z-index:1">
+                        <rect x="0.0" y="0" width="10.5" height="68" fill="#1d6b37"/><rect x="10.5" y="0" width="10.5" height="68" fill="#185c2f"/><rect x="21.0" y="0" width="10.5" height="68" fill="#1d6b37"/><rect x="31.5" y="0" width="10.5" height="68" fill="#185c2f"/><rect x="42.0" y="0" width="10.5" height="68" fill="#1d6b37"/><rect x="52.5" y="0" width="10.5" height="68" fill="#185c2f"/><rect x="63.0" y="0" width="10.5" height="68" fill="#1d6b37"/><rect x="73.5" y="0" width="10.5" height="68" fill="#185c2f"/><rect x="84.0" y="0" width="10.5" height="68" fill="#1d6b37"/><rect x="94.5" y="0" width="10.5" height="68" fill="#185c2f"/>
+                        <g stroke="rgba(255,255,255,.78)" stroke-width=".28" fill="none">
+                            <rect x=".5" y=".5" width="104" height="67"/>
+                            <line x1="52.5" y1=".5" x2="52.5" y2="67.5"/>
+                            <circle cx="52.5" cy="34" r="9.15"/>
+                            <rect x=".5" y="13.84" width="16.5" height="40.32"/><rect x=".5" y="24.84" width="5.5" height="18.32"/>
+                            <rect x="88" y="13.84" width="16.5" height="40.32"/><rect x="99" y="24.84" width="5.5" height="18.32"/>
+                            <path d="M17 26.69 A9.15 9.15 0 0 1 17 41.31"/><path d="M88 26.69 A9.15 9.15 0 0 0 88 41.31"/>
+                            <path d="M.5 2 A1.5 1.5 0 0 0 2 .5"/><path d="M103 .5 A1.5 1.5 0 0 0 104.5 2"/><path d="M.5 66 A1.5 1.5 0 0 1 2 67.5"/><path d="M103 67.5 A1.5 1.5 0 0 1 104.5 66"/>
+                        </g>
+                        <g fill="rgba(255,255,255,.85)"><circle cx="52.5" cy="34" r=".45"/><circle cx="11.5" cy="34" r=".4"/><circle cx="93.5" cy="34" r=".4"/></g>
+                        <rect x="0" y="30.3" width="1" height="7.4" fill="rgba(255,255,255,.9)"/><rect x="104" y="30.3" width="1" height="7.4" fill="rgba(255,255,255,.9)"/>
+                    </svg>
+                    <div class="tp-vignette" style="z-index:2"></div>
+                    <svg id="tacticsArrowsSvg" class="absolute inset-0 w-full h-full pointer-events-none" style="z-index:15;"></svg>
+                    <div id="tacticsTokensLayer" class="absolute inset-0" style="z-index:20"></div>
+                </div>
+                <p id="tacticsModeHint" class="text-[11px] text-amber-400"></p>
             </div>
         </section>
 
@@ -749,10 +788,11 @@
             updateAuthUI();
         }
 
+        function toggleTheme() { toggleThemeRaw(); try { localStorage.setItem("ffc_theme", document.documentElement.classList.contains("dark") ? "dark" : "light"); } catch (e) {} }
         function openSettingsModal() { document.getElementById("settingsModal").classList.remove("hidden"); document.getElementById("settingsModal").classList.add("flex"); }
         function closeSettingsModal() { document.getElementById("settingsModal").classList.add("hidden"); document.getElementById("settingsModal").classList.remove("flex"); }
 
-        function toggleTheme() {
+        function toggleThemeRaw() {
             const html = document.documentElement;
             const icon = document.getElementById("themeIcon");
             if (html.classList.contains("dark")) {
@@ -1227,37 +1267,85 @@
             `).join("");
         }
 
-        let tacticsState = {
-            mode: "move",
-            showOpponents: false,
-            tokens: [
-                { id: "tk_gk", name: "GK", type: "club", photo: "", x: 10, y: 50 },
-                { id: "tk_ball", name: "BALL", type: "ball", photo: "", x: 50, y: 50 }
-            ],
-            arrows: []
+        const TAC_TYPES = {
+            pass: { c: "#22c55e", dash: "none" },
+            run:  { c: "#fbbf24", dash: "9 6" },
+            def:  { c: "#ef4444", dash: "none" },
+            pos:  { c: "#38bdf8", dash: "3 6" }
         };
+        const TAC_SPEED = { slow: 110, normal: 210, fast: 360 };
+        let tacAnimSpeed = "normal";
+        try { tacAnimSpeed = localStorage.getItem("ffc_anim") || "normal"; } catch (e) {}
 
-        function toggleTacticsMode(mode) {
-            tacticsState.mode = mode;
-            document.getElementById("tacticModeMoveBtn").className = mode === "move" ? "bg-emerald-500 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs" : "bg-slate-800 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs";
-            document.getElementById("tacticModeArrowBtn").className = mode === "arrow" ? "bg-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs" : "bg-slate-800 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs";
+        function tacDefaultTokens() {
+            return [
+                { id: "tk_gk", name: "GK", type: "club", gk: true, photo: "", x: 10, y: 50 },
+                { id: "tk_ball", name: "BALL", type: "ball", photo: "", x: 50, y: 50 }
+            ];
+        }
+
+        let tacticsState = { mode: "move", showOpponents: false, arrowType: "pass", arrowStyle: "curve", tokens: tacDefaultTokens(), arrows: [] };
+        let tacDrag = null, tacAnimating = false, tacReady = false, tacMeasureSvg = null;
+
+        const tacPitch = () => document.getElementById("tacticsPitch");
+        const tacSize = () => { const p = tacPitch(); return { w: p.clientWidth, h: p.clientHeight }; };
+        const tacClamp = (v, a, b) => Math.max(a, Math.min(b, v));
+        function tacPlace(el, px, py) { el.style.transform = `translate3d(${px}px,${py}px,0) translate(-50%,-50%)`; }
+        function tacPlaceAll() {
+            const { w, h } = tacSize();
+            tacticsState.tokens.forEach(t => {
+                const el = document.getElementById("tactic_el_" + t.id);
+                if (el) tacPlace(el, t.x / 100 * w, t.y / 100 * h);
+            });
+        }
+
+        // Smooth path through points (Catmull-Rom -> Bezier)
+        function tacPathD(P) {
+            if (P.length < 3) return `M${P[0].x},${P[0].y} L${P[P.length - 1].x},${P[P.length - 1].y}`;
+            let d = `M${P[0].x},${P[0].y}`;
+            for (let i = 0; i < P.length - 1; i++) {
+                const p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || p2;
+                d += ` C${p1.x + (p2.x - p0.x) / 6},${p1.y + (p2.y - p0.y) / 6} ${p2.x - (p3.x - p1.x) / 6},${p2.y - (p3.y - p1.y) / 6} ${p2.x},${p2.y}`;
+            }
+            return d;
+        }
+        function tacArrowPx(a) { const { w, h } = tacSize(); return a.pts.map(p => ({ x: p.x / 100 * w, y: p.y / 100 * h })); }
+
+        function tacRefreshUI() {
+            const on = " bg-emerald-500 text-slate-950 font-bold", off = " bg-slate-800 text-slate-300 font-semibold";
+            const base = "px-3 py-1.5 rounded-xl text-xs";
+            const m = tacticsState.mode;
+            document.getElementById("tacticModeMoveBtn").className = base + (m === "move" ? on : off);
+            document.getElementById("tacticModeArrowBtn").className = base + (m === "arrow" ? " bg-amber-500 text-slate-950 font-bold" : off);
+            Object.keys(TAC_TYPES).forEach(k => { const b = document.getElementById("tacType_" + k); if (b) b.className = base + (tacticsState.arrowType === k ? " bg-slate-600 text-white font-bold ring-1 ring-white/60" : off); });
+            ["curve", "straight"].forEach(k => { const b = document.getElementById("tacStyle_" + k); if (b) b.className = base + (tacticsState.arrowStyle === k ? on : off); });
+            document.getElementById("tacticsModeHint").innerText = m === "move"
+                ? "টিপস: প্লেয়ার ধরে টেনে নিজের জায়গায় বসান। তীর আঁকতে \"Arrow / Roadmap\" চাপুন।"
+                : "টিপস: প্লেয়ার থেকে আঙুল টেনে পথ আঁকুন, ছাড়লেই বাঁকা তীর তৈরি হবে। একই প্লেয়ার থেকে আবার আঁকলে পরের ধাপ যোগ হবে। শেষে Play Animation চাপুন।";
+        }
+        function setArrowType(t) { tacticsState.arrowType = t; tacRefreshUI(); }
+        function setArrowStyle(s) { tacticsState.arrowStyle = s; tacRefreshUI(); }
+        function toggleTacticsMode(mode) { tacticsState.mode = mode; tacRefreshUI(); }
+        function undoTacticsArrow() { if (tacAnimating) return; tacticsState.arrows.pop(); renderTacticsArrows(); }
+        function clearTacticsArrows() { if (tacAnimating) return; tacticsState.arrows = []; renderTacticsArrows(); }
+
+        function setAnimSpeed(s) {
+            tacAnimSpeed = s;
+            try { localStorage.setItem("ffc_anim", s); } catch (e) {}
+            ["slow", "normal", "fast"].forEach(k => {
+                const b = document.getElementById("animBtn_" + k);
+                if (b) b.className = "py-2 rounded-xl text-xs " + (k === s ? "bg-emerald-500 text-slate-950 font-bold" : "bg-slate-800 text-slate-300 font-medium");
+            });
         }
 
         function addClubPlayerToTactics() {
             if (!state.currentUser && !state.isAdmin) return alert("ভিজিটর মোডে ট্যাকটিকস বোর্ড ব্যবহার করা যাবে না।");
             const pid = document.getElementById("tacticsClubPlayerSelect").value;
-            if (!pid || !state.players[pid]) return alert("প্রথমে একজন ক্লাব প্লেয়ার সিলেক্ট করুন।");
+            if (!pid || !state.players[pid]) return alert("প্রথমে একজন ক্লাব প্লেয়ার সিলেক্ট করুন।");
             const p = state.players[pid];
-            if (tacticsState.tokens.some(t => t.id === pid)) return alert("এই প্লেয়ার ইতিমধ্যে মাঠে আছেন!");
-
-            tacticsState.tokens.push({
-                id: pid,
-                name: p.name.split(" ")[0],
-                type: "club",
-                photo: p.photo || "",
-                x: 30 + (tacticsState.tokens.length * 5) % 40,
-                y: 25 + (tacticsState.tokens.length * 12) % 50
-            });
+            if (tacticsState.tokens.some(t => t.id === pid)) return alert("এই প্লেয়ার ইতিমধ্যে মাঠে আছেন!");
+            const n = tacticsState.tokens.length;
+            tacticsState.tokens.push({ id: pid, name: p.name.split(" ")[0], type: "club", gk: p.pos === "Goalkeeper", photo: p.photo || "", x: 30 + (n * 5) % 40, y: 25 + (n * 12) % 50 });
             renderTacticsBoard();
         }
 
@@ -1268,139 +1356,186 @@
             if (tacticsState.showOpponents) {
                 btn.innerHTML = `<i class="fa-solid fa-users"></i> Opponent Team: ON`;
                 btn.className = "bg-rose-600 text-white px-3 py-2 rounded-xl text-xs font-bold";
-                const oppCoords = [{x:88,y:50},{x:72,y:28},{x:72,y:72},{x:58,y:50},{x:42,y:35},{x:42,y:65}];
-                oppCoords.forEach((c, idx) => {
-                    tacticsState.tokens.push({ id: `opp_${idx}`, name: `OPP ${idx+1}`, type: "opp", photo: "", x: c.x, y: c.y });
-                });
+                [{x:88,y:50},{x:72,y:28},{x:72,y:72},{x:58,y:50},{x:42,y:35},{x:42,y:65}].forEach((c, i) => tacticsState.tokens.push({ id: `opp_${i}`, name: `OPP ${i + 1}`, type: "opp", photo: "", x: c.x, y: c.y }));
             } else {
                 btn.innerHTML = `<i class="fa-solid fa-users-slash"></i> Opponent Team: OFF`;
                 btn.className = "bg-rose-600/20 text-rose-400 border border-rose-500/40 px-3 py-2 rounded-xl text-xs font-bold";
                 tacticsState.tokens = tacticsState.tokens.filter(t => t.type !== "opp");
+                tacticsState.arrows = tacticsState.arrows.filter(a => !String(a.tokenId).startsWith("opp_"));
             }
             renderTacticsBoard();
         }
 
-        function clearTacticsArrows() {
-            tacticsState.arrows = [];
-            renderTacticsArrows();
-        }
-
         function resetTacticsPitch() {
+            if (tacAnimating) return;
             tacticsState.showOpponents = false;
             tacticsState.arrows = [];
-            tacticsState.tokens = [
-                { id: "tk_gk", name: "GK", type: "club", photo: "", x: 10, y: 50 },
-                { id: "tk_ball", name: "BALL", type: "ball", photo: "", x: 50, y: 50 }
-            ];
-            document.getElementById("toggleOpponentBtn").innerHTML = `<i class="fa-solid fa-users-slash"></i> Opponent Team: OFF`;
-            document.getElementById("toggleOpponentBtn").className = "bg-rose-600/20 text-rose-400 border border-rose-500/40 px-3 py-2 rounded-xl text-xs font-bold";
+            tacticsState.tokens = tacDefaultTokens();
+            const btn = document.getElementById("toggleOpponentBtn");
+            btn.innerHTML = `<i class="fa-solid fa-users-slash"></i> Opponent Team: OFF`;
+            btn.className = "bg-rose-600/20 text-rose-400 border border-rose-500/40 px-3 py-2 rounded-xl text-xs font-bold";
             renderTacticsBoard();
         }
 
-        function renderTacticsArrows() {
+        function renderTacticsArrows(draft) {
             const svg = document.getElementById("tacticsArrowsSvg");
-            const defs = svg.querySelector("defs").outerHTML;
-            const lines = tacticsState.arrows.map(a => `
-                <line x1="${a.fromX}%" y1="${a.fromY}%" x2="${a.toX}%" y2="${a.toY}%" stroke="#fbbf24" stroke-width="3" stroke-dasharray="6,4" marker-end="url(#arrowhead)" />
-            `).join("");
-            svg.innerHTML = defs + lines;
+            const { w, h } = tacSize();
+            if (!w) return;
+            svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+            const list = tacticsState.arrows.slice();
+            if (draft) list.push(draft);
+            svg.innerHTML = list.map(a => {
+                const P = tacArrowPx(a);
+                if (P.length < 2) return "";
+                const T = TAC_TYPES[a.type] || TAC_TYPES.pass, e = P[P.length - 1];
+                let q = P[P.length - 2];
+                for (let i = P.length - 2; i >= 0; i--) { if (Math.hypot(e.x - P[i].x, e.y - P[i].y) > 10) { q = P[i]; break; } }
+                const ang = Math.atan2(e.y - q.y, e.x - q.x), s = 12;
+                const bx = e.x - s * Math.cos(ang), by = e.y - s * Math.sin(ang), nx = -Math.sin(ang) * s * 0.55, ny = Math.cos(ang) * s * 0.55;
+                return `<g opacity="${a === draft ? 0.7 : 0.95}" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,.7))">
+                    <path d="${tacPathD(P)}" fill="none" stroke="${T.c}" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="${T.dash}"/>
+                    <polygon points="${e.x},${e.y} ${bx + nx},${by + ny} ${bx - nx},${by - ny}" fill="${T.c}"/></g>`;
+            }).join("");
+        }
+
+        function tacBuildPts(d) {
+            const s = d.pts[0], end = d.cur || d.pts[d.pts.length - 1];
+            if (tacticsState.arrowStyle === "straight") return [s, end];
+            let pts = d.pts.concat([end]);
+            if (pts.length < 4) { // short/straight drag -> gentle automatic bend
+                const dx = end.x - s.x, dy = end.y - s.y;
+                pts = [s, { x: (s.x + end.x) / 2 - dy * 0.18, y: (s.y + end.y) / 2 + dx * 0.18 }, end];
+            }
+            return pts;
+        }
+
+        function tacInstall() {
+            if (tacReady) return;
+            tacReady = true;
+            const pitch = tacPitch();
+            const pos = e => { const r = pitch.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top, w: r.width, h: r.height }; };
+
+            pitch.addEventListener("pointerdown", e => {
+                if (tacAnimating) return;
+                const el = e.target.closest(".draggable-token");
+                if (!el) return;
+                if (!state.currentUser && !state.isAdmin) { alert("ভিজিটর মোডে ট্যাকটিকস বোর্ড ব্যবহার করা যাবে না। অনুগ্রহ করে লগইন করুন।"); return; }
+                const t = tacticsState.tokens.find(x => x.id === el.dataset.id);
+                if (!t) return;
+                e.preventDefault();
+                const p = pos(e);
+                try { pitch.setPointerCapture(e.pointerId); } catch (err) {}
+                if (tacticsState.mode === "move") {
+                    tacDrag = { t, el, dx: p.x - t.x / 100 * p.w, dy: p.y - t.y / 100 * p.h };
+                    el.classList.add("dragging");
+                } else {
+                    const prev = tacticsState.arrows.filter(a => a.tokenId === t.id).pop();
+                    const s = prev ? prev.pts[prev.pts.length - 1] : { x: t.x, y: t.y };
+                    tacDrag = { t, arrow: true, pts: [s], last: { x: p.x, y: p.y } };
+                }
+            });
+
+            pitch.addEventListener("pointermove", e => {
+                if (!tacDrag) return;
+                const p = pos(e);
+                if (!tacDrag.arrow) {
+                    const x = tacClamp((p.x - tacDrag.dx) / p.w * 100, 3, 97), y = tacClamp((p.y - tacDrag.dy) / p.h * 100, 5, 95);
+                    tacDrag.t.x = x; tacDrag.t.y = y;
+                    tacPlace(tacDrag.el, x / 100 * p.w, y / 100 * p.h);
+                } else {
+                    const x = tacClamp(p.x / p.w * 100, 2, 98), y = tacClamp(p.y / p.h * 100, 3, 97);
+                    if (Math.hypot(p.x - tacDrag.last.x, p.y - tacDrag.last.y) > 10) { tacDrag.last = { x: p.x, y: p.y }; tacDrag.pts.push({ x, y }); }
+                    tacDrag.cur = { x, y };
+                    renderTacticsArrows({ tokenId: tacDrag.t.id, type: tacticsState.arrowType, pts: tacBuildPts(tacDrag) });
+                }
+            });
+
+            const finish = () => {
+                if (!tacDrag) return;
+                const d = tacDrag; tacDrag = null;
+                if (d.el) d.el.classList.remove("dragging");
+                if (d.arrow) {
+                    const pts = tacBuildPts(d), s = pts[0], e2 = pts[pts.length - 1];
+                    if (d.cur && Math.hypot(e2.x - s.x, e2.y - s.y) > 2) tacticsState.arrows.push({ id: "ar_" + Date.now(), tokenId: d.t.id, type: tacticsState.arrowType, pts });
+                    renderTacticsArrows();
+                }
+            };
+            pitch.addEventListener("pointerup", finish);
+            pitch.addEventListener("pointercancel", finish);
+            if (window.ResizeObserver) new ResizeObserver(() => { tacPlaceAll(); renderTacticsArrows(); }).observe(pitch);
+            else window.addEventListener("resize", () => { tacPlaceAll(); renderTacticsArrows(); });
         }
 
         function playTacticsAnimation() {
-            if (tacticsState.arrows.length === 0) return alert("প্রথমে Arrow / Roadmap মোডে প্লেয়ার থেকে তীর চিহ্ন আঁকুন!");
-            tacticsState.arrows.forEach(arrow => {
-                const tokenObj = tacticsState.tokens.find(t => t.id === arrow.tokenId);
-                const el = document.getElementById(`tactic_el_${arrow.tokenId}`);
-                if (tokenObj && el) {
-                    el.classList.add("animating");
-                    el.style.left = `${arrow.toX}%`;
-                    el.style.top = `${arrow.toY}%`;
-                    setTimeout(() => {
-                        el.classList.remove("animating");
-                        el.style.left = `${arrow.fromX}%`;
-                        el.style.top = `${arrow.fromY}%`;
-                    }, 1800);
-                }
+            if (tacAnimating) return;
+            if (tacticsState.arrows.length === 0) return alert("প্রথমে Arrow / Roadmap মোডে প্লেয়ার থেকে তীর আঁকুন!");
+            const { w, h } = tacSize();
+            if (!tacMeasureSvg) {
+                tacMeasureSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                tacMeasureSvg.setAttribute("width", "0"); tacMeasureSvg.setAttribute("height", "0");
+                tacMeasureSvg.style.cssText = "position:absolute;visibility:hidden;pointer-events:none";
+                document.body.appendChild(tacMeasureSvg);
+            }
+            tacMeasureSvg.innerHTML = "";
+            const spd = TAC_SPEED[tacAnimSpeed] || 210, groups = {};
+            tacticsState.arrows.forEach(a => {
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("d", tacPathD(tacArrowPx(a)));
+                tacMeasureSvg.appendChild(path);
+                const L = path.getTotalLength();
+                (groups[a.tokenId] = groups[a.tokenId] || []).push({ path, L, dur: Math.max(600, L / spd * 1000) });
             });
+            const ids = Object.keys(groups); let total = 0;
+            ids.forEach(id => { let t0 = 0; groups[id].forEach(s => { s.t0 = t0; t0 += s.dur + 150; }); total = Math.max(total, t0); });
+            const ease = u => u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+            tacAnimating = true;
+            const start = performance.now();
+            const frame = now => {
+                const t = now - start;
+                ids.forEach(id => {
+                    const el = document.getElementById("tactic_el_" + id); if (!el) return;
+                    const segs = groups[id];
+                    const s = segs.find(s => t >= s.t0 && t <= s.t0 + s.dur) || segs.slice().reverse().find(s => t > s.t0 + s.dur);
+                    if (!s) return;
+                    const u = tacClamp((t - s.t0) / s.dur, 0, 1), pt = s.path.getPointAtLength(s.L * ease(u));
+                    tacPlace(el, pt.x, pt.y);
+                });
+                if (t < total) { requestAnimationFrame(frame); return; }
+                setTimeout(() => {
+                    ids.forEach(id => {
+                        const el = document.getElementById("tactic_el_" + id), tk = tacticsState.tokens.find(x => x.id === id);
+                        if (el && tk) { el.classList.add("returning"); tacPlace(el, tk.x / 100 * w, tk.y / 100 * h); }
+                    });
+                    setTimeout(() => { document.querySelectorAll(".draggable-token.returning").forEach(x => x.classList.remove("returning")); tacAnimating = false; }, 800);
+                }, 500);
+            };
+            requestAnimationFrame(frame);
         }
 
         function renderTacticsBoard() {
             const layer = document.getElementById("tacticsTokensLayer");
-            const pitch = document.getElementById("tacticsPitch");
-            renderTacticsArrows();
-
             layer.innerHTML = tacticsState.tokens.map(t => {
                 if (t.type === "ball") {
-                    return `
-                        <div id="tactic_el_${t.id}" data-id="${t.id}" style="left:${t.x}%; top:${t.y}%;" class="draggable-token flex flex-col items-center">
-                            <div class="w-6 h-6 rounded-full bg-white text-slate-950 flex items-center justify-center shadow-lg border border-slate-950">
-                                <i class="fa-solid fa-futbol text-sm"></i>
-                            </div>
-                        </div>
-                    `;
+                    return `<div id="tactic_el_${t.id}" data-id="${t.id}" class="draggable-token">
+                        <div class="tk-body w-6 h-6 rounded-full bg-white text-slate-950 flex items-center justify-center shadow-lg border border-slate-900"><i class="fa-solid fa-futbol text-sm"></i></div></div>`;
                 }
-                const bgClass = t.type === "opp" ? "bg-rose-600 text-white" : "bg-emerald-400 text-slate-950";
-                return `
-                    <div id="tactic_el_${t.id}" data-id="${t.id}" style="left:${t.x}%; top:${t.y}%;" class="draggable-token flex flex-col items-center">
-                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full ${bgClass} font-extrabold text-xs flex items-center justify-center border-2 border-white shadow-lg overflow-hidden">
-                            ${t.photo ? `<img src="${t.photo}" class="w-full h-full object-cover">` : t.name.substring(0, 3).toUpperCase()}
-                        </div>
-                        <span class="bg-slate-950/85 text-white text-[10px] px-1.5 rounded mt-0.5 whitespace-nowrap">${t.name}</span>
+                if (t.type === "opp") {
+                    return `<div id="tactic_el_${t.id}" data-id="${t.id}" class="draggable-token">
+                        <div class="tk-body w-8 h-8 rounded-full bg-slate-900/70 text-slate-200 border-2 border-slate-300/80 flex items-center justify-center shadow-lg"><i class="fa-solid fa-xmark text-sm"></i></div></div>`;
+                }
+                const bg = t.gk ? "bg-amber-500 text-slate-950" : "bg-blue-600 text-white";
+                return `<div id="tactic_el_${t.id}" data-id="${t.id}" class="draggable-token flex flex-col items-center">
+                    <div class="tk-body w-9 h-9 sm:w-10 sm:h-10 rounded-full ${bg} font-extrabold text-xs flex items-center justify-center border-2 border-white shadow-lg overflow-hidden">
+                        ${t.photo ? `<img src="${t.photo}" draggable="false" class="w-full h-full object-cover pointer-events-none">` : t.name.substring(0, 1).toUpperCase()}
                     </div>
-                `;
+                    <span class="bg-[#0b111e]/90 border border-amber-400/40 text-white text-[10px] font-semibold px-1.5 rounded mt-0.5 whitespace-nowrap leading-4">${t.name}</span>
+                </div>`;
             }).join("");
-
-            layer.querySelectorAll(".draggable-token").forEach(el => {
-                const tid = el.dataset.id;
-                let active = false;
-                let startX = 0, startY = 0;
-
-                const startHandler = (cx, cy) => {
-                    if (!state.currentUser && !state.isAdmin) {
-                        alert("ভিজিটর মোডে ট্যাকটিকস বোর্ড ব্যবহার করা যাবে না। অনুগ্রহ করে লগইন করুন।");
-                        return;
-                    }
-                    active = true;
-                    const tObj = tacticsState.tokens.find(x => x.id === tid);
-                    startX = tObj.x;
-                    startY = tObj.y;
-                };
-
-                const moveHandler = (cx, cy) => {
-                    if (!active) return;
-                    const r = pitch.getBoundingClientRect();
-                    const x = Math.max(4, Math.min(96, ((cx - r.left) / r.width) * 100));
-                    const y = Math.max(6, Math.min(94, ((cy - r.top) / r.height) * 100));
-                    if (tacticsState.mode === "move") {
-                        el.style.left = `${x}%`;
-                        el.style.top = `${y}%`;
-                        const tObj = tacticsState.tokens.find(x => x.id === tid);
-                        if (tObj) { tObj.x = x; tObj.y = y; }
-                    }
-                };
-
-                const endHandler = (cx, cy) => {
-                    if (!active) return;
-                    active = false;
-                    if (tacticsState.mode === "arrow" && cx && cy) {
-                        const r = pitch.getBoundingClientRect();
-                        const toX = Math.max(4, Math.min(96, ((cx - r.left) / r.width) * 100));
-                        const toY = Math.max(6, Math.min(94, ((cy - r.top) / r.height) * 100));
-                        tacticsState.arrows = tacticsState.arrows.filter(a => a.tokenId !== tid);
-                        tacticsState.arrows.push({ tokenId: tid, fromX: startX, fromY: startY, toX, toY });
-                        renderTacticsArrows();
-                    }
-                };
-
-                el.addEventListener("mousedown", e => startHandler(e.clientX, e.clientY));
-                window.addEventListener("mousemove", e => moveHandler(e.clientX, e.clientY));
-                window.addEventListener("mouseup", e => endHandler(e.clientX, e.clientY));
-
-                el.addEventListener("touchstart", e => startHandler(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
-                window.addEventListener("touchmove", e => { if (active) moveHandler(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
-                window.addEventListener("touchend", e => { if (active && e.changedTouches[0]) endHandler(e.changedTouches[0].clientX, e.changedTouches[0].clientY); });
-            });
+            tacInstall();
+            tacPlaceAll();
+            renderTacticsArrows();
         }
+
 
         function switchMatchSubTab(type) {
             document.getElementById("subtab-regular").classList.toggle("hidden", type !== "regular");
@@ -1710,6 +1845,9 @@
         document.getElementById("confirmActionBtn").addEventListener("click", () => { if (pendingConfirm) pendingConfirm(); closeConfirmModal(); });
 
         setLanguage(state.lang);
+        try { if (localStorage.getItem("ffc_theme") === "light") toggleThemeRaw(); } catch (e) {}
+        setAnimSpeed(tacAnimSpeed);
+        tacRefreshUI();
         renderTacticsBoard();
         addTournamentMatchRow();
     </script>
