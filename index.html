@@ -196,7 +196,7 @@
                 <i class="fa-solid fa-trophy"></i> <span id="t_tabSquad">স্কোয়াড ও প্রোফাইল</span>
             </button>
             <button onclick="switchTab('lineup')" id="tab-btn-lineup" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-                <i class="fa-solid fa-people-group"></i> <span id="t_tabLineup">টিম লাইনআপ</span>
+                <i class="fa-solid fa-calendar-check"></i> <span id="t_tabLineup">ম্যাচ ফিক্সচার</span>
             </button>
             <button onclick="switchTab('tactics')" id="tab-btn-tactics" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
                 <i class="fa-solid fa-chalkboard-user"></i> <span id="t_tabTactics">ট্যাকটিকস বোর্ড</span>
@@ -327,6 +327,10 @@
 
         <!-- TAB 3: VISUAL FIELD LINEUP -->
         <section id="tab-lineup" class="tab-content hidden space-y-6">
+            <div id="tnRoot" class="space-y-5"></div>
+            <details class="group">
+                <summary class="cursor-pointer text-xs text-slate-400 hover:text-white select-none"><i class="fa-solid fa-clock-rotate-left"></i> পুরোনো ফ্রেন্ডলি ম্যাচ লাইনআপ দেখুন</summary>
+                <div class="mt-3 space-y-6">
             <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
                     <div>
@@ -340,6 +344,9 @@
                     <div class="col-span-full text-center py-10 text-slate-500 text-sm">এখনো কোনো টিম লাইনআপ পাবলিশ করা হয়নি।</div>
                 </div>
             </div>
+        
+                </div>
+            </details>
         </section>
 
         <!-- TAB 4: PRO TACTICS MANAGER -->
@@ -686,7 +693,7 @@
                 t_navSwitchId: "আইডি পরিবর্তন",
                 t_tabHome: "হোম",
                 t_tabSquad: "স্কোয়াড ও প্রোফাইল",
-                t_tabLineup: "টিম লাইনআপ",
+                t_tabLineup: "ম্যাচ ফিক্সচার",
                 t_tabTactics: "ট্যাকটিকস বোর্ড",
                 t_tabMatches: "ম্যাচ ও টুর্নামেন্ট",
                 t_tabChat: "চ্যাট ওয়াল",
@@ -706,7 +713,7 @@
                 t_feeSub: "টার্ফ ও বল ফান্ডের বর্তমান স্ট্যাটাস (অ্যাডমিন ক্লিক করে পরিবর্তন করতে পারবেন)",
                 t_squadTitle: "স্কোয়াড ও প্লেয়ার প্রোফাইল",
                 t_squadHint: "যেকোনো প্লেয়ারের কার্ডে ক্লিক করে তার বিস্তারিত প্রোফাইল ও বায়ো দেখুন।",
-                t_backToSquad: "স্কোয়াডে ফিরে যান",
+                t_backToSquad: "স্কোয়াডে ফিরে যান",
                 t_editProfileTitle: "নিজের প্রোফাইল এডিট করুন",
                 t_bioLabel: "নিজের সম্পর্কে বায়ো (Bio):",
                 t_newPinLabel: "নতুন গোপন পিন (খালি রাখলে আগেরটাই থাকবে):",
@@ -731,7 +738,7 @@
                 t_navSwitchId: "Switch ID",
                 t_tabHome: "Home",
                 t_tabSquad: "Squad & Profiles",
-                t_tabLineup: "Team Lineup",
+                t_tabLineup: "Match Fixtures",
                 t_tabTactics: "Tactics Board",
                 t_tabMatches: "Matches & Tournaments",
                 t_tabChat: "Chat Wall",
@@ -2126,6 +2133,245 @@
             renderAdminAwards();
             if (state.viewingProfileId && state.players[state.viewingProfileId]) renderProfileDetail(state.viewingProfileId);
         });
+
+        // ===== Tournament Hub (fixtures, live table, knockout, team lineups) =====
+        const TN_COLORS = ["#ef4444", "#3b82f6", "#22c55e", "#f59e0b", "#a855f7", "#06b6d4", "#ec4899"];
+        const TN_FORMS = ["1-1", "2-1", "2-2", "1-2-1", "2-1-1", "2-1-2", "3-2", "1-3-1", "2-3-1", "3-2-1", "2-2-2"];
+        const TN_ROLE = { Goalkeeper: 0, Defender: 1, Midfielder: 2, Attacker: 3 };
+        const TN_STAGE = { G: ["গ্রুপ", "#38bdf8"], SF: ["সেমিফাইনাল", "#c084fc"], F: ["ফাইনাল", "#facc15"] };
+        let xTn = {}, xTnId = null, xTnSub = "matches", xTnTeam = null, xTnEditM = null, xTnSel = null, xTnNew = false, xTnTeamEdit = false;
+
+        const tnAdd = (d, n) => { const x = new Date(d + "T00:00:00"); x.setDate(x.getDate() + n); return x.getFullYear() + "-" + String(x.getMonth() + 1).padStart(2, "0") + "-" + String(x.getDate()).padStart(2, "0"); };
+        const tnHM = m => String(Math.floor(m / 60) % 24).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
+        const tnT12 = s => { const [h, m] = s.split(":").map(Number); return ((h % 12) || 12) + ":" + String(m).padStart(2, "0") + (h < 12 ? " AM" : " PM"); };
+        const tnDay = d => new Date(d + "T00:00:00").toLocaleDateString("bn-BD", { weekday: "long", day: "numeric", month: "short" });
+        const tnAv = (p, c = "w-full h-full text-xs") => p ? (p.photo ? `<img src="${p.photo}" class="${c} object-cover rounded-full">` : `<span class="${c} flex items-center justify-center font-bold">${xEsc(p.name.substring(0, 1).toUpperCase())}</span>`) : "";
+        const tnCap = t => state.currentUser && t && state.currentUser.id;
+
+        function tnStand(t) {
+            const R = {};
+            Object.values(t.teams || {}).forEach(x => R[x.id] = { id: x.id, name: x.name, color: x.color, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0 });
+            Object.values(t.matches || {}).filter(m => m.stage === "G" && (m.status === "live" || m.status === "done")).forEach(m => {
+                const a = R[m.home], b = R[m.away]; if (!a || !b) return;
+                const h = +m.hs || 0, x = +m.as || 0;
+                a.p++; b.p++; a.gf += h; a.ga += x; b.gf += x; b.ga += h;
+                if (h > x) { a.w++; b.l++; a.pts += 3; } else if (h < x) { b.w++; a.l++; b.pts += 3; } else { a.d++; b.d++; a.pts++; b.pts++; }
+            });
+            return Object.values(R).sort((x, y) => y.pts - x.pts || (y.gf - y.ga) - (x.gf - x.ga) || y.gf - x.gf || x.name.localeCompare(y.name));
+        }
+        const tnList = t => Object.values(t.matches || {});
+        const tnGroupDone = t => { const g = tnList(t).filter(m => m.stage === "G"); return g.length > 0 && g.every(m => m.status === "done"); };
+        function tnSrc(t, src, st) {
+            if (!src) return null;
+            if (src[0] === "S") return tnGroupDone(t) ? ((st[+src.slice(1) - 1] || {}).id || null) : null;
+            if (src.startsWith("W:")) { const m = (t.matches || {})[src.slice(2)]; return m && m.status === "done" ? tnWinner(t, m, st) : null; }
+            return src;
+        }
+        function tnWinner(t, m, st) {
+            const [h, a] = [tnSrc(t, m.home, st), tnSrc(t, m.away, st)];
+            if (!h || !a) return null;
+            const x = +m.hs || 0, y = +m.as || 0;
+            if (x !== y) return x > y ? h : a;
+            const ph = m.ph, pa = m.pa;
+            return (ph == null || pa == null || ph === pa) ? null : (ph > pa ? h : a);
+        }
+        const tnLabel = s => s && s[0] === "S" ? `${s.slice(1)} নম্বর স্থান` : (s && s.startsWith("W:") ? `${s.slice(2).toUpperCase()} বিজয়ী` : "TBD");
+        function tnChip(t, src, st) {
+            const id = tnSrc(t, src, st), tm = id && t.teams[id];
+            return tm ? `<span class="inline-flex items-center gap-1.5 font-bold text-white"><i class="w-2.5 h-2.5 rounded-full inline-block" style="background:${tm.color}"></i>${xEsc(tm.name)}</span>` : `<span class="text-slate-500 italic text-xs">${tnLabel(src)}</span>`;
+        }
+        function tnChamp(t) { const f = (t.matches || {}).f1; if (!f || f.status !== "done") return null; const id = tnWinner(t, f, tnStand(t)); return id ? t.teams[id] : null; }
+        function tnStep(t) {
+            const L = tnList(t); if (!L.length) return 0;
+            if (!tnGroupDone(t)) return 1;
+            const sf = L.filter(m => m.stage === "SF");
+            if (sf.length && !sf.every(m => m.status === "done")) return 2;
+            return (t.matches.f1 && t.matches.f1.status === "done") ? 4 : 3;
+        }
+        function tnLocked(t, teamId) { return tnList(t).some(m => m.status === "live" && (tnSrc(t, m.home, tnStand(t)) === teamId || tnSrc(t, m.away, tnStand(t)) === teamId)); }
+        function tnCanEdit(t, tm) { return state.isAdmin || (!!state.currentUser && tm.captain === state.currentUser.id && !tnLocked(t, tm.id)); }
+
+        // ---------- Admin actions ----------
+        function tnCreate() {
+            if (!state.isAdmin) return;
+            const v = id => document.getElementById(id).value, name = v("tnName").trim();
+            if (!name) return alert("টুর্নামেন্টের নাম দিন।");
+            if (!v("tnStart")) return alert("শুরুর তারিখ দিন।");
+            const n = +v("tnTeams"), teams = {}, id = "tn" + Date.now();
+            for (let i = 0; i < n; i++) teams["t" + i] = { id: "t" + i, name: "Team " + String.fromCharCode(65 + i), color: TN_COLORS[i], captain: "", players: [] };
+            db.ref(`${ROOT}/tn/${id}`).set({ id, name, created: Date.now(), cfg: { start: v("tnStart"), days: +v("tnDays"), time: v("tnTime"), hours: +v("tnHours"), mm: +v("tnMM"), br: +v("tnBR") }, teams })
+                .then(() => { xTnId = id; xTnSub = "teams"; xTnTeam = null; xTnNew = false; tnRender(); });
+        }
+        function tnDelete(id) { if (state.isAdmin) openConfirmModal("টুর্নামেন্ট ডিলিট?", "এই টুর্নামেন্টের সব ম্যাচ ও টিম মুছে যাবে।", () => { db.ref(`${ROOT}/tn/${id}`).remove(); xTnId = null; }); }
+        function tnGenerate(id) {
+            const t = xTn[id]; if (!state.isAdmin || !t) return;
+            const teams = Object.values(t.teams), c = t.cfg;
+            if (teams.some(x => (x.players || []).length < 3)) return alert("প্রতিটা টিমে অন্তত ৩ জন প্লেয়ার দিন।");
+            if (tnList(t).some(m => m.status !== "upcoming") && !confirm("কিছু ম্যাচ শুরু হয়ে গেছে। আবার বানালে সব স্কোর মুছে যাবে। চালিয়ে যাবেন?")) return;
+            let pairs = []; for (let i = 0; i < teams.length; i++) for (let j = i + 1; j < teams.length; j++) pairs.push([teams[i].id, teams[j].id]);
+            const last = {}, seq = [];
+            while (pairs.length) {
+                const k = seq.length; let best = 0, bs = 1e9;
+                pairs.forEach((p, i) => { const s = ((last[p[0]] === k - 1 || last[p[1]] === k - 1) ? 100 : 0) + (last[p[0]] ?? -9) + (last[p[1]] ?? -9); if (s < bs) { bs = s; best = i; } });
+                const p = pairs.splice(best, 1)[0]; last[p[0]] = k; last[p[1]] = k; seq.push({ stage: "G", home: p[0], away: p[1] });
+            }
+            seq.forEach((m, i) => m.id = "g" + String(i).padStart(2, "0"));
+            if (teams.length >= 4) seq.push({ id: "sf1", stage: "SF", home: "S1", away: "S4" }, { id: "sf2", stage: "SF", home: "S2", away: "S3" }, { id: "f1", stage: "F", home: "W:sf1", away: "W:sf2" });
+            else seq.push({ id: "f1", stage: "F", home: "S1", away: "S2" });
+            const per = Math.floor((c.hours * 60 + c.br) / (c.mm + c.br)), slots = [], [sh, sm] = c.time.split(":").map(Number);
+            for (let d = 0; d < c.days; d++) for (let k = 0; k < per; k++) slots.push([tnAdd(c.start, d), tnHM(sh * 60 + sm + k * (c.mm + c.br))]);
+            if (slots.length < seq.length) return alert(`মোট ${seq.length}টি ম্যাচ লাগবে, কিন্তু সময় আছে মাত্র ${slots.length}টির। দিন বা ঘণ্টা বাড়িয়ে নতুন টুর্নামেন্ট বানান।`);
+            const out = {}; seq.forEach((m, i) => out[m.id] = { ...m, day: slots[i][0], time: slots[i][1], status: "upcoming" });
+            db.ref(`${ROOT}/tn/${id}/matches`).set(out); xTnSub = "matches";
+        }
+        function tnM(id, mid, f, v) {
+            if (!state.isAdmin) return;
+            const u = {}, m = xTn[id].matches[mid];
+            if (["hs", "as", "ph", "pa"].includes(f)) v = Math.max(0, +v || 0);
+            u[f] = v;
+            if (f === "status" && v !== "upcoming") { if (m.hs == null) u.hs = 0; if (m.as == null) u.as = 0; }
+            db.ref(`${ROOT}/tn/${id}/matches/${mid}`).update(u);
+        }
+        const tnStepM = (id, mid, f, d) => tnM(id, mid, f, (+xTn[id].matches[mid][f] || 0) + d);
+        function tnTeamSet(id, tid, f, v) { if (state.isAdmin) db.ref(`${ROOT}/tn/${id}/teams/${tid}/${f}`).set(v); }
+        function tnTogglePlayer(id, tid, pid) {
+            if (!state.isAdmin) return;
+            const tm = xTn[id].teams[tid], arr = (tm.players || []).slice(), i = arr.indexOf(pid);
+            if (i >= 0) arr.splice(i, 1); else arr.push(pid);
+            db.ref(`${ROOT}/tn/${id}/teams/${tid}`).update({ players: arr, captain: (i >= 0 && tm.captain === pid) ? "" : (tm.captain || "") });
+        }
+
+        // ---------- Lineup ----------
+        function tnSlots(f) {
+            const L = f.split("-").map(Number), o = [{ x: 9, y: 50, gk: 1 }];
+            L.forEach((c, i) => { const x = L.length === 1 ? 50 : 28 + i * (48 / (L.length - 1)); for (let j = 0; j < c; j++) o.push({ x, y: (j + 1) * 100 / (c + 1) }); });
+            return o;
+        }
+        function tnSaveLineup(id, tid, formation, slots) { db.ref(`${ROOT}/tn/${id}/teams/${tid}/lineup`).set({ formation, slots }); }
+        function tnLineup(id, tid) {
+            const tm = xTn[id].teams[tid], k = (tm.players || []).length, f = (tm.lineup && tm.lineup.formation) || TN_FORMS.filter(x => x.split("-").reduce((a, b) => a + +b, 1) <= Math.min(k, 7)).pop() || "1-1";
+            return { f, slots: (tm.lineup && tm.lineup.slots) || {} };
+        }
+        function tnSetForm(id, tid, f) { const t = xTn[id]; if (!tnCanEdit(t, t.teams[tid])) return; const n = f.split("-").reduce((a, b) => a + +b, 1), s = {}; Object.entries(tnLineup(id, tid).slots).forEach(([i, p]) => { if (+i < n) s[i] = p; }); xTnSel = null; tnSaveLineup(id, tid, f, s); }
+        function tnPickSlot(i) { xTnSel = xTnSel === i ? null : i; tnRender(); }
+        function tnPickPlayer(id, tid, pid) {
+            const t = xTn[id]; if (!tnCanEdit(t, t.teams[tid])) return;
+            if (xTnSel == null) return alert("আগে মাঠের একটা পজিশনে চাপুন, তারপর প্লেয়ার বেছে নিন।");
+            const { f, slots } = tnLineup(id, tid), s = {};
+            Object.entries(slots).forEach(([i, p]) => { if (p !== pid) s[i] = p; });
+            s[xTnSel] = pid; xTnSel = null; tnSaveLineup(id, tid, f, s);
+        }
+        function tnClearSlot(id, tid) { if (xTnSel == null) return; const { f, slots } = tnLineup(id, tid), s = { ...slots }; delete s[xTnSel]; xTnSel = null; tnSaveLineup(id, tid, f, s); }
+        function tnAuto(id, tid) {
+            const t = xTn[id], tm = t.teams[tid]; if (!tnCanEdit(t, tm)) return;
+            const { f } = tnLineup(id, tid), n = tnSlots(f).length, s = {};
+            (tm.players || []).filter(p => state.players[p]).sort((a, b) => (TN_ROLE[state.players[a].pos] ?? 2) - (TN_ROLE[state.players[b].pos] ?? 2)).slice(0, n).forEach((p, i) => s[i] = p);
+            xTnSel = null; tnSaveLineup(id, tid, f, s);
+        }
+
+        // ---------- Rendering ----------
+        function tnRoad(t) {
+            const st = tnStep(t), has4 = Object.keys(t.teams).length >= 4;
+            const steps = [["টিম গঠন", "fa-users"], ["গ্রুপ স্টেজ", "fa-table"]].concat(has4 ? [["সেমিফাইনাল", "fa-code-branch"]] : []).concat([["ফাইনাল", "fa-trophy"]]);
+            const cur = has4 ? st : (st >= 3 ? st - 1 : st);
+            return `<div class="flex items-center overflow-x-auto pb-1">${steps.map((s, i) => { const done = i < cur || st === 4, act = i === cur && st < 4;
+                return `<div class="flex items-center shrink-0"><div class="flex flex-col items-center w-20"><div class="w-9 h-9 rounded-full flex items-center justify-center text-sm ${done ? "bg-emerald-500 text-slate-950" : act ? "bg-amber-500 text-slate-950 ring-4 ring-amber-500/25" : "bg-slate-800 text-slate-500"}"><i class="fa-solid ${done ? "fa-check" : s[1]}"></i></div><span class="text-[10px] mt-1 ${act ? "text-amber-400 font-bold" : done ? "text-emerald-400" : "text-slate-500"}">${s[0]}</span></div>${i < steps.length - 1 ? `<div class="w-6 h-0.5 ${done ? "bg-emerald-500" : "bg-slate-700"}"></div>` : ""}</div>`; }).join("")}</div>`;
+        }
+        function tnMatchRow(t, m, st) {
+            const adm = state.isAdmin, [h, a] = [tnSrc(t, m.home, st), tnSrc(t, m.away, st)], S = TN_STAGE[m.stage];
+            const sc = m.status === "upcoming" ? `<span class="text-slate-500 text-sm">vs</span>` : `<span class="text-lg font-extrabold text-white">${+m.hs || 0} - ${+m.as || 0}</span>`;
+            const pill = m.status === "live" ? `<span class="text-[10px] font-bold bg-rose-500 text-white px-2 py-0.5 rounded-full animate-pulse">● LIVE</span>` : m.status === "done" ? `<span class="text-[10px] bg-slate-700 text-slate-300 px-2 py-0.5 rounded-full">শেষ</span>` : `<span class="text-[10px] bg-slate-800 text-cyan-400 px-2 py-0.5 rounded-full">আসন্ন</span>`;
+            const pen = m.stage !== "G" && m.status === "done" && (+m.hs || 0) === (+m.as || 0) ? `<div class="text-[10px] text-amber-400 text-center">পেনাল্টি ${m.ph ?? 0}-${m.pa ?? 0}</div>` : "";
+            let ed = "";
+            if (adm && xTnEditM === m.id) {
+                const stp = (f, l) => `<div class="flex items-center gap-1"><span class="text-[11px] text-slate-400 w-12">${l}</span><button onclick="tnStepM('${t.id}','${m.id}','${f}',-1)" class="w-7 h-7 bg-slate-700 rounded">−</button><b class="w-6 text-center text-white">${+m[f] || 0}</b><button onclick="tnStepM('${t.id}','${m.id}','${f}',1)" class="w-7 h-7 bg-emerald-600 rounded">+</button></div>`;
+                const ok = h && a, inp = "bg-[#0b111e] border border-slate-700 rounded-lg px-2 py-1 text-xs text-white";
+                ed = `<div class="mt-3 pt-3 border-t border-slate-700/70 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div class="flex flex-wrap gap-2 items-center"><select onchange="tnM('${t.id}','${m.id}','status',this.value)" class="${inp}"><option value="upcoming" ${m.status === "upcoming" ? "selected" : ""}>আসন্ন</option><option value="live" ${m.status === "live" ? "selected" : ""}>চলছে (LIVE)</option><option value="done" ${m.status === "done" ? "selected" : ""}>শেষ</option></select>
+                    <input type="date" value="${m.day}" onchange="tnM('${t.id}','${m.id}','day',this.value)" class="${inp}"><input type="time" value="${m.time}" onchange="tnM('${t.id}','${m.id}','time',this.value)" class="${inp}"></div>
+                    ${ok ? `<div class="space-y-1.5">${stp("hs", "হোম")}${stp("as", "অ্যাওয়ে")}${m.stage !== "G" && (+m.hs || 0) === (+m.as || 0) ? `<div class="text-amber-400">ড্র হলে পেনাল্টি স্কোর:</div>${stp("ph", "হোম")}${stp("pa", "অ্যাওয়ে")}` : ""}</div>` : `<p class="text-slate-500">টিম ঠিক হলে স্কোর দেওয়া যাবে।</p>`}</div>`;
+            }
+            return `<div class="bg-[#0b111e] border ${m.status === "live" ? "border-rose-500/60" : "border-slate-800"} rounded-xl p-3">
+                <div class="flex items-center justify-between mb-2"><div class="flex items-center gap-2"><span class="text-xs font-bold text-white">${tnT12(m.time)}</span><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:${S[1]}22;color:${S[1]}">${S[0]}${m.id.startsWith("sf") ? " " + m.id.slice(2) : ""}</span></div><div class="flex items-center gap-2">${pill}${adm ? `<button onclick="xTnEditM=xTnEditM==='${m.id}'?null:'${m.id}';tnRender()" class="text-slate-400 hover:text-amber-400"><i class="fa-solid fa-pen text-xs"></i></button>` : ""}</div></div>
+                <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-sm"><div class="text-right">${tnChip(t, m.home, st)}</div><div class="px-2 text-center">${sc}${pen}</div><div>${tnChip(t, m.away, st)}</div></div>${ed}</div>`;
+        }
+        function tnViewMatches(t, st) {
+            const L = tnList(t).sort((a, b) => (a.day + a.time).localeCompare(b.day + b.time));
+            if (!L.length) return tnSetupCard(t);
+            const days = [...new Set(L.map(m => m.day))];
+            return days.map((d, i) => `<div class="space-y-2"><h4 class="text-xs font-bold text-amber-400 flex items-center gap-2"><i class="fa-solid fa-calendar-day"></i> দিন ${i + 1} · ${tnDay(d)}</h4>${L.filter(m => m.day === d).map(m => tnMatchRow(t, m, st)).join("")}</div>`).join("") + (state.isAdmin ? `<button onclick="tnGenerate('${t.id}')" class="text-[11px] text-slate-400 underline">ফিক্সচার আবার বানান</button>` : "");
+        }
+        function tnSetupCard(t) {
+            const n = Object.keys(t.teams).length, bad = Object.values(t.teams).filter(x => (x.players || []).length < 3).length;
+            return `<div class="bg-[#0b111e] border border-dashed border-slate-700 rounded-xl p-5 text-center space-y-2">
+                <i class="fa-solid fa-clipboard-list text-2xl text-amber-400"></i><p class="text-sm text-white font-semibold">ম্যাচ ফিক্সচার এখনো তৈরি হয়নি</p>
+                ${state.isAdmin ? `<p class="text-xs text-slate-400">${bad ? `"টিম ও লাইনআপ" ট্যাবে গিয়ে ${bad}টি টিমে আরও প্লেয়ার দিন (প্রতি টিমে অন্তত ৩ জন)।` : `সব ${n}টি টিম তৈরি। এবার সময়সূচি বানানো যায়।`}</p><button onclick="tnGenerate('${t.id}')" ${bad ? "disabled" : ""} class="${bad ? "bg-slate-700 text-slate-500" : "bg-emerald-500 hover:bg-emerald-600 text-slate-950"} font-bold px-4 py-2 rounded-xl text-xs"><i class="fa-solid fa-wand-magic-sparkles"></i> অটো ফিক্সচার তৈরি করুন</button>` : `<p class="text-xs text-slate-400">অ্যাডমিন শীঘ্রই সময়সূচি দেবে।</p>`}</div>`;
+        }
+        function tnViewTable(t, st) {
+            const q = Object.keys(t.teams).length >= 4 ? 4 : 2, th = "py-2 px-1.5 text-center";
+            return `<div class="overflow-x-auto"><table class="w-full text-xs"><thead class="text-slate-400 border-b border-slate-700"><tr><th class="${th} text-left">#</th><th class="${th} text-left">টিম</th><th class="${th}">খেলা</th><th class="${th}">জয়</th><th class="${th}">ড্র</th><th class="${th}">হার</th><th class="${th}">গোল</th><th class="${th}">GD</th><th class="${th} text-amber-400">পয়েন্ট</th></tr></thead><tbody>
+                ${st.map((r, i) => `<tr class="border-b border-slate-800 ${i < q ? "bg-emerald-500/5" : ""}"><td class="${th} text-left ${i < q ? "text-emerald-400 font-bold" : "text-slate-500"}">${i + 1}</td><td class="${th} text-left font-bold text-white whitespace-nowrap"><i class="w-2.5 h-2.5 rounded-full inline-block mr-1.5" style="background:${r.color}"></i>${xEsc(r.name)}</td><td class="${th}">${r.p}</td><td class="${th}">${r.w}</td><td class="${th}">${r.d}</td><td class="${th}">${r.l}</td><td class="${th}">${r.gf}:${r.ga}</td><td class="${th}">${r.gf - r.ga > 0 ? "+" : ""}${r.gf - r.ga}</td><td class="${th} font-extrabold text-amber-400 text-sm">${r.pts}</td></tr>`).join("")}</tbody></table></div>
+                <p class="text-[11px] text-slate-500 mt-2"><i class="fa-solid fa-circle text-emerald-500 text-[8px]"></i> সবুজ জায়গার সেরা ${q} টিম ${q === 4 ? "সেমিফাইনালে" : "ফাইনালে"} যাবে। পয়েন্ট সমান হলে গোল ব্যবধান, তারপর বেশি গোল। জয় ৩, ড্র ১।</p>`;
+        }
+        function tnViewBracket(t, st) {
+            const ch = tnChamp(t), M = t.matches || {}, col = ids => `<div class="space-y-3 flex-1 min-w-[200px]">${ids.filter(i => M[i]).map(i => `<div><div class="text-[11px] text-slate-400 mb-1">${TN_STAGE[M[i].stage][0]} ${i.startsWith("sf") ? i.slice(2) : ""} · ${tnDay(M[i].day)} ${tnT12(M[i].time)}</div>${tnMatchRow(t, M[i], st)}</div>`).join("")}</div>`;
+            if (!tnList(t).length) return `<p class="text-xs text-slate-500 text-center py-6">ফিক্সচার তৈরি হলে এখানে নকআউট দেখা যাবে।</p>`;
+            return (ch ? `<div class="rounded-2xl p-5 text-center mb-4" style="background:linear-gradient(120deg,#facc1522,#f59e0b11);border:1px solid #facc1566"><i class="fa-solid fa-trophy text-3xl text-amber-400"></i><p class="text-xs text-amber-300 mt-1">চ্যাম্পিয়ন</p><p class="text-xl font-extrabold text-white"><i class="w-3 h-3 rounded-full inline-block mr-2" style="background:${ch.color}"></i>${xEsc(ch.name)}</p></div>` : "") + `<div class="flex flex-col md:flex-row gap-4">${col(["sf1", "sf2"])}${col(["f1"])}</div>`;
+        }
+        function tnViewTeams(t) {
+            const adm = state.isAdmin;
+            if (xTnTeam && t.teams[xTnTeam]) return tnTeamDetail(t, t.teams[xTnTeam]);
+            return `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${Object.values(t.teams).map(tm => { const cp = state.players[tm.captain];
+                return `<button onclick="xTnTeam='${tm.id}';xTnSel=null;xTnTeamEdit=false;tnRender()" class="text-left bg-[#0b111e] border border-slate-800 hover:border-emerald-500/50 rounded-xl p-4 transition"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-extrabold" style="background:${tm.color}">${xEsc(tm.name.substring(0, 1))}</div><div class="flex-1 min-w-0"><div class="font-bold text-white truncate">${xEsc(tm.name)}</div><div class="text-[11px] text-slate-400">${(tm.players || []).length} জন প্লেয়ার${cp ? ` · ক্যাপ্টেন ${xEsc(cp.name.split(" ")[0])}` : ""}</div></div><i class="fa-solid fa-chevron-right text-slate-600"></i></div></button>`; }).join("")}</div>`;
+        }
+        function tnTeamDetail(t, tm) {
+            const adm = state.isAdmin, can = tnCanEdit(t, tm), locked = tnLocked(t, tm.id), pl = (tm.players || []).filter(p => state.players[p]);
+            const { f, slots } = tnLineup(t.id, tm.id), S = tnSlots(f), on = {}; Object.entries(slots).forEach(([i, p]) => { if (pl.includes(p)) on[i] = p; });
+            const used = new Set(Object.values(on)), inp = "bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white";
+            const pitch = `<div class="tpitch" style="max-width:640px">${document.querySelector("#tacticsPitch > svg").outerHTML}<div class="tp-vignette" style="z-index:2"></div>${S.map((s, i) => { const p = state.players[on[i]], sel = xTnSel === i;
+                return `<div ${can ? `onclick="tnPickSlot(${i})"` : ""} class="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center ${can ? "cursor-pointer" : ""}" style="left:${s.x}%;top:${s.y}%;z-index:10"><div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full border-2 ${sel ? "border-amber-400 ring-4 ring-amber-400/40" : "border-white"} shadow-lg overflow-hidden flex items-center justify-center ${s.gk ? "bg-amber-500 text-slate-950" : "bg-blue-600 text-white"} font-bold text-xs">${p ? tnAv(p) : (can ? "+" : "")}</div>${p ? `<span class="bg-[#0b111e]/90 border border-amber-400/40 text-white text-[10px] px-1.5 rounded mt-0.5 whitespace-nowrap">${xEsc(p.name.split(" ")[0])}</span>` : ""}</div>`; }).join("")}</div>`;
+            const edit = adm ? `<div class="bg-[#0b111e] border border-slate-800 rounded-xl p-3 space-y-3"><button onclick="xTnTeamEdit=!xTnTeamEdit;tnRender()" class="text-xs text-amber-400 font-bold"><i class="fa-solid fa-gear"></i> টিম এডিট (অ্যাডমিন) ${xTnTeamEdit ? "▲" : "▼"}</button>
+                ${xTnTeamEdit ? `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><input value="${xEsc(tm.name)}" maxlength="20" onchange="tnTeamSet('${t.id}','${tm.id}','name',this.value.trim()||'${xEsc(tm.name)}')" class="${inp}"><select onchange="tnTeamSet('${t.id}','${tm.id}','captain',this.value)" class="${inp}"><option value="">-- ক্যাপ্টেন বাছুন --</option>${pl.map(p => `<option value="${p}" ${tm.captain === p ? "selected" : ""}>${xEsc(state.players[p].name)}</option>`).join("")}</select></div>
+                <p class="text-[11px] text-slate-400">প্লেয়ার বেছে নিন (যারা অন্য টিমে আছে তাদের দেখাবে না):</p><div class="flex flex-wrap gap-1.5">${Object.values(state.players).filter(p => !Object.values(t.teams).some(x => x.id !== tm.id && (x.players || []).includes(p.id))).map(p => `<button onclick="tnTogglePlayer('${t.id}','${tm.id}','${p.id}')" class="px-2.5 py-1 rounded-lg text-xs ${(tm.players || []).includes(p.id) ? "bg-emerald-500 text-slate-950 font-bold" : "bg-slate-800 text-slate-300"}">${xEsc(p.name)}</button>`).join("")}</div>` : ""}</div>` : "";
+            const k = pl.length, forms = TN_FORMS.filter(x => { const n = x.split("-").reduce((a, b) => a + +b, 1); return n <= Math.max(k, 3) && n >= 3; });
+            return `<div class="space-y-4"><button onclick="xTnTeam=null;xTnSel=null;tnRender()" class="text-xs text-slate-400 hover:text-white"><i class="fa-solid fa-arrow-left"></i> সব টিম</button>
+                <div class="flex items-center gap-3"><div class="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl font-extrabold" style="background:${tm.color}">${xEsc(tm.name.substring(0, 1))}</div><div><h3 class="text-lg font-extrabold text-white">${xEsc(tm.name)}</h3><p class="text-xs text-slate-400">${state.players[tm.captain] ? `ক্যাপ্টেন: ${xEsc(state.players[tm.captain].name)}` : "ক্যাপ্টেন ঠিক হয়নি"} · ${k} জন প্লেয়ার</p></div></div>${edit}
+                ${locked ? `<p class="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-xl p-3"><i class="fa-solid fa-lock"></i> ম্যাচ চলছে, তাই লাইনআপ এখন লক করা।</p>` : can && !adm ? `<p class="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3"><i class="fa-solid fa-circle-info"></i> আপনি ক্যাপ্টেন। মাঠের একটা পজিশনে চাপুন, তারপর নিচের তালিকা থেকে প্লেয়ার বেছে নিন।</p>` : ""}
+                ${can ? `<div class="flex flex-wrap items-center gap-1.5"><span class="text-[11px] text-slate-400">ফরমেশন:</span>${forms.map(x => `<button onclick="tnSetForm('${t.id}','${tm.id}','${x}')" class="px-3 py-1.5 rounded-xl text-xs ${x === f ? "bg-emerald-500 text-slate-950 font-bold" : "bg-slate-800 text-slate-300"}">${x}</button>`).join("")}<button onclick="tnAuto('${t.id}','${tm.id}')" class="px-3 py-1.5 rounded-xl text-xs bg-cyan-500/20 text-cyan-300 ml-auto"><i class="fa-solid fa-wand-magic-sparkles"></i> অটো সাজান</button></div>` : `<span class="text-[11px] text-slate-400">ফরমেশন: <b class="text-white">${f}</b></span>`}
+                ${pitch}
+                <div><div class="flex items-center justify-between mb-2"><h4 class="text-xs font-bold text-slate-300">টিমের প্লেয়ার (${k})</h4>${can && xTnSel != null ? `<button onclick="tnClearSlot('${t.id}','${tm.id}')" class="text-[11px] text-rose-400">নির্বাচিত পজিশন খালি করুন</button>` : ""}</div>
+                <div class="flex flex-wrap gap-2">${pl.map(p => `<button ${can ? `onclick="tnPickPlayer('${t.id}','${tm.id}','${p}')"` : ""} class="flex items-center gap-2 pr-3 rounded-full border text-xs ${used.has(p) ? "border-emerald-500/50 bg-emerald-500/10 text-white" : "border-slate-700 bg-slate-800/60 text-slate-300"}"><span class="w-7 h-7 rounded-full overflow-hidden bg-slate-700 flex items-center justify-center">${tnAv(state.players[p])}</span>${xEsc(state.players[p].name.split(" ")[0])}${tm.captain === p ? ` <b class="text-amber-400">C</b>` : ""}<span class="text-[10px] ${used.has(p) ? "text-emerald-400" : "text-slate-500"}">${used.has(p) ? "মাঠে" : "বেঞ্চ"}</span></button>`).join("") || `<span class="text-xs text-slate-500">এখনো কোনো প্লেয়ার দেওয়া হয়নি।</span>`}</div></div></div>`;
+        }
+        function tnCreateForm() {
+            const d = xDefaultKickoff(), ds = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+            const L = (l, x) => `<label class="block text-[11px] text-slate-400">${l}${x}</label>`, i = "mt-1 w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white";
+            const sel = (id, arr, def) => `<select id="${id}" class="${i}">${arr.map(v => `<option value="${v}" ${v === def ? "selected" : ""}>${v}</option>`).join("")}</select>`;
+            return `<div class="bg-[#0b111e] border border-emerald-500/30 rounded-2xl p-4 space-y-3"><h3 class="text-sm font-bold text-emerald-400">নতুন টুর্নামেন্ট</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                ${L("নাম", `<input id="tnName" maxlength="40" placeholder="যেমন: FFC টার্ফ কাপ" class="${i}">`)}${L("টিম সংখ্যা (৩-৭)", sel("tnTeams", [3, 4, 5, 6, 7], 4))}${L("শুরুর তারিখ", `<input id="tnStart" type="date" value="${ds}" class="${i}">`)}${L("কত দিন", sel("tnDays", [1, 2, 3, 4], 1))}
+                ${L("শুরুর সময়", `<input id="tnTime" type="time" value="16:00" class="${i}">`)}${L("প্রতিদিন টার্ফ (ঘণ্টা)", sel("tnHours", [2, 3, 4, 5, 6], 3))}${L("ম্যাচ (মিনিট)", sel("tnMM", [10, 12, 15, 20, 25, 30], 15))}${L("বিরতি (মিনিট)", sel("tnBR", [0, 3, 5, 10], 5))}</div>
+                <div class="flex gap-2"><button onclick="tnCreate()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs">তৈরি করুন</button><button onclick="xTnNew=false;tnRender()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs">বাতিল</button></div></div>`;
+        }
+        function tnRender() {
+            const root = document.getElementById("tnRoot"); if (!root) return;
+            const L = Object.values(xTn).sort((a, b) => b.created - a.created), t = xTn[xTnId];
+            if (!t) {
+                xTnId = null;
+                root.innerHTML = `<div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg space-y-4"><div class="flex flex-wrap items-center justify-between gap-2"><div><h2 class="text-base sm:text-lg font-bold text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-calendar-check"></i> ম্যাচ ফিক্সচার</h2><p class="text-xs text-slate-400">টার্ফ টুর্নামেন্টের সময়সূচি, পয়েন্ট টেবিল ও লাইনআপ</p></div>${state.isAdmin ? `<button onclick="xTnNew=true;tnRender()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs"><i class="fa-solid fa-plus"></i> নতুন টুর্নামেন্ট</button>` : ""}</div>
+                    ${xTnNew && state.isAdmin ? tnCreateForm() : ""}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${L.map(x => { const ch = tnChamp(x), n = Object.keys(x.teams || {}).length;
+                        return `<button onclick="xTnId='${x.id}';xTnSub='matches';xTnTeam=null;tnRender()" class="text-left bg-[#0b111e] border border-slate-800 hover:border-emerald-500/50 rounded-xl p-4 transition"><div class="flex items-center justify-between"><b class="text-white">${xEsc(x.name)}</b>${ch ? `<span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full">সমাপ্ত</span>` : tnList(x).some(m => m.status === "live") ? `<span class="text-[10px] bg-rose-500 text-white px-2 py-0.5 rounded-full animate-pulse">● LIVE</span>` : `<span class="text-[10px] bg-slate-800 text-cyan-400 px-2 py-0.5 rounded-full">চলমান</span>`}</div><p class="text-[11px] text-slate-400 mt-1">${n}টি টিম · ${tnDay(x.cfg.start)} থেকে ${x.cfg.days} দিন</p>${ch ? `<p class="text-xs text-amber-300 mt-1"><i class="fa-solid fa-trophy"></i> চ্যাম্পিয়ন: ${xEsc(ch.name)}</p>` : ""}</button>`; }).join("") || `<p class="col-span-full text-center text-sm text-slate-500 py-8">এখনো কোনো টুর্নামেন্ট নেই।${state.isAdmin ? " উপরের বাটন চেপে নতুন টুর্নামেন্ট বানান।" : ""}</p>`}</div></div>`;
+                return;
+            }
+            const st = tnStand(t), subs = [["matches", "ম্যাচ", "fa-calendar-days"], ["table", "পয়েন্ট টেবিল", "fa-table"], ["bracket", "নকআউট", "fa-code-branch"], ["teams", "টিম ও লাইনআপ", "fa-people-group"]];
+            root.innerHTML = `<div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg space-y-4">
+                <div class="flex items-center justify-between gap-2"><button onclick="xTnId=null;tnRender()" class="text-xs text-slate-400 hover:text-white"><i class="fa-solid fa-arrow-left"></i> সব টুর্নামেন্ট</button>${state.isAdmin ? `<button onclick="tnDelete('${t.id}')" class="text-xs text-rose-400"><i class="fa-solid fa-trash"></i> ডিলিট</button>` : ""}</div>
+                <h2 class="text-lg font-extrabold text-white">${xEsc(t.name)}</h2>${tnRoad(t)}
+                <div class="flex gap-1.5 overflow-x-auto">${subs.map(([k, l, ic]) => `<button onclick="xTnSub='${k}';xTnTeam=null;tnRender()" class="shrink-0 px-3 py-2 rounded-xl text-xs ${xTnSub === k ? "bg-emerald-500 text-slate-950 font-bold" : "bg-slate-800 text-slate-300"}"><i class="fa-solid ${ic}"></i> ${l}</button>`).join("")}</div>
+                <div class="space-y-4">${xTnSub === "matches" ? tnViewMatches(t, st) : xTnSub === "table" ? tnViewTable(t, st) : xTnSub === "bracket" ? tnViewBracket(t, st) : tnViewTeams(t)}</div></div>`;
+        }
+        db.ref(`${ROOT}/tn`).on("value", snap => { xTn = snap.val() || {}; tnRender(); });
+        { let sig = ""; setInterval(() => { const s = state.isAdmin + "|" + (state.currentUser ? state.currentUser.id : "") + "|" + Object.keys(state.players || {}).length; if (s !== sig) { sig = s; tnRender(); } }, 1000); }
 
         try { if (localStorage.getItem("ffc_theme") === "light") toggleThemeRaw(); } catch (e) {}
         setAnimSpeed(tacAnimSpeed);
