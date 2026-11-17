@@ -202,7 +202,7 @@
                 <i class="fa-solid fa-chalkboard-user"></i> <span id="t_tabTactics">ট্যাকটিকস বোর্ড</span>
             </button>
             <button onclick="switchTab('matches')" id="tab-btn-matches" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-                <i class="fa-solid fa-calendar-days"></i> <span id="t_tabMatches">ম্যাচ ও টুর্নামেন্ট</span>
+                <i class="fa-solid fa-calendar-days"></i> <span id="t_tabMatches">ম্যাচ হিস্ট্রি</span>
             </button>
             <button onclick="switchTab('chat')" id="tab-btn-chat" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
                 <i class="fa-solid fa-comments"></i> <span id="t_tabChat">চ্যাট ওয়াল</span>
@@ -456,30 +456,17 @@
 
         <!-- TAB 5: MATCHES & TOURNAMENTS -->
         <section id="tab-matches" class="tab-content hidden space-y-6">
-            <div class="flex gap-2">
-                <button onclick="switchMatchSubTab('regular')" id="subtab-btn-regular" class="bg-cyan-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs sm:text-sm">
-                    <i class="fa-solid fa-futbol mr-1"></i> সাধারণ ম্যাচ হিস্ট্রি
-                </button>
-                <button onclick="switchMatchSubTab('tournament')" id="subtab-btn-tournament" class="bg-[#111827] border border-slate-800 text-slate-300 font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm">
-                    <i class="fa-solid fa-trophy text-amber-400 mr-1"></i> টুর্নামেন্ট হিস্ট্রি (Tournaments)
-                </button>
+            <div class="rounded-2xl p-5 relative overflow-hidden" style="background:linear-gradient(120deg,#0c4a6e,#0e7490 55%,#1e293b)">
+                <i class="fa-solid fa-futbol absolute -right-3 -bottom-5 text-9xl text-white/10"></i>
+                <div class="relative flex items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-black text-white">ম্যাচ হিস্ট্রি</h2>
+                        <p class="text-xs text-cyan-100/80">ক্লাবের সব খেলার ফলাফল, ছবি ও আলোচনা</p>
+                    </div>
+                    <div class="bg-black/25 rounded-xl px-4 py-2 text-center"><div id="matchHistoryCount" class="text-xl font-black text-white">0</div><div class="text-[10px] text-cyan-100/70">মোট ম্যাচ</div></div>
+                </div>
             </div>
-
-            <!-- Regular Matches -->
-            <div id="subtab-regular" class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
-                <h2 class="text-base sm:text-lg font-bold text-cyan-400 flex items-center gap-2 mb-4">
-                    <i class="fa-solid fa-calendar-check"></i> সাধারণ ম্যাচ রেকর্ড ও আলোচনা
-                </h2>
-                <div id="matchHistoryContainer" class="space-y-4"></div>
-            </div>
-
-            <!-- Tournaments Archive -->
-            <div id="subtab-tournament" class="hidden bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
-                <h2 class="text-base sm:text-lg font-bold text-amber-400 flex items-center gap-2 mb-4">
-                    <i class="fa-solid fa-trophy"></i> টুর্নামেন্ট আর্কাইভ (একাধিক ম্যাচ ও ছবি)
-                </h2>
-                <div id="tournamentsContainer" class="space-y-5"></div>
-            </div>
+            <div id="matchHistoryContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
 
             <!-- Unlimited Match Moments Gallery -->
             <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
@@ -548,6 +535,12 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-5"><div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-3"><h3 class="text-sm font-bold text-rose-400 flex items-center gap-2"><i class="fa-solid fa-key"></i> অ্যাডমিন পাসওয়ার্ড বদলান</h3><input type="password" id="adminOldPin" placeholder="বর্তমান পাসওয়ার্ড" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="password" id="adminNewPin" placeholder="নতুন পাসওয়ার্ড (কমপক্ষে ৪ অক্ষর)" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="password" id="adminNewPin2" placeholder="নতুন পাসওয়ার্ড আবার লিখুন" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><button onclick="changeAdminPin()" class="w-full bg-rose-500 hover:bg-rose-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs">পাসওয়ার্ড বদলান</button></div><div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-3"><h3 class="text-sm font-bold text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-address-book"></i> সেটিংসের যোগাযোগ তথ্য</h3><p class="text-[11px] text-slate-400">এগুলো সেটিংসে সবাই দেখতে পাবে। খালি রাখলে দেখাবে না।</p><div class="grid grid-cols-2 gap-2"><input type="text" id="ct_email" placeholder="Gmail / Email" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="text" id="ct_phone" placeholder="ফোন নম্বর" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="text" id="ct_whatsapp" placeholder="WhatsApp নম্বর" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="text" id="ct_facebook" placeholder="Facebook লিংক" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="text" id="ct_instagram" placeholder="Instagram লিংক" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="text" id="ct_youtube" placeholder="YouTube লিংক" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><input type="text" id="ct_telegram" placeholder="Telegram লিংক" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"></div><input type="text" id="ct_note" placeholder="ছোট নোট (যেমন: কল করার সময়)" class="w-full bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><button onclick="saveContact()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs">যোগাযোগ তথ্য সেভ করুন</button></div></div><div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-3"><h3 class="text-sm font-bold text-fuchsia-400 flex items-center gap-2"><i class="fa-solid fa-crown"></i> বিশেষ ব্যাজ / সম্মান প্রদান</h3><p class="text-[11px] text-slate-400">স্ট্যাটস দিয়ে পাওয়া যায় না এমন বিশেষ সম্মান সদস্যদের দিন। এগুলো প্রোফাইলের গ্যালারিতে Special হিসেবে দেখাবে।</p><div class="grid grid-cols-1 sm:grid-cols-4 gap-2"><select id="spPlayer" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"></select><select id="spBadge" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><option value="captain">Captain</option><option value="founder">Club Founder</option><option value="fairplay">Fair Play</option><option value="teammate">Best Teammate</option><option value="legend">Club Legend</option><option value="honor">Honorary Member</option><option value="mvp">Season MVP</option><option value="fire">On Fire</option><option value="custom">নিজের ব্যাজ বানান...</option></select><input id="spCustom" placeholder="কাস্টম ব্যাজের নাম" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"><button onclick="grantSpecial()" class="bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-bold rounded-xl text-xs py-2">প্রদান করুন</button></div><div id="spList" class="flex flex-wrap gap-2"></div></div>
 
+            <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-3">
+                <h3 class="text-sm font-bold text-rose-400 flex items-center gap-2"><i class="fa-solid fa-broom"></i> পুরোনো ডেটা পরিষ্কার</h3>
+                <p class="text-[11px] text-slate-400">আগের টুর্নামেন্ট আর্কাইভ ও আগের সেভ করা ট্যাকটিক্স আর কোনো কাজে লাগে না। এগুলো মুছলে Firebase-এর জায়গা ও ডাউনলোড বাঁচবে। নতুন ফিক্সচার, ম্যাচ হিস্ট্রি, প্লেয়ার ও চ্যাট মুছবে না।</p>
+                <button onclick="clearOldData()" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-2.5 rounded-xl text-xs">পুরোনো ডেটা মুছুন</button>
+            </div>
+
             <!-- Add New Player & Squad Management -->
             <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-4">
                 <h3 class="text-sm font-bold text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-user-plus"></i> নতুন প্লেয়ার যোগ ও স্কোয়াড ম্যানেজমেন্ট</h3>
@@ -613,30 +606,6 @@
                 <button onclick="addMatchRecord()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs">সাধারণ ম্যাচ সেভ করুন</button>
             </div>
 
-            <!-- Add Multi-Match Tournament History -->
-            <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-4">
-                <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2"><i class="fa-solid fa-trophy"></i> টুর্নামেন্ট ম্যাচ হিস্ট্রি যোগ করুন (৩–৭ টিম ও একাধিক ম্যাচ)</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <input type="text" id="tournNameInput" placeholder="টুর্নামেন্টের নাম (যেমন: Maa Babar Dua Cup)" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-                    <input type="date" id="tournDateInput" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-                    <input type="text" id="tournChampionInput" placeholder="চ্যাম্পিয়ন দল (যেমন: Team Sayed)" class="bg-[#0b111e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-                </div>
-
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs text-cyan-400 font-bold">টুর্নামেন্টের ম্যাচসমূহ:</span>
-                        <button type="button" onclick="addTournamentMatchRow()" class="bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 px-2.5 py-1 rounded-lg text-xs font-bold">+ আরও ম্যাচ যোগ করুন</button>
-                    </div>
-                    <div id="tournMatchRowsContainer" class="space-y-2"></div>
-                </div>
-
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">টুর্নামেন্টের ছবি আপলোড করুন (একাধিক ছবি সিলেক্ট করা যাবে):</label>
-                    <input type="file" id="tournPhotosInput" accept="image/*" multiple class="text-xs text-slate-300">
-                </div>
-
-                <button onclick="saveTournamentRecord()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs">টুর্নামেন্ট হিস্ট্রি পাবলিশ করুন</button>
-            </div>
         </section>
     </main>
 
@@ -695,7 +664,7 @@
                 t_tabSquad: "স্কোয়াড ও প্রোফাইল",
                 t_tabLineup: "ম্যাচ ফিক্সচার",
                 t_tabTactics: "ট্যাকটিকস বোর্ড",
-                t_tabMatches: "ম্যাচ ও টুর্নামেন্ট",
+                t_tabMatches: "ম্যাচ হিস্ট্রি",
                 t_tabChat: "চ্যাট ওয়াল",
                 t_tabAdmin: "অ্যাডমিন প্যানেল",
                 t_noticeTag: "নোটিশ",
@@ -740,7 +709,7 @@
                 t_tabSquad: "Squad & Profiles",
                 t_tabLineup: "Match Fixtures",
                 t_tabTactics: "Tactics Board",
-                t_tabMatches: "Matches & Tournaments",
+                t_tabMatches: "Match History",
                 t_tabChat: "Chat Wall",
                 t_tabAdmin: "Admin Panel",
                 t_noticeTag: "Notice",
@@ -841,7 +810,6 @@
         db.ref(`${ROOT}/notice`).on("value", (snap) => { if (snap.exists()) { state.notice = snap.val(); document.getElementById("clubNoticeText").innerText = state.notice; } });
         db.ref(`${ROOT}/lineups`).on("value", (snap) => { state.lineups = snap.val(); renderPublishedLineups(); });
         db.ref(`${ROOT}/matches`).on("value", (snap) => { state.matches = snap.val() || {}; renderMatchHistory(); });
-        db.ref(`${ROOT}/tournaments`).on("value", (snap) => { state.tournaments = snap.val() || {}; renderTournaments(); });
         db.ref(`${ROOT}/moments`).on("value", (snap) => { state.moments = snap.val() || {}; renderMoments(); });
         db.ref(`${ROOT}/chat`).limitToLast(60).on("value", (snap) => { state.chat = snap.val() || {}; renderChat(); });
         db.ref(`${ROOT}/musicUrl`).on("value", (snap) => {
@@ -934,7 +902,6 @@
             }
             renderMoments();
             renderMatchHistory();
-            renderTournaments();
         }
 
         async function verifyAdminPin() {
@@ -952,7 +919,6 @@
                 switchTab("admin");
                 renderMoments();
                 renderMatchHistory();
-                renderTournaments();
             } else {
                 alert(state.lang === "bn" ? "ভুল অ্যাডমিন পিন!" : "Wrong Admin PIN!");
             }
@@ -970,7 +936,6 @@
             switchTab("home");
             renderMoments();
             renderMatchHistory();
-            renderTournaments();
         }
 
         function switchTab(tabName) {
@@ -1515,13 +1480,6 @@
         }
 
 
-        function switchMatchSubTab(type) {
-            document.getElementById("subtab-regular").classList.toggle("hidden", type !== "regular");
-            document.getElementById("subtab-tournament").classList.toggle("hidden", type !== "tournament");
-            document.getElementById("subtab-btn-regular").className = type === "regular" ? "bg-cyan-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs sm:text-sm" : "bg-[#111827] border border-slate-800 text-slate-300 font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm";
-            document.getElementById("subtab-btn-tournament").className = type === "tournament" ? "bg-amber-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs sm:text-sm" : "bg-[#111827] border border-slate-800 text-slate-300 font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm";
-        }
-
         async function addMatchRecord() {
             if (!state.isAdmin) return;
             const title = document.getElementById("matchTitleInput").value.trim();
@@ -1545,45 +1503,36 @@
 
         function renderMatchHistory() {
             const c = document.getElementById("matchHistoryContainer");
-            const list = Object.values(state.matches).reverse();
-            if (!list.length) { c.innerHTML = `<p class="text-center py-8 text-slate-500 text-sm">কোনো সাধারণ ম্যাচ রেকর্ড নেই।</p>`; return; }
+            const list = Object.values(state.matches).sort((x, y) => String(y.date).localeCompare(String(x.date)));
+            const cnt = document.getElementById("matchHistoryCount"); if (cnt) cnt.innerText = list.length;
+            if (!list.length) { c.innerHTML = `<p class="col-span-full text-center py-10 text-slate-500 text-sm">কোনো ম্যাচ রেকর্ড নেই।</p>`; return; }
+            const side = (v, fb, col, win) => {
+                const t = String(v || "").trim(), short = t && t.length <= 18, nm = short ? t : fb;
+                return `<div class="flex flex-col items-center gap-1.5 min-w-0"><span class="w-12 h-12 rounded-full inline-flex items-center justify-center text-white font-extrabold text-lg ring-2 ${win ? "ring-emerald-400 shadow-[0_0_16px_rgba(52,211,153,.45)]" : "ring-white/10"}" style="background:${col}">${xEsc(nm.substring(0, 1).toUpperCase())}</span><span class="text-sm font-bold text-white text-center truncate max-w-[130px]">${xEsc(nm)}</span>${t && !short ? `<span class="text-[10px] text-slate-400 text-center leading-snug line-clamp-3 max-w-[150px]">${xEsc(t)}</span>` : ""}</div>`;
+            };
             c.innerHTML = list.map(m => {
+                const sc = String(m.score || "").match(/^\s*(\d+)\s*[-:–]\s*(\d+)\s*$/), a = sc ? +sc[1] : 0, b = sc ? +sc[2] : 0;
+                const bar = !sc ? "#38bdf8" : a > b ? "#22c55e" : b > a ? "#3b82f6" : "#f59e0b";
+                const d = new Date(m.date + "T00:00:00"), dt = isNaN(d) ? xEsc(m.date) : d.toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" });
                 const comments = m.comments ? Object.values(m.comments) : [];
-                return `
-                    <div class="bg-[#0b111e] border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4">
-                        <div class="flex items-center justify-between">
-                            <span class="text-amber-400 font-bold text-sm sm:text-base flex items-center gap-2"><i class="fa-solid fa-futbol"></i> ${m.title}</span>
-                            <div class="flex items-center gap-3">
-                                <span class="text-xs text-slate-400">${m.date}</span>
-                                ${state.isAdmin ? `<button onclick="confirmDeleteMatch('${m.id}')" class="text-rose-400 text-xs"><i class="fa-solid fa-trash"></i></button>` : ''}
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                            <div class="bg-[#111827] border border-slate-800 rounded-xl p-3"><strong class="text-cyan-400">Team A:</strong> ${m.teamA || '-'}</div>
-                            <div class="bg-[#111827] border border-slate-800 rounded-xl p-3"><strong class="text-cyan-400">Team B:</strong> ${m.teamB || '-'}</div>
-                        </div>
-                        <div class="flex justify-between text-xs sm:text-sm">
-                            <span class="font-bold text-emerald-400">Score: ${m.score}</span>
-                            <span class="text-amber-400 text-xs">${m.scorers || ''}</span>
-                        </div>
-                        ${(m.photos || []).length ? `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${m.photos.map((src, idx) => `
-                            <div class="relative rounded-xl overflow-hidden border border-slate-800">
-                                <img src="${src}" class="w-full h-44 object-cover">
-                                ${state.isAdmin ? `<button onclick="deleteMatchPhoto('${m.id}', ${idx})" class="absolute top-2 right-2 bg-rose-600 text-white w-7 h-7 rounded-lg text-xs flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>` : ''}
-                            </div>
-                        `).join("")}</div>` : ''}
-                        <div class="pt-3 border-t border-slate-800 space-y-2">
-                            ${comments.map(cm => `<div class="bg-[#111827] rounded-xl px-3 py-2 text-xs"><strong class="text-emerald-400">${cm.author}:</strong> ${cm.text}</div>`).join("")}
-                            <div class="flex gap-2">
-                                <input type="text" id="matchCommentInput_${m.id}" placeholder="Comment..." class="flex-1 bg-[#111827] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-                                <button onclick="postMatchComment('${m.id}')" class="bg-cyan-500 text-slate-950 font-bold px-3.5 py-2 rounded-xl text-xs">Post</button>
-                            </div>
-                        </div>
+                return `<div class="rounded-2xl p-4 sm:p-5 border border-slate-800 space-y-4" style="background:linear-gradient(180deg,#0f172a,#0b111e);border-top:3px solid ${bar}">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0"><span class="inline-block text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300">${xEsc(m.title)}</span><div class="text-[11px] text-slate-400 mt-1.5"><i class="fa-solid fa-calendar-day"></i> ${dt}</div></div>
+                        ${state.isAdmin ? `<button onclick="confirmDeleteMatch('${m.id}')" class="w-7 h-7 shrink-0 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white"><i class="fa-solid fa-trash text-[11px]"></i></button>` : ""}
                     </div>
-                `;
+                    <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+                        ${side(m.teamA, "Team A", "#ef4444", sc && a > b)}
+                        <div class="text-center">${sc ? `<div class="text-3xl font-black text-white leading-none">${a}<span class="text-slate-600 mx-1">:</span>${b}</div><div class="text-[10px] text-slate-500 mt-1">${a === b ? "ড্র" : "ফুল টাইম"}</div>` : `<div class="text-lg font-black text-white">${xEsc(m.score)}</div>`}</div>
+                        ${side(m.teamB, "Team B", "#3b82f6", sc && b > a)}
+                    </div>
+                    ${m.scorers ? `<div class="text-xs text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-2"><i class="fa-solid fa-futbol"></i> ${xEsc(m.scorers)}</div>` : ""}
+                    ${(m.photos || []).length ? `<div class="grid grid-cols-2 gap-2">${m.photos.map((src, idx) => `<div class="relative rounded-xl overflow-hidden border border-slate-800"><img src="${src}" class="w-full h-36 object-cover">${state.isAdmin ? `<button onclick="deleteMatchPhoto('${m.id}', ${idx})" class="absolute top-2 right-2 bg-rose-600 text-white w-7 h-7 rounded-lg text-xs flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>` : ""}</div>`).join("")}</div>` : ""}
+                    <div class="pt-3 border-t border-slate-800 space-y-2">
+                        ${comments.map(cm => `<div class="bg-[#111827] rounded-xl px-3 py-2 text-xs"><strong class="text-emerald-400">${xEsc(cm.author)}:</strong> <span class="text-slate-300">${xEsc(cm.text)}</span></div>`).join("")}
+                        <div class="flex gap-2"><input type="text" id="matchCommentInput_${m.id}" placeholder="কমেন্ট লিখুন..." class="flex-1 bg-[#111827] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500"><button onclick="postMatchComment('${m.id}')" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-3.5 py-2 rounded-xl text-xs">Post</button></div>
+                    </div></div>`;
             }).join("");
         }
-
         function postMatchComment(mid) {
             if (!state.currentUser) return alert("কমেন্ট করতে লগইন করুন।");
             const inp = document.getElementById(`matchCommentInput_${mid}`);
@@ -1601,96 +1550,6 @@
 
         function confirmDeleteMatch(mid) {
             openConfirmModal("ম্যাচ ডিলিট করবেন?", "এই ম্যাচের সকল তথ্য মুছে যাবে।", () => db.ref(`${ROOT}/matches/${mid}`).remove());
-        }
-
-        function addTournamentMatchRow() {
-            const container = document.getElementById("tournMatchRowsContainer");
-            const row = document.createElement("div");
-            row.className = "tourn-match-row grid grid-cols-1 sm:grid-cols-4 gap-2 bg-[#0b111e] p-2.5 rounded-xl border border-slate-800";
-            row.innerHTML = `
-                <input type="text" placeholder="ম্যাচ নাম (যেমন: Match 1 / Final)" class="tm-stage bg-[#111827] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
-                <input type="text" placeholder="টিম ১ বনাম টিম ২" class="tm-teams bg-[#111827] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
-                <input type="text" placeholder="স্কোর (যেমন: 3-2)" class="tm-score bg-[#111827] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
-                <input type="text" placeholder="গোলদাতা / নোট" class="tm-scorers bg-[#111827] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
-            `;
-            container.appendChild(row);
-        }
-
-        async function saveTournamentRecord() {
-            if (!state.isAdmin) return;
-            const name = document.getElementById("tournNameInput").value.trim();
-            if (!name) return alert("টুর্নামেন্টের নাম লিখুন।");
-
-            const matchList = [];
-            document.querySelectorAll(".tourn-match-row").forEach(row => {
-                const stage = row.querySelector(".tm-stage").value.trim();
-                const teams = row.querySelector(".tm-teams").value.trim();
-                const score = row.querySelector(".tm-score").value.trim();
-                const scorers = row.querySelector(".tm-scorers").value.trim();
-                if (teams || score) matchList.push({ stage, teams, score, scorers });
-            });
-
-            const files = Array.from(document.getElementById("tournPhotosInput").files);
-            const photos = [];
-            for (const f of files) photos.push(await compressImage(f, 700, 0.7));
-
-            const ref = db.ref(`${ROOT}/tournaments`).push();
-            await ref.set({
-                id: ref.key,
-                name,
-                date: document.getElementById("tournDateInput").value || new Date().toISOString().split("T")[0],
-                champion: document.getElementById("tournChampionInput").value.trim(),
-                matches: matchList,
-                photos
-            });
-
-            document.getElementById("tournNameInput").value = "";
-            document.getElementById("tournChampionInput").value = "";
-            document.getElementById("tournMatchRowsContainer").innerHTML = "";
-            addTournamentMatchRow();
-            document.getElementById("tournPhotosInput").value = "";
-            alert("টুর্নামেন্ট হিস্ট্রি পাবলিশ হয়েছে!");
-        }
-
-        function renderTournaments() {
-            const container = document.getElementById("tournamentsContainer");
-            const list = Object.values(state.tournaments).reverse();
-            if (!list.length) {
-                container.innerHTML = `<p class="text-center py-8 text-slate-500 text-sm">এখনো কোনো টুর্নামেন্ট হিস্ট্রি যোগ করা হয়নি।</p>`;
-                return;
-            }
-            container.innerHTML = list.map(t => `
-                <div class="bg-[#0b111e] border border-amber-500/30 rounded-2xl p-4 sm:p-5 space-y-4">
-                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                        <div>
-                            <h3 class="text-base sm:text-lg font-bold text-amber-400 flex items-center gap-2"><i class="fa-solid fa-trophy"></i> ${t.name}</h3>
-                            <p class="text-xs text-slate-400">তারিখ: ${t.date} ${t.champion ? `| <span class="text-emerald-400 font-bold">চ্যাম্পিয়ন: ${t.champion}</span>` : ''}</p>
-                        </div>
-                        ${state.isAdmin ? `<button onclick="openConfirmModal('টুর্নামেন্ট ডিলিট?', 'পুরো টুর্নামেন্ট মুছে যাবে।', () => db.ref('${ROOT}/tournaments/${t.id}').remove())" class="bg-rose-600/20 text-rose-400 px-3 py-1 rounded-lg text-xs"><i class="fa-solid fa-trash"></i></button>` : ''}
-                    </div>
-
-                    <div class="space-y-2">
-                        ${(t.matches || []).map((m, idx) => `
-                            <div class="bg-[#111827] border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
-                                <div>
-                                    <span class="text-cyan-400 font-bold mr-2">${m.stage || `Match ${idx+1}`}:</span>
-                                    <span class="text-white font-semibold">${m.teams}</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <span class="bg-emerald-500/15 text-emerald-400 px-2.5 py-0.5 rounded font-bold">${m.score}</span>
-                                    <span class="text-slate-400">${m.scorers || ''}</span>
-                                </div>
-                            </div>
-                        `).join("")}
-                    </div>
-
-                    ${(t.photos || []).length ? `
-                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
-                            ${t.photos.map(src => `<img src="${src}" class="w-full h-36 sm:h-44 object-cover rounded-xl border border-slate-800">`).join("")}
-                        </div>
-                    ` : ''}
-                </div>
-            `).join("");
         }
 
         async function handleMomentUpload(e) {
@@ -2393,11 +2252,21 @@
         db.ref(`${ROOT}/tn`).on("value", snap => { xTn = snap.val() || {}; tnRender(); });
         { let sig = ""; setInterval(() => { const s = state.isAdmin + "|" + (state.currentUser ? state.currentUser.id : "") + "|" + Object.keys(state.players || {}).length; if (s !== sig) { sig = s; tnRender(); } }, 1000); }
 
+        async function clearOldData() {
+            if (!state.isAdmin) return;
+            const [a, b] = await Promise.all([db.ref(`${ROOT}/tournaments`).once("value"), db.ref(`${ROOT}/tactics`).once("value")]);
+            if (!a.exists() && !b.exists()) return alert("মোছার মতো পুরোনো ডেটা আর নেই।");
+            const kb = Math.max(1, Math.round((JSON.stringify(a.val() || "").length + JSON.stringify(b.val() || "").length) / 1024));
+            openConfirmModal("পুরোনো ডেটা মুছবেন?", `পুরোনো টুর্নামেন্ট আর্কাইভ ও পুরোনো ট্যাকটিক্স (প্রায় ${kb} KB) স্থায়ীভাবে মুছে যাবে। আর ফেরত আনা যাবে না।`, async () => {
+                await db.ref(`${ROOT}/tournaments`).remove(); await db.ref(`${ROOT}/tactics`).remove();
+                alert("পুরোনো ডেটা পরিষ্কার হয়েছে!");
+            });
+        }
+
         try { if (localStorage.getItem("ffc_theme") === "light") toggleThemeRaw(); } catch (e) {}
         setAnimSpeed(tacAnimSpeed);
         tacRefreshUI();
         renderTacticsBoard();
-        addTournamentMatchRow();
     </script>
 </body>
 </html>
